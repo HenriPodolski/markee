@@ -1,5 +1,13 @@
-# Session 20220109
-* Prototyping save with HTML5 FileSystem API
+# Backlog
+- [ ] Foundations of the overall layout
+- [ ] New note functionality and form
+- [ ] New folder functionality and form
+- [ ] eslint and eslint fix
+- [ ] File tree
+- [ ] Preview
+- [ ] Markdown editing mode (source code)
+- [ ] Versions using git
+- [ ] Add draggable borders to the sections to adjust the width of the areas
 
 # Getting Started with Create React App
 

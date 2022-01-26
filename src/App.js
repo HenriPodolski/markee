@@ -1,8 +1,10 @@
-import './App.css';
 import React, {useState, useRef} from 'react'
-import Editor from "./editor/Editor";
+import Editor from "./components/editor/Editor";
 import LightningFS from '@isomorphic-git/lightning-fs';
-import FileTree from "./filetree/FileTree";
+import FileTree from "./components/filetree/FileTree";
+import styles from './App.module.css';
+import {GlobalContext} from "./context/global.context";
+import Preview from "./components/preview/Preview";
 
 function App() {
     const [html, setHtml] = useState();
@@ -26,12 +28,15 @@ function App() {
     };
 
     return (
-        <main>
-            <FileTree fs={fsRef.current} />
-            <Editor onEditorChange={handleEditorChange} />
-            <button type="button" disabled={isSaving} onClick={handleSaveClick}>Save</button>
-            <div dangerouslySetInnerHTML={{__html: html}}></div>
-        </main>
+        <GlobalContext.Provider value={{ onSave: handleSaveClick, isSaving, html, fs: fsRef.current }}>
+            <main className={styles.App}>
+                <FileTree />
+                <div className={styles.splitView}>
+                    <Editor onEditorChange={handleEditorChange} />
+                    <Preview />
+                </div>
+            </main>
+        </GlobalContext.Provider>
     )
 }
 
