@@ -1,3 +1,9 @@
 .FileTree {
-    flex: 0 0 auto;
+  flex: 0 0 auto;
+}
+
+.filetreeWrap {
+  height: 100%;
+  overflow: auto;
+  padding: var(--size-6) var(--size-8);
 }

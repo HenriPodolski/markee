@@ -1,19 +1,20 @@
-import React, { useContext } from 'react'
-import {GlobalContext} from "../../../context/global.context";
+import React, { useContext } from 'react';
+import { GlobalContext } from '../../../context/global.context';
 
 function FileTreeControls(props) {
-    const globalContext = useContext(GlobalContext);
+  const [globalContext] = useContext(GlobalContext);
 
-    return (
-        <div>
-            <button
-                type="button"
-                disabled={globalContext.isSaving}
-                onClick={globalContext.onSave}>
-                Save
-            </button>
-        </div>
-    );
+  return (
+    <div>
+      <button
+        type="button"
+        disabled={globalContext.isSaving}
+        onClick={globalContext.onSave}
+      >
+        Save
+      </button>
+    </div>
+  );
 }
 
-export default FileTreeControls
+export default FileTreeControls;

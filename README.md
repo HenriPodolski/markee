@@ -1,13 +1,18 @@
 # Backlog
+
 - [ ] Foundations of the overall layout
 - [ ] New note functionality and form
 - [ ] New folder functionality and form
-- [ ] eslint and eslint fix
+- [x] eslint and eslint fix
 - [ ] File tree
 - [ ] Preview
 - [ ] Markdown editing mode (source code)
 - [ ] Versions using git
+- [ ] Differentiate between different file types (different icon in file tree)
 - [ ] Add draggable borders to the sections to adjust the width of the areas
+
+## Resources
+* Icons: https://materialdesignicons.com/
 
 # Getting Started with Create React App
 

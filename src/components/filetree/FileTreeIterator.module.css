@@ -1,0 +1,35 @@
+.FileTreeIterator {
+
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  gap: var(--size-1);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-bottom: var(--size-2);
+}
+
+.folder {
+  display: flex;
+  align-items: center;
+  gap: var(--size-1);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-bottom: var(--size-2);
+}
+
+.listItem {
+
+}
+
+.listItemCollapsed {
+  display: none;
+}
+
+.listItem .listItem {
+  padding-left: var(--size-5);
+}

@@ -1,8 +1,9 @@
-import { createContext } from 'react'
+import { createContext } from 'react';
 export const globalContextDefault = {
-    onSave: () => {},
-    isSaving: false,
-    html: '',
-    fs: null
+  onSave: () => {},
+  isSaving: false,
+  html: '',
+  fs: null,
+  editorFileContent: '',
 };
-export const GlobalContext = createContext(globalContextDefault);
+export const GlobalContext = createContext([globalContextDefault]);
