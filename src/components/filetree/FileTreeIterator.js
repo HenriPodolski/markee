@@ -1,25 +1,55 @@
-import React, { useContext, useState } from 'react';
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styles from './FileTreeIterator.module.css';
 import { ReactComponent as FileIcon } from '../../icons/file-document-outline.svg';
+import { ReactComponent as FileNewIcon } from '../../icons/file-document-new-outline.svg';
+import { ReactComponent as FileEditIcon } from '../../icons/file-document-edit-outline.svg';
 import cx from 'classnames';
 import FileTreeFolder from './FileTreeFolder';
 import { GlobalContext } from '../../context/global.context';
+import MarkdownIt from 'markdown-it';
 
 function FileTreeIterator(props) {
   const { tree } = props;
   const [globalContext, setGlobalContext] = useContext(GlobalContext);
+  const { openFilePath, newFileCreateRequest } = globalContext;
   const [fsPromise] = useState(globalContext.fs.promises);
+  const md = useRef(new MarkdownIt());
+  const [newFileName, setNewFileName] = useState('');
+
+  useEffect(() => {
+    console.log('newFileCreateRequest', newFileCreateRequest, tree);
+  }, [newFileCreateRequest]);
 
   const handleFileClick = async (evt, fullPath) => {
-    console.log('handleFileClick', fullPath, evt);
     const fileContent = await fsPromise.readFile(fullPath, {
       encoding: 'utf8',
     });
 
     setGlobalContext({
       ...globalContext,
-      editorFileContent: fileContent,
+      editorFileContent: md.current.render(fileContent),
+      openFilePath: fullPath,
     });
+  };
+
+  const handleNewFileNameInputBlur = (evt) => {
+    const fileName = `${newFileCreateRequest.createPath}${evt.target.value}.md`;
+    console.log(fileName);
+  };
+
+  const handleNewFileNameInputInput = (evt) => {
+    let fileName = evt.target.value;
+    const regexPattern = evt.target.getAttribute('pattern').replace('[', '[^');
+    const pattern = new RegExp(`${regexPattern}`, 'gm');
+
+    fileName = fileName.replaceAll(pattern, '');
+    setNewFileName(fileName);
   };
 
   return (
@@ -39,27 +69,59 @@ function FileTreeIterator(props) {
           if (item.type === 'directory') {
             return (
               <FileTreeFolder
-                key={`${item.name}-${item.open ? 'open' : 'close'}-${i}`}
+                key={`${item.name}-${item.visible ? 'open' : 'close'}-${i}`}
                 item={item}
                 parentIndex={i}
               />
             );
           } else {
             return (
-              <li
-                className={cx(styles.listItem, {
-                  [styles.listItemCollapsed]: !item.open,
-                })}
-                key={`${item.name + i}`}
-              >
-                <button
-                  className={styles.file}
-                  type="button"
-                  onClick={(evt) => handleFileClick(evt, item.fullPath)}
+              <Fragment key={`${item.name + i}`}>
+                <li
+                  className={cx(styles.listItem, {
+                    [styles.listItemCollapsed]: !item.visible,
+                  })}
                 >
-                  <FileIcon /> {item.name}
-                </button>
-              </li>
+                  <button
+                    className={cx(styles.file, {
+                      [styles.fileActive]: openFilePath === item.fullPath,
+                    })}
+                    type="button"
+                    onClick={(evt) => handleFileClick(evt, item.fullPath, i)}
+                  >
+                    {openFilePath === item.fullPath ? (
+                      <FileEditIcon />
+                    ) : (
+                      <FileIcon />
+                    )}{' '}
+                    {item.name}
+                  </button>
+                </li>
+                {newFileCreateRequest &&
+                  tree.length - 1 === i &&
+                  newFileCreateRequest.level === item.level && (
+                    <li className={cx(styles.listItemForm)} key={'new'}>
+                      <FileNewIcon />
+                      <span className={styles.inputWrap}>
+                        <span className={styles.reflectFormField}>
+                          {newFileName}
+                        </span>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          value={newFileName}
+                          pattern="[a-zA-Z0-9-_.]"
+                          autoFocus
+                          onInput={handleNewFileNameInputInput}
+                          onChange={handleNewFileNameInputInput}
+                          onPaste={handleNewFileNameInputInput}
+                          onBlur={handleNewFileNameInputBlur}
+                        />
+                        <span>.md</span>
+                      </span>
+                    </li>
+                  )}
+              </Fragment>
             );
           }
         })}

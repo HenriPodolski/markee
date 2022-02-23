@@ -12,6 +12,18 @@
   margin-bottom: var(--size-2);
 }
 
+.fileActive {
+  color: #06c;
+}
+
+.file:focus svg {
+  color: #06c;
+}
+
+.file svg path {
+  fill: currentColor;
+}
+
 .folder {
   display: flex;
   align-items: center;
@@ -22,8 +34,15 @@
   margin-bottom: var(--size-2);
 }
 
-.listItem {
+.folder:focus svg {
+  color: #06c;
+}
 
+.folder svg path {
+  fill: currentColor;
+}
+
+.listItem {
 }
 
 .listItemCollapsed {
@@ -32,4 +51,25 @@
 
 .listItem .listItem {
   padding-left: var(--size-5);
+}
+
+.listItemForm {
+
+}
+
+.inputWrap {
+  position: relative;
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+.reflectFormField {
+  visibility: hidden;
+}
+
+.input {
+  position: absolute;
+  display: block;
+  width: 100%;
+  left: 0;
 }

@@ -54,7 +54,7 @@ function Editor(props) {
       });
       const html = md.current.render(markdown);
 
-      onEditorChange({ markdown, html });
+      onEditorChange({ markdown, html, content });
     }
   };
 

@@ -5,5 +5,8 @@ export const globalContextDefault = {
   html: '',
   fs: null,
   editorFileContent: '',
+  editorFileHTML: '',
+  editorFileMarkdown: '',
+  openFilePath: '',
 };
 export const GlobalContext = createContext([globalContextDefault]);

@@ -25,7 +25,8 @@ function FileTree() {
                 name: dirPath[index],
                 fullPath: currentItem,
                 type: 'directory',
-                open: level < 1,
+                visible: level < 1,
+                open: false,
                 level,
               });
               const lastIndex = treeList.length - 1;
@@ -40,7 +41,8 @@ function FileTree() {
                 name: dirPath[index],
                 fullPath: currentItem,
                 type: 'file',
-                open: level < 1,
+                visible: level < 1,
+                open: false,
                 level,
               });
             }
