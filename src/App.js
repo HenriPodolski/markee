@@ -23,22 +23,17 @@ function App() {
     setIsSaving(false);
   };
 
-  const createNewFile = async (filePath, fileContent) => {
+  const handleCreateNewFile = async (filePath, fileContent = '') => {
     console.log('createNewFile', filePath, fileContent);
     const fs = fsRef.current;
 
-    // await fs.promises.writeFile(
-    //     filePath,
-    //     fileContent,
-    //     {
-    //       encoding: 'utf8',
-    //     }
-    // );
+    await fs.promises.writeFile(filePath, fileContent, {
+      encoding: 'utf8',
+    });
   };
 
   const handleNewFile = async (focusedFolder, openFilePath) => {
-    console.log('handleNewFile', focusedFolder, openFilePath);
-    let createPath = '/';
+    let createPath = '';
 
     if (focusedFolder) {
       createPath = focusedFolder;
@@ -48,18 +43,15 @@ function App() {
       createPath = filepathSplit.join('/');
     }
 
-    console.log('createPath', createPath);
-
     setGlobalState({
       ...globalState,
       newFileCreateRequest: {
         createPath,
-        level: createPath.split('/').length - 2,
+        level: createPath.split('/').filter((pathPart) => Boolean(pathPart))
+          .length,
       },
     });
   };
-
-  const handleNewFileCreate = (path) => {};
 
   const handleNewFolder = (focusedFolder, openFilePath) => {
     // case undefined for both -> create on the top level
@@ -77,15 +69,16 @@ function App() {
 
   const [globalState, setGlobalState] = useState({
     ...globalContextDefault,
+    onCreateNewFile: handleCreateNewFile,
     onSave: handleSave,
     onNewFile: handleNewFile,
-    onNewFileCreate: handleNewFileCreate,
     onNewFolder: handleNewFolder,
     newFileCreateRequest: null,
     isSaving: false,
     html: '',
     fs: fsRef.current,
     editorFileContent: '',
+    updateFileTree: Date.now(),
   });
 
   return (

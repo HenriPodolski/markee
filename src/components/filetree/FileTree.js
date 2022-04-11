@@ -51,7 +51,7 @@ function FileTree() {
 
         return treeList;
       },
-    [fsPromise]
+    []
   );
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function FileTree() {
     };
 
     prepareTree();
-  }, [walkDirCallback]);
+  }, [walkDirCallback, globalContext.updateFileTree]);
 
   return (
     <div>

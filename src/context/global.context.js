@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 export const globalContextDefault = {
+  onCreateNewFile: () => {},
   onSave: () => {},
   isSaving: false,
   html: '',
@@ -8,5 +9,6 @@ export const globalContextDefault = {
   editorFileHTML: '',
   editorFileMarkdown: '',
   openFilePath: '',
+  updateFileTree: Date.now(),
 };
 export const GlobalContext = createContext([globalContextDefault]);

@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { Fragment, useContext, useRef, useState } from 'react';
 import styles from './FileTreeIterator.module.css';
 import { ReactComponent as FileIcon } from '../../icons/file-document-outline.svg';
 import { ReactComponent as FileNewIcon } from '../../icons/file-document-new-outline.svg';
@@ -17,14 +11,11 @@ import MarkdownIt from 'markdown-it';
 function FileTreeIterator(props) {
   const { tree } = props;
   const [globalContext, setGlobalContext] = useContext(GlobalContext);
-  const { openFilePath, newFileCreateRequest } = globalContext;
+  const { openFilePath, newFileCreateRequest, editorFileMarkdown } =
+    globalContext;
   const [fsPromise] = useState(globalContext.fs.promises);
   const md = useRef(new MarkdownIt());
   const [newFileName, setNewFileName] = useState('');
-
-  useEffect(() => {
-    console.log('newFileCreateRequest', newFileCreateRequest, tree);
-  }, [newFileCreateRequest]);
 
   const handleFileClick = async (evt, fullPath) => {
     const fileContent = await fsPromise.readFile(fullPath, {
@@ -38,9 +29,29 @@ function FileTreeIterator(props) {
     });
   };
 
-  const handleNewFileNameInputBlur = (evt) => {
-    const fileName = `${newFileCreateRequest.createPath}${evt.target.value}.md`;
-    console.log(fileName);
+  const handleNewFileNameInputBlur = async (evt) => {
+    if (!evt.target.value) {
+      setGlobalContext({
+        ...globalContext,
+        newFileCreateRequest: null,
+      });
+      return;
+    }
+
+    const fullPath = `${newFileCreateRequest.createPath}/${evt.target.value}.md`;
+    await globalContext.onCreateNewFile(fullPath, editorFileMarkdown);
+
+    const fileContent = await fsPromise.readFile(fullPath, {
+      encoding: 'utf8',
+    });
+
+    setGlobalContext({
+      ...globalContext,
+      editorFileContent: md.current.render(fileContent),
+      openFilePath: fullPath,
+      updateFileTree: Date.now(),
+      newFileCreateRequest: null,
+    });
   };
 
   const handleNewFileNameInputInput = (evt) => {
@@ -66,17 +77,15 @@ function FileTreeIterator(props) {
           return 0;
         })
         .map((item, i) => {
-          if (item.type === 'directory') {
-            return (
-              <FileTreeFolder
-                key={`${item.name}-${item.visible ? 'open' : 'close'}-${i}`}
-                item={item}
-                parentIndex={i}
-              />
-            );
-          } else {
-            return (
-              <Fragment key={`${item.name + i}`}>
+          return (
+            <Fragment key={`${item.name + i}`}>
+              {item.type === 'directory' ? (
+                <FileTreeFolder
+                  key={`${item.name}-${item.visible ? 'open' : 'close'}-${i}`}
+                  item={item}
+                  parentIndex={i}
+                />
+              ) : (
                 <li
                   className={cx(styles.listItem, {
                     [styles.listItemCollapsed]: !item.visible,
@@ -97,33 +106,33 @@ function FileTreeIterator(props) {
                     {item.name}
                   </button>
                 </li>
-                {newFileCreateRequest &&
-                  tree.length - 1 === i &&
-                  newFileCreateRequest.level === item.level && (
-                    <li className={cx(styles.listItemForm)} key={'new'}>
-                      <FileNewIcon />
-                      <span className={styles.inputWrap}>
-                        <span className={styles.reflectFormField}>
-                          {newFileName}
-                        </span>
-                        <input
-                          className={styles.input}
-                          type="text"
-                          value={newFileName}
-                          pattern="[a-zA-Z0-9-_.]"
-                          autoFocus
-                          onInput={handleNewFileNameInputInput}
-                          onChange={handleNewFileNameInputInput}
-                          onPaste={handleNewFileNameInputInput}
-                          onBlur={handleNewFileNameInputBlur}
-                        />
-                        <span>.md</span>
+              )}
+              {newFileCreateRequest &&
+                tree.length - 1 === i &&
+                newFileCreateRequest.level === item.level && (
+                  <li className={cx(styles.listItemForm)} key={'new'}>
+                    <FileNewIcon />
+                    <span className={styles.inputWrap}>
+                      <span className={styles.reflectFormField}>
+                        {newFileName}
                       </span>
-                    </li>
-                  )}
-              </Fragment>
-            );
-          }
+                      <input
+                        className={styles.input}
+                        type="text"
+                        value={newFileName}
+                        pattern="[a-zA-Z0-9-_.]"
+                        autoFocus
+                        onInput={handleNewFileNameInputInput}
+                        onChange={handleNewFileNameInputInput}
+                        onPaste={handleNewFileNameInputInput}
+                        onBlur={handleNewFileNameInputBlur}
+                      />
+                      <span>.md</span>
+                    </span>
+                  </li>
+                )}
+            </Fragment>
+          );
         })}
     </ol>
   );
