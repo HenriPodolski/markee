@@ -2,7 +2,7 @@ const centerClassName = 'ql-align-center';
 const rightClassName = 'ql-align-right';
 const justifyClassName = 'ql-align-justify';
 
-const textLayoutFilter = (node) => {
+const textLayoutFilter = (node: HTMLElement) => {
   return (
     node.nodeName === 'P' &&
     (node.classList.contains(centerClassName) ||
@@ -17,7 +17,7 @@ const rules = {
   justify: 'text-align: justify; text-justify: inter-word;',
 };
 
-const replaceTextLayoutClass = (innerHTML, node) => {
+const replaceTextLayoutClass = (innerHTML: string, node: HTMLElement) => {
   let mode;
 
   if (node.classList.contains(centerClassName)) {
