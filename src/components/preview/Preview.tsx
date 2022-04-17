@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { GlobalContext } from '../../context/global.context';
-import styles from './Preview.module.css';
+import styles from './Preview.module.scss';
 
-function Preview(props) {
+const Preview: React.FC = () => {
   const [globalContext] = useContext(GlobalContext);
   return (
     <div
@@ -10,6 +10,6 @@ function Preview(props) {
       dangerouslySetInnerHTML={{ __html: globalContext.html }}
     ></div>
   );
-}
+};
 
 export default Preview;
