@@ -3,7 +3,8 @@ import MarkdownIt from 'markdown-it';
 import toMarkdown from 'to-markdown';
 import TextLayoutConverter from './filters/text-layout-converter';
 import { GlobalContext } from '../../context/global.context';
-import ReactQuill from 'react-quill';
+// @ts-ignore
+import ReactQuill from '@adrianhelvik/react-quill';
 
 interface Props {
   onEditorChange: (editorChangeProps: {
@@ -26,24 +27,24 @@ const Editor: React.FC<Props> = (props) => {
     setValue(editorFileContent);
   }, [editorFileContent]);
 
-  // const options = {
-  //   modules: {
-  //     toolbar: [
-  //       ['bold', 'italic', 'underline'].filter(Boolean), // toggled buttons
-  //       [{ list: 'ordered' }, { list: 'bullet' }],
-  //       [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-  //       [{ header: [1, 2, 3, 4, 5, false] }],
-  //       [{ align: [] }],
-  //       ['link', 'image', 'video'],
-  //       ['clean'],
-  //     ],
-  //     clipboard: {
-  //       matchVisual: false,
-  //     },
-  //   },
-  //   placeholder: '',
-  //   theme: 'snow',
-  // };
+  const options = {
+    modules: {
+      toolbar: [
+        ['bold', 'italic', 'underline'].filter(Boolean), // toggled buttons
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+        [{ header: [1, 2, 3, 4, 5, false] }],
+        [{ align: [] }],
+        ['link', 'image', 'video'],
+        ['clean'],
+      ],
+      clipboard: {
+        matchVisual: false,
+      },
+    },
+    placeholder: '',
+    theme: 'snow',
+  };
 
   const onChange = () => {
     if (editorRef.current && md.current) {
@@ -72,7 +73,7 @@ const Editor: React.FC<Props> = (props) => {
           value={value}
           onChange={onChange}
           placeholder={`${placeholder}`}
-          // options={options}
+          options={options}
         />
       </div>
     </>
