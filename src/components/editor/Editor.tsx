@@ -2,9 +2,10 @@ import React, { useState, useRef, useContext, useEffect } from 'react';
 import MarkdownIt from 'markdown-it';
 import toMarkdown from 'to-markdown';
 import TextLayoutConverter from './filters/text-layout-converter';
-import { GlobalContext } from '../../context/global.context';
 // @ts-ignore
 import ReactQuill from '@adrianhelvik/react-quill';
+import { useAppSelector } from '../../store/hooks';
+import { selectOpenFileContent } from '../../store/slices/openFileSlice';
 
 interface Props {
   onEditorChange: (editorChangeProps: {
@@ -16,9 +17,8 @@ interface Props {
 
 const Editor: React.FC<Props> = (props) => {
   const { onEditorChange } = props;
-  const [globalContext] = useContext(GlobalContext);
-  const { editorFileContent } = globalContext;
-  const [placeholder, setPlaceholder] = useState('Placeholder');
+  const editorFileContent = useAppSelector(selectOpenFileContent);
+  const [placeholder] = useState('Placeholder');
   const [value, setValue] = useState<string>();
   const editorRef = useRef<HTMLDivElement>(null);
   const md = useRef(new MarkdownIt());
@@ -30,7 +30,7 @@ const Editor: React.FC<Props> = (props) => {
   const options = {
     modules: {
       toolbar: [
-        ['bold', 'italic', 'underline'].filter(Boolean), // toggled buttons
+        ['bold', 'italic', 'underline'], // toggled buttons
         [{ list: 'ordered' }, { list: 'bullet' }],
         [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
         [{ header: [1, 2, 3, 4, 5, false] }],

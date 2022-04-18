@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import fsPromiseSingleton from '../../lib/fsPromiseSingleton';
 import config from '../../config';
-import { fetchFileSystem } from './fileSystemSlice';
 import { RootState } from '../store';
 
 const fsPromise = fsPromiseSingleton.getInstance(config.fsNamespace);
@@ -20,25 +19,21 @@ const initialState: OpenFileState = {
   loading: false,
 };
 
-export const loadFile = createAsyncThunk(
-  'openFile/loadFile',
-  async (dispatch, { getState }) => {
-    const state = getState() as OpenFileState;
-    return await fsPromise.readFile(state.path, {
-      encoding: 'utf8',
-    });
-  }
-);
+export const load = createAsyncThunk('openFile/load', async (path: string) => {
+  const fileContent = await fsPromise.readFile(path, {
+    encoding: 'utf8',
+  });
+
+  return {
+    fileContent,
+    path,
+  };
+});
 
 const openFileSlice = createSlice({
   name: 'openFile',
   initialState,
   reducers: {
-    load: (state, action: PayloadAction<string>) => {
-      state.content = '';
-      state.path = action.payload;
-      state.loading = true;
-    },
     reset: (state) => {
       state.content = '';
       state.path = '';
@@ -46,8 +41,13 @@ const openFileSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(loadFile.fulfilled, (state, action) => {
-      state.content = action.payload as string;
+    builder.addCase(load.pending, (state, action) => {
+      state.content = '';
+      state.loading = true;
+    });
+    builder.addCase(load.fulfilled, (state, action) => {
+      state.content = (action.payload.fileContent as string) || '';
+      state.path = (action.payload.path as string) || '';
       state.loading = false;
     });
   },
@@ -56,3 +56,7 @@ const openFileSlice = createSlice({
 export default openFileSlice.reducer;
 
 export const selectOpenFilePath = (state: RootState) => state.openFile.path;
+export const selectOpenFileContent = (state: RootState) =>
+  state.openFile.content;
+export const selectOpenFileLoading = (state: RootState) =>
+  state.openFile.loading;

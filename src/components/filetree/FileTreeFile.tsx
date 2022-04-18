@@ -4,8 +4,8 @@ import styles from './FileTreeFile.module.scss';
 import { ReactComponent as FileIcon } from '../../icons/file-document-outline.svg';
 import { ReactComponent as FileEditIcon } from '../../icons/file-document-edit-outline.svg';
 import { FileSystemItem } from '../../models/FileSystemItem.interface';
-import { useAppSelector } from '../../store/hooks';
-import { selectOpenFilePath } from '../../store/slices/openFileSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { load, selectOpenFilePath } from '../../store/slices/openFileSlice';
 
 interface Props {
   item: FileSystemItem;
@@ -14,9 +14,11 @@ interface Props {
 const FileTreeFile: React.FC<Props> = (props) => {
   const { item } = props;
   const openFilePath = useAppSelector(selectOpenFilePath);
+  const dispatch = useAppDispatch();
 
   const handleFileClick = () => {
     console.log('handleFileClick', item.fullPath);
+    dispatch(load(item.fullPath));
   };
 
   return (
