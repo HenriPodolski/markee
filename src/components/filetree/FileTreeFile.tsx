@@ -6,6 +6,7 @@ import { ReactComponent as FileEditIcon } from '../../icons/file-document-edit-o
 import { FileSystemItem } from '../../models/FileSystemItem.interface';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { load, selectOpenFilePath } from '../../store/slices/openFileSlice';
+import { fileSystemItemOpen } from '../../store/slices/fileSystemSlice';
 
 interface Props {
   item: FileSystemItem;
@@ -19,6 +20,7 @@ const FileTreeFile: React.FC<Props> = (props) => {
   const handleFileClick = () => {
     console.log('handleFileClick', item.fullPath);
     dispatch(load(item.fullPath));
+    dispatch(fileSystemItemOpen(item.id));
   };
 
   return (

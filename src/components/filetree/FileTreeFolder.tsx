@@ -6,6 +6,8 @@ import { ReactComponent as FolderIcon } from '../../icons/folder.svg';
 import { ReactComponent as FolderOpenIcon } from '../../icons/folder-open.svg';
 import { GlobalContext } from '../../context/global.context';
 import { FileSystemItem } from '../../models/FileSystemItem.interface';
+import { useAppDispatch } from '../../store/hooks';
+import { fileSystemItemOpen } from '../../store/slices/fileSystemSlice';
 
 interface Props {
   item: FileSystemItem;
@@ -13,20 +15,11 @@ interface Props {
 
 const FileTreeFolder: React.FC<Props> = (props) => {
   const { item } = props;
+  const dispatch = useAppDispatch();
 
   const handleFolderClick = (evt: MouseEvent) => {
     console.log('handleFolderClick', evt, item);
-    // const content = itemState.content.map((content) => ({
-    //   ...content,
-    //   visible: !content.visible,
-    // }));
-    //
-    // setItemState({ ...itemState, open: !itemState.open, content: content });
-    //
-    // setGlobalContext({
-    //   ...globalContext,
-    //   focusedFolder: itemState.fullPath,
-    // });
+    dispatch(fileSystemItemOpen(item.id));
   };
 
   return (

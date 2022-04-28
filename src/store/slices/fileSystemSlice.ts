@@ -3,13 +3,14 @@ import {
   createEntityAdapter,
   createSelector,
   createSlice,
+  PayloadAction,
 } from '@reduxjs/toolkit';
 import fsPromiseSingleton from '../../lib/fsPromiseSingleton';
 import config from '../../config';
 import { uuid } from '../../lib/uuid';
 import { RootState } from '../store';
 import { FileSystemItem } from '../../models/FileSystemItem.interface';
-import { CreateSelectorFunction } from 'reselect';
+import { EntityState } from '@reduxjs/toolkit/src/entities/models';
 
 const fsPromise = fsPromiseSingleton.getInstance(config.fsNamespace);
 
@@ -71,7 +72,38 @@ const fileSystemSlice = createSlice({
   name: 'fileSystem',
   initialState,
   reducers: {
-    fileSytemItemAdd: fileSystemAdapter.addOne,
+    fileSystemItemAdd: fileSystemAdapter.addOne,
+    fileSystemItemOpen(
+      state: EntityState<FileSystemItem>,
+      action: PayloadAction<string>
+    ) {
+      const fileSystemFileOpenId = Object.keys(state.entities).find(
+        (fileSystemItemKey) => {
+          const fileSystemItem = state.entities[fileSystemItemKey];
+          return (
+            fileSystemItem &&
+            fileSystemItem.type === 'file' &&
+            fileSystemItem.open
+          );
+        }
+      );
+      const fileSystemItem = state.entities[action.payload];
+
+      if (
+        fileSystemFileOpenId &&
+        fileSystemItem &&
+        fileSystemItem.type === 'file'
+      ) {
+        const fileSystemItemOpen = state.entities[fileSystemFileOpenId];
+        if (fileSystemItemOpen && fileSystemItemOpen.open) {
+          fileSystemItemOpen.open = false;
+        }
+      }
+
+      if (fileSystemItem) {
+        fileSystemItem.open = true;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchFileSystem.fulfilled, (state, action) => {
@@ -80,7 +112,8 @@ const fileSystemSlice = createSlice({
   },
 });
 
-export const { fileSytemItemAdd } = fileSystemSlice.actions;
+export const { fileSystemItemAdd, fileSystemItemOpen } =
+  fileSystemSlice.actions;
 
 export default fileSystemSlice.reducer;
 
