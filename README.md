@@ -1,15 +1,25 @@
 # Backlog
 
-- [ ] Foundations of the overall layout
-- [ ] New note functionality and form
-- [ ] New folder functionality and form
 - [x] eslint and eslint fix
-- [ ] File tree
+- [x] File tree
+- [x] Foundations of the overall layout
+- [ ] Add more space between files and folders for tap interactions
+- [ ] Use lexical instead of quill editor
+- [ ] New/Update note functionality and form
+- [ ] New/Update folder functionality and form
+- [ ] Add note title field
+- [ ] Add tags title field
+- [ ] Remove note functionality and confirm
+- [ ] Remove folder functionality and confirm
+- [ ] Add switch for title or file name in File tree
 - [ ] Preview
 - [ ] Markdown editing mode (source code)
 - [ ] Versions using git
+- [ ] Research spike use LightningFS as fallback and try to make FileAccess API to work with isomorphic git
 - [ ] Differentiate between different file types (different icon in file tree)
 - [ ] Add draggable borders to the sections to adjust the width of the areas
+- [ ] Add search
+- [ ] Add speech to text feature
 
 ## Resources
 * Icons: https://materialdesignicons.com/
