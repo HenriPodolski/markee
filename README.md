@@ -1,10 +1,12 @@
 # Backlog
 
+## MVP
 - [x] eslint and eslint fix
 - [x] File tree
 - [x] Foundations of the overall layout
 - [ ] Add more space between files and folders for tap interactions
 - [ ] Use lexical instead of quill editor
+- [ ] Reimplement previous implemented save as autosave
 - [ ] New/Update note functionality and form
 - [ ] New/Update folder functionality and form
 - [ ] Add note title field
@@ -13,13 +15,18 @@
 - [ ] Remove folder functionality and confirm
 - [ ] Add switch for title or file name in File tree
 - [ ] Preview
-- [ ] Markdown editing mode (source code)
-- [ ] Versions using git
-- [ ] Research spike use LightningFS as fallback and try to make FileAccess API to work with isomorphic git
-- [ ] Differentiate between different file types (different icon in file tree)
 - [ ] Add draggable borders to the sections to adjust the width of the areas
+
+# Expansion phase 1
+- [ ] Markdown editing mode (source code)
+- [ ] Implement .markee config file to serialize and save last state
+- [ ] Versions using git (save and sync)
+- [ ] Research spike use LightningFS as fallback and try to make FileAccess API to work with isomorphic git
+- [ ] Add file asset upload for image, audio, video etc.
+- [ ] Differentiate between different file types (different icon in file tree)
 - [ ] Add search
 - [ ] Add speech to text feature
+- [ ] Versions using git (merge conflicts GUI)
 
 ## Resources
 * Icons: https://materialdesignicons.com/
