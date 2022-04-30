@@ -18,7 +18,7 @@ const FileTreeIterator: React.FC<Props> = (props) => {
 
   return (
     <>
-      {tree && Boolean(tree.length) && (
+      {Boolean(tree && tree.length) && (
         <ol className={styles.FileTreeIterator}>
           {tree.map((item: FileSystemItem, i: number) => {
             return (

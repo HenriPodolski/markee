@@ -73,7 +73,7 @@ const fileSystemSlice = createSlice({
   initialState,
   reducers: {
     fileSystemItemAdd: fileSystemAdapter.addOne,
-    fileSystemItemOpen(
+    fileSystemFileOpen(
       state: EntityState<FileSystemItem>,
       action: PayloadAction<string>
     ) {
@@ -104,6 +104,27 @@ const fileSystemSlice = createSlice({
         fileSystemItem.open = true;
       }
     },
+    fileSystemFolderToggle(
+      state: EntityState<FileSystemItem>,
+      action: PayloadAction<string>
+    ) {
+      const fileSystemItem = state.entities[action.payload];
+
+      Object.values(state.entities)
+        .filter((fileSystemEntity: FileSystemItem | undefined) => {
+          return (
+            fileSystemEntity &&
+            fileSystemItem &&
+            `${fileSystemItem?.fullPath}/` === fileSystemEntity.basePath
+          );
+        })
+        .forEach((toggleVisibilityFileSystemItem) => {
+          if (toggleVisibilityFileSystemItem) {
+            toggleVisibilityFileSystemItem.visible =
+              !toggleVisibilityFileSystemItem.visible;
+          }
+        });
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchFileSystem.fulfilled, (state, action) => {
@@ -112,7 +133,7 @@ const fileSystemSlice = createSlice({
   },
 });
 
-export const { fileSystemItemAdd, fileSystemItemOpen } =
+export const { fileSystemItemAdd, fileSystemFileOpen, fileSystemFolderToggle } =
   fileSystemSlice.actions;
 
 export default fileSystemSlice.reducer;
@@ -140,5 +161,8 @@ export const selectSortedFileSystem = createSelector(
 
 export const selectFileSystemByBasePath: any = createSelector(
   [selectSortedFileSystem, (state, basePath) => basePath],
-  (items, basePath) => items.filter((item) => item.basePath === basePath)
+  (items, basePath) =>
+    items.filter((item) => {
+      return item.basePath === (basePath !== '/' ? `${basePath}/` : '/');
+    })
 );
