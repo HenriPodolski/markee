@@ -17,7 +17,7 @@
 - [ ] Preview
 - [ ] Add draggable borders to the sections to adjust the width of the areas
 
-# Expansion phase 1
+## Expansion phase 1
 - [ ] Markdown editing mode (source code)
 - [ ] Implement .markee config file to serialize and save last state
 - [ ] Versions using git (save and sync)
