@@ -21,6 +21,7 @@
 - [ ] Markdown editing mode (source code)
 - [ ] Implement .markee config file to serialize and save last state
 - [ ] Versions using git (save and sync)
+- [ ] Build as PWA
 - [ ] Research spike use LightningFS as fallback and try to make FileAccess API to work with isomorphic git
 - [ ] Add file asset upload for image, audio, video etc.
 - [ ] Differentiate between different file types (different icon in file tree)
