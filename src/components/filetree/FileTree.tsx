@@ -5,7 +5,7 @@ import styles from './FileTree.module.scss';
 
 function FileTree() {
   return (
-    <div>
+    <div className={styles.FileTree}>
       <FileTreeControls />
       <div className={styles.filetreeWrap}>
         <FileTreeIterator />

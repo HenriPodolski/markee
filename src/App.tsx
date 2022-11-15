@@ -4,6 +4,7 @@ import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
 import { GlobalContext, globalContextDefault } from './context/global.context';
 import Preview from './components/preview/Preview';
+import Navbar from './components/navbar/Navbar';
 
 function App() {
   // const [setIsSaving] = useState(false);
@@ -81,13 +82,16 @@ function App() {
   // });
   //
   return (
-    <main className={styles.App}>
-      <FileTree />
-      <div className={styles.splitView}>
+    <div className={styles.App}>
+      <section className={styles.controlSection}>
+        <Navbar />
+      </section>
+      <section className={styles.splitView}>
+        <FileTree />
         <Editor onEditorChange={() => {}} />
         <Preview />
-      </div>
-    </main>
+      </section>
+    </div>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import MarkdownIt from 'markdown-it';
 import toMarkdown from 'to-markdown';
 import TextLayoutConverter from './filters/text-layout-converter';
@@ -6,6 +6,7 @@ import TextLayoutConverter from './filters/text-layout-converter';
 import ReactQuill from '@adrianhelvik/react-quill';
 import { useAppSelector } from '../../store/hooks';
 import { selectOpenFileContent } from '../../store/slices/openFileSlice';
+import styles from './Editor.module.scss';
 
 interface Props {
   onEditorChange: (editorChangeProps: {
@@ -19,7 +20,7 @@ const Editor: React.FC<Props> = (props) => {
   const { onEditorChange } = props;
   const editorFileContent = useAppSelector(selectOpenFileContent);
   const [placeholder] = useState('Placeholder');
-  const [value, setValue] = useState<string>();
+  const [value, setValue] = useState<string>('');
   const editorRef = useRef<HTMLDivElement>(null);
   const md = useRef(new MarkdownIt());
 
@@ -68,7 +69,7 @@ const Editor: React.FC<Props> = (props) => {
 
   return (
     <>
-      <div ref={editorRef}>
+      <div className={styles.Editor} ref={editorRef}>
         <ReactQuill
           value={value}
           onChange={onChange}

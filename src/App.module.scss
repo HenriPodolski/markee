@@ -1,10 +1,17 @@
 .App {
   display: flex;
-  height: 100vh;
+  flex-direction: column;
+  height: 100%;
+}
+
+.controlSection {
+  flex: 0 1 auto;
+  overflow: auto;
 }
 
 .splitView {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  flex: 1 1 auto;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
 }

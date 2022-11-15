@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import React from 'react';
 import cx from 'classnames';
 import styles from './FileTreeFolder.module.scss';
 import FileTreeIterator from './FileTreeIterator';
