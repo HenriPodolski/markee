@@ -2,7 +2,7 @@ import React from 'react';
 import Editor from './components/editor/Editor';
 import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
-import { GlobalContext, globalContextDefault } from './context/global.context';
+// import { GlobalContext, globalContextDefault } from './context/global.context';
 import Preview from './components/preview/Preview';
 import Navbar from './components/navbar/Navbar';
 
@@ -87,9 +87,9 @@ function App() {
         <Navbar />
       </section>
       <section className={styles.splitView}>
-        <FileTree />
-        <Editor onEditorChange={() => {}} />
-        <Preview />
+        <FileTree className={styles.splitViewChild} />
+        <Editor className={styles.splitViewChild} />
+        <Preview className={styles.splitViewChild} />
       </section>
     </div>
   );

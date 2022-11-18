@@ -68,6 +68,13 @@ export const fetchFileSystem = createAsyncThunk(
   }
 );
 
+const saveFile = async (filePath: string, fileContent: string) => {
+  await fsPromise.writeFile(filePath, fileContent, {
+    mode: 0o777,
+    encoding: 'utf8',
+  });
+};
+
 const fileSystemSlice = createSlice({
   name: 'fileSystem',
   initialState,
@@ -125,6 +132,30 @@ const fileSystemSlice = createSlice({
           }
         });
     },
+    fileSystemFileSave(
+      state: EntityState<FileSystemItem>,
+      action: PayloadAction<string>
+    ) {
+      // get the id of the open file
+      const fileSystemFileOpenId = Object.keys(state.entities).find(
+        (fileSystemItemKey) => {
+          const fileSystemItem = state.entities[fileSystemItemKey];
+          return (
+            fileSystemItem &&
+            fileSystemItem.type === 'file' &&
+            fileSystemItem.open
+          );
+        }
+      );
+
+      if (fileSystemFileOpenId && state.entities[fileSystemFileOpenId]) {
+        const fileSystemItem: FileSystemItem =
+          state.entities[fileSystemFileOpenId]!;
+        const filePath = fileSystemItem.fullPath;
+
+        saveFile(filePath, action.payload);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchFileSystem.fulfilled, (state, action) => {
@@ -133,8 +164,12 @@ const fileSystemSlice = createSlice({
   },
 });
 
-export const { fileSystemItemAdd, fileSystemFileOpen, fileSystemFolderToggle } =
-  fileSystemSlice.actions;
+export const {
+  fileSystemItemAdd,
+  fileSystemFileSave,
+  fileSystemFileOpen,
+  fileSystemFolderToggle,
+} = fileSystemSlice.actions;
 
 export default fileSystemSlice.reducer;
 

@@ -4,29 +4,36 @@ import toMarkdown from 'to-markdown';
 import TextLayoutConverter from './filters/text-layout-converter';
 // @ts-ignore
 import ReactQuill from '@adrianhelvik/react-quill';
-import { useAppSelector } from '../../store/hooks';
-import { selectOpenFileContent } from '../../store/slices/openFileSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
+  selectOpenFileContent,
+  selectOpenFilePath,
+  updateOpenFile,
+} from '../../store/slices/openFileSlice';
 import styles from './Editor.module.scss';
+import cx from 'classnames';
 
-interface Props {
-  onEditorChange: (editorChangeProps: {
-    markdown: string;
-    html: string;
-    content: string;
-  }) => void;
-}
+export type Props = {
+  className: string;
+};
 
-const Editor: React.FC<Props> = (props) => {
-  const { onEditorChange } = props;
+const Editor: React.FC<Props> = ({ className }) => {
   const editorFileContent = useAppSelector(selectOpenFileContent);
+  const editorFilePath = useAppSelector(selectOpenFilePath);
   const [placeholder] = useState('Placeholder');
-  const [value, setValue] = useState<string>('');
   const editorRef = useRef<HTMLDivElement>(null);
-  const md = useRef(new MarkdownIt());
+  const dispatch = useAppDispatch();
+  const [value, setValue] = useState('');
+  const [path, setPath] = useState('');
+  // const md = useRef(new MarkdownIt());
 
   useEffect(() => {
-    setValue(editorFileContent);
-  }, [editorFileContent]);
+    if (!value || path !== editorFilePath) {
+      setValue(editorFileContent);
+    }
+
+    setPath(editorFilePath);
+  }, [editorFileContent, editorFilePath]);
 
   const options = {
     modules: {
@@ -48,28 +55,31 @@ const Editor: React.FC<Props> = (props) => {
   };
 
   const onChange = () => {
-    if (editorRef.current && md.current) {
+    if (editorRef.current /* && md.current*/) {
       const editorContentWrapper =
         editorRef.current.querySelector('.ql-editor');
       const content = editorContentWrapper!.innerHTML;
 
-      md.current.set({
-        html: true,
-      });
+      // TODO move conversion to md, html into selector
+      // md.current.set({
+      //   html: true,
+      // });
+      //
+      // const markdown = toMarkdown(content, {
+      //   gfm: true,
+      //   converters: [TextLayoutConverter],
+      // });
+      // const html = md.current.render(markdown);
 
-      const markdown = toMarkdown(content, {
-        gfm: true,
-        converters: [TextLayoutConverter],
-      });
-      const html = md.current.render(markdown);
+      console.log('content', content);
 
-      onEditorChange({ markdown, html, content });
+      dispatch(updateOpenFile({ content }));
     }
   };
 
   return (
     <>
-      <div className={styles.Editor} ref={editorRef}>
+      <div className={cx(styles.Editor, className)} ref={editorRef}>
         <ReactQuill
           value={value}
           onChange={onChange}

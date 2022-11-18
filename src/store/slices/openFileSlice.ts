@@ -34,6 +34,10 @@ const openFileSlice = createSlice({
   name: 'openFile',
   initialState,
   reducers: {
+    updateOpenFile: (state, action: PayloadAction<Partial<OpenFileState>>) => {
+      state = { ...state, ...action.payload };
+      return state;
+    },
     reset: (state) => {
       state.content = '';
       state.path = '';
@@ -52,6 +56,8 @@ const openFileSlice = createSlice({
     });
   },
 });
+
+export const { updateOpenFile } = openFileSlice.actions;
 
 export default openFileSlice.reducer;
 
