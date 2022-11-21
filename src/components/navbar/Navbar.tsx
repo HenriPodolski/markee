@@ -1,15 +1,21 @@
 import React from 'react';
 import styles from './Navbar.module.scss';
+import SaveFileControl from './controls/SaveFileControl';
+import NewFolderControl from './controls/NewFolderControl';
+import NewFileControl from './controls/NewFileControl';
 
 const Navbar: React.FC = () => {
   return (
     <div className={styles.Navbar}>
-      <ol>
+      <ol className={styles.ControlsList}>
         <li>
-          <button>First Button</button>
+          <SaveFileControl />
         </li>
         <li>
-          <button>Second Button</button>
+          <NewFolderControl />
+        </li>
+        <li>
+          <NewFileControl />
         </li>
       </ol>
     </div>
