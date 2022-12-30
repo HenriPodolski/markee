@@ -5,8 +5,10 @@ import styles from './App.module.scss';
 // import { GlobalContext, globalContextDefault } from './context/global.context';
 import Preview from './components/preview/Preview';
 import Navbar from './components/navbar/Navbar';
+import { useFileSystemFetch } from './store/fileSystem/useFileSystemFetch';
 
-function App() {
+const App = () => {
+  useFileSystemFetch();
   // const [setIsSaving] = useState(false);
   // const fsRef = useRef(new LightningFS('markee'));
   //
@@ -93,6 +95,6 @@ function App() {
       </section>
     </div>
   );
-}
+};
 
 export default App;

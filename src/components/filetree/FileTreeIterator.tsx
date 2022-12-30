@@ -1,20 +1,18 @@
 import React from 'react';
 import styles from './FileTreeIterator.module.scss';
 import cx from 'classnames';
-import FileTreeFolder from './FileTreeFolder';
-import { selectFileSystemByBasePath } from '../../store/slices/fileSystemSlice';
-import FileTreeFile from './FileTreeFile';
-import { useAppSelector } from '../../store/hooks';
 import { FileSystemItem } from '../../models/FileSystemItem.interface';
+import { useRecoilValue } from 'recoil';
+import { fileSystemTreeSelector } from '../../store/fileSystem/fileSystem.selectors';
+import FileTreeFolder from './FileTreeFolder';
+import FileTreeFile from './FileTreeFile';
 
 interface Props {
   basePath?: string;
 }
 
-const FileTreeIterator: React.FC<Props> = (props) => {
-  const tree = useAppSelector((state) =>
-    selectFileSystemByBasePath(state, props.basePath ? props.basePath : '/')
-  );
+const FileTreeIterator: React.FC<Props> = ({ basePath }) => {
+  const tree = useRecoilValue(fileSystemTreeSelector(basePath ?? '/'));
 
   return (
     <>

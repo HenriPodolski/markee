@@ -12,8 +12,7 @@ interface Props {
   item: FileSystemItem;
 }
 
-const FileTreeFolder: React.FC<Props> = (props) => {
-  const { item } = props;
+const FileTreeFolder: React.FC<Props> = ({ item }) => {
   const dispatch = useAppDispatch();
 
   const handleFolderClick = () => {
