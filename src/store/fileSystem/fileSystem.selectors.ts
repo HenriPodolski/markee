@@ -1,5 +1,6 @@
 import { selectorFamily } from 'recoil';
 import { fileSystemState } from './fileSystem.atoms';
+import { FileSystemItem } from '../../models/FileSystemItem.interface';
 
 export const fileSystemTreeSelector = selectorFamily({
   key: 'fileSystemTreeSelector',
@@ -26,5 +27,18 @@ export const fileSystemTreeSelector = selectorFamily({
           if (a.type === 'file') return 1;
           return 0;
         });
+    },
+});
+
+export const fileSystemDirectoryChildrenSelector = selectorFamily({
+  key: 'fileSystemDirectoryChildrenSelector',
+  get:
+    (currentDirectoryPath: string) =>
+    ({ get }) => {
+      const items = get(fileSystemState);
+
+      return items.filter((directoryChildItem: FileSystemItem) => {
+        return directoryChildItem.basePath === `${currentDirectoryPath}/`;
+      });
     },
 });
