@@ -1,4 +1,4 @@
-export interface FileSystemItem {
+export type FileSystemItem = {
   name: string;
   id: string;
   fullPath: string;
@@ -7,4 +7,4 @@ export interface FileSystemItem {
   visible: boolean;
   open: boolean;
   level: number;
-}
+};

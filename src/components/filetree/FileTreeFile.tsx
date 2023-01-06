@@ -3,10 +3,11 @@ import cx from 'classnames';
 import styles from './FileTreeFile.module.scss';
 import { ReactComponent as FileIcon } from '../../icons/file-document-outline.svg';
 import { ReactComponent as FileEditIcon } from '../../icons/file-document-edit-outline.svg';
-import { FileSystemItem } from '../../models/FileSystemItem.interface';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { load, selectOpenFilePath } from '../../store/slices/openFileSlice';
-import { fileSystemFileOpen } from '../../store/slices/fileSystemSlice';
+import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
+import { useRecoilState } from 'recoil';
+import { loadOpenFileContent } from '../../store/openFile/openFile.services';
+import { openFileState } from '../../store/openFile/openFile.atoms';
+import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 
 interface Props {
   item: FileSystemItem;
@@ -14,24 +15,49 @@ interface Props {
 
 const FileTreeFile: React.FC<Props> = (props) => {
   const { item } = props;
-  const openFilePath = useAppSelector(selectOpenFilePath);
-  const dispatch = useAppDispatch();
+  const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
+  const [openFile, setOpenFile] = useRecoilState(openFileState);
 
-  const handleFileClick = () => {
-    dispatch(load(item.fullPath));
-    dispatch(fileSystemFileOpen(item.id));
+  const handleFileClick = async () => {
+    if (openFile?.path === item.fullPath) {
+      return;
+    }
+    // Initial state is empty
+    const initialOpenFile = {
+      content: '',
+      path: item.fullPath,
+      loading: true,
+    };
+    setOpenFile(initialOpenFile);
+    const content = await loadOpenFileContent(item.fullPath);
+
+    // fill content after loading file
+    setOpenFile({
+      ...initialOpenFile,
+      content,
+      loading: false,
+    });
+
+    setFileSystem(
+      fileSystem.map((fileSystemItem: FileSystemItem) => {
+        return {
+          ...fileSystemItem,
+          open: item.id === fileSystemItem.id,
+        };
+      })
+    );
   };
 
   return (
     <>
       <button
         className={cx(styles.FileTreeFile, {
-          [styles.fileActive]: openFilePath === item.fullPath,
+          [styles.fileActive]: openFile?.path === item.fullPath,
         })}
         type="button"
         onClick={handleFileClick}
       >
-        {openFilePath === item.fullPath ? <FileEditIcon /> : <FileIcon />}{' '}
+        {openFile?.path === item.fullPath ? <FileEditIcon /> : <FileIcon />}{' '}
         {item.name}
       </button>
     </>

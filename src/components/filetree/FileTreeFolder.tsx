@@ -4,7 +4,7 @@ import styles from './FileTreeFolder.module.scss';
 import FileTreeIterator from './FileTreeIterator';
 import { ReactComponent as FolderIcon } from '../../icons/folder.svg';
 import { ReactComponent as FolderOpenIcon } from '../../icons/folder-open.svg';
-import { FileSystemItem } from '../../models/FileSystemItem.interface';
+import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { updateFileSystemItemById } from '../../store/fileSystem/fileSystem.services';

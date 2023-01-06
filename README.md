@@ -4,9 +4,10 @@
 - [x] eslint and eslint fix
 - [x] File tree
 - [x] Foundations of the overall layout
+- [ ] Confirm dialog when user interaction will cause input data loss (editing file and leaving without save)
 - [ ] Add more space between files and folders for tap interactions
 - [ ] Use lexical instead of quill editor
-- [ ] Reimplement previous implemented save as autosave
+- [ ] Reimplement previous implemented save as autosave (Implement autosave after a certain amount of input events)
 - [ ] New/Update note functionality and form
 - [ ] New/Update folder functionality and form
 - [ ] Add note title field

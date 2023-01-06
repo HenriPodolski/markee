@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './FileTreeIterator.module.scss';
 import cx from 'classnames';
-import { FileSystemItem } from '../../models/FileSystemItem.interface';
+import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { useRecoilValue } from 'recoil';
 import { fileSystemTreeSelector } from '../../store/fileSystem/fileSystem.selectors';
 import FileTreeFolder from './FileTreeFolder';

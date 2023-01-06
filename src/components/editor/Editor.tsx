@@ -1,64 +1,58 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
 import MarkdownIt from 'markdown-it';
 import toMarkdown from 'to-markdown';
 import TextLayoutConverter from './filters/text-layout-converter';
 // @ts-ignore
 import ReactQuill from '@adrianhelvik/react-quill';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  selectOpenFileContent,
-  selectOpenFilePath,
-  updateOpenFile,
-} from '../../store/slices/openFileSlice';
 import styles from './Editor.module.scss';
 import cx from 'classnames';
+import { openFileState } from '../../store/openFile/openFile.atoms';
+import { useRecoilState } from 'recoil';
 
 export type Props = {
   className: string;
 };
 
 const Editor: React.FC<Props> = ({ className }) => {
-  const editorFileContent = useAppSelector(selectOpenFileContent);
-  const editorFilePath = useAppSelector(selectOpenFilePath);
+  const [openFile, setOpenFile] = useRecoilState(openFileState);
   const [placeholder] = useState('Placeholder');
-  const editorRef = useRef<HTMLDivElement>(null);
-  const dispatch = useAppDispatch();
-  const [value, setValue] = useState('');
-  const [path, setPath] = useState('');
+  const editorWrapperRef = useRef<HTMLDivElement | null>(null);
   // const md = useRef(new MarkdownIt());
 
-  useEffect(() => {
-    if (!value || path !== editorFilePath) {
-      setValue(editorFileContent);
-    }
-
-    setPath(editorFilePath);
-  }, [editorFileContent, editorFilePath]);
-
-  const options = {
-    modules: {
-      toolbar: [
-        ['bold', 'italic', 'underline'], // toggled buttons
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-        [{ header: [1, 2, 3, 4, 5, false] }],
-        [{ align: [] }],
-        ['link', 'image', 'video'],
-        ['clean'],
-      ],
-      clipboard: {
-        matchVisual: false,
+  const options = useCallback(
+    () => ({
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline'], // toggled buttons
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+          [{ header: [1, 2, 3, 4, 5, false] }],
+          [{ align: [] }],
+          ['link', 'image', 'video'],
+          ['clean'],
+        ],
+        clipboard: {
+          matchVisual: false,
+        },
       },
-    },
-    placeholder: '',
-    theme: 'snow',
-  };
+      placeholder: '',
+      theme: 'snow',
+    }),
+    []
+  );
 
   const onChange = () => {
-    if (editorRef.current /* && md.current*/) {
+    if (editorWrapperRef.current /* && md.current*/) {
       const editorContentWrapper =
-        editorRef.current.querySelector('.ql-editor');
+        editorWrapperRef.current.querySelector('.ql-editor');
       const content = editorContentWrapper!.innerHTML;
+      // setUserSelection(editorRef.current.getEditor().getSelection());
 
       // TODO move conversion to md, html into selector
       // md.current.set({
@@ -71,20 +65,21 @@ const Editor: React.FC<Props> = ({ className }) => {
       // });
       // const html = md.current.render(markdown);
 
-      console.log('content', content);
-
-      dispatch(updateOpenFile({ content }));
+      console.log('content', content, openFile);
+      if (openFile) {
+        setOpenFile({ ...openFile, content });
+      }
     }
   };
 
   return (
     <>
-      <div className={cx(styles.Editor, className)} ref={editorRef}>
+      <div className={cx(styles.Editor, className)} ref={editorWrapperRef}>
         <ReactQuill
-          value={value}
+          value={openFile?.content ?? ''}
           onChange={onChange}
           placeholder={`${placeholder}`}
-          options={options}
+          options={options()}
         />
       </div>
     </>

@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import { fileSystemState } from './fileSystem.atoms';
-import { FileSystemItem } from '../../models/FileSystemItem.interface';
+import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { uuid } from '../../lib/uuid';
 import fsPromiseSingleton from '../../lib/fsPromiseSingleton';
 import config from '../../config';

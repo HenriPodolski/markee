@@ -9,7 +9,7 @@ import fsPromiseSingleton from '../../lib/fsPromiseSingleton';
 import config from '../../config';
 import { uuid } from '../../lib/uuid';
 import { RootState } from '../store';
-import { FileSystemItem } from '../../models/FileSystemItem.interface';
+import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { EntityState } from '@reduxjs/toolkit/src/entities/models';
 
 const fsPromise = fsPromiseSingleton.getInstance(config.fsNamespace);

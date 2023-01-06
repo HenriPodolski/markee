@@ -1,15 +1,17 @@
 import React, { FunctionComponent } from 'react';
 import styles from './Controls.module.scss';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { selectOpenFileContent } from '../../../store/slices/openFileSlice';
-import { fileSystemFileSave } from '../../../store/slices/fileSystemSlice';
+import { useRecoilValue } from 'recoil';
+import { openFileState } from '../../../store/openFile/openFile.atoms';
+import { saveOpenFileContent } from '../../../store/openFile/openFile.services';
 
 const SaveFileControl: FunctionComponent = () => {
-  const dispatch = useAppDispatch();
-  const editorFileContent = useAppSelector(selectOpenFileContent);
+  const openFile = useRecoilValue(openFileState);
 
-  const onButtonClick = () => {
-    dispatch(fileSystemFileSave(editorFileContent));
+  const onButtonClick = async () => {
+    // TODO add sync to GIT repository here
+    if (openFile?.path && openFile.content && !openFile.loading) {
+      await saveOpenFileContent(openFile?.path, openFile?.content);
+    }
   };
 
   return (

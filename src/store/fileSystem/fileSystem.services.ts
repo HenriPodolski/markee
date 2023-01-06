@@ -1,4 +1,4 @@
-import { FileSystemItem } from '../../models/FileSystemItem.interface';
+import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 
 type UpdateFileSystemByIdParams = {
   id: string;
