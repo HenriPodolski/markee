@@ -4,6 +4,7 @@
 - [x] eslint and eslint fix
 - [x] File tree
 - [x] Foundations of the overall layout
+- [x] Replace redux state management with recoil
 - [ ] Confirm dialog when user interaction will cause input data loss (editing file and leaving without save)
 - [ ] Add more space between files and folders for tap interactions
 - [ ] Use lexical instead of quill editor

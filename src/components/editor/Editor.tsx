@@ -65,7 +65,6 @@ const Editor: React.FC<Props> = ({ className }) => {
       // });
       // const html = md.current.render(markdown);
 
-      console.log('content', content, openFile);
       if (openFile) {
         setOpenFile({ ...openFile, content });
       }

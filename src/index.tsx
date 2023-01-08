@@ -1,22 +1,15 @@
 import React from 'react';
 import './index.scss';
 import App from './App';
-import { store } from './store/store';
-import { Provider } from 'react-redux';
 import reportWebVitals from './reportWebVitals';
-import { fetchFileSystem } from './store/slices/fileSystemSlice';
 import { createRoot } from 'react-dom/client';
 import { RecoilRoot } from 'recoil';
-
-store.dispatch(fetchFileSystem());
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
     <RecoilRoot>
-      <Provider store={store}>
-        <App />
-      </Provider>
+      <App />
     </RecoilRoot>
   </React.StrictMode>
 );
