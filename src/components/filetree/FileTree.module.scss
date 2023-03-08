@@ -1,8 +1,9 @@
 .FileTree {
+  grid-area: files;
+  height: 100%;
 }
 
 .filetreeWrap {
-  height: 100%;
-  overflow: auto;
+
   padding: var(--size-6) var(--size-8);
 }

@@ -5,3 +5,5 @@ declare module JSX {
     'trix-editor': any;
   }
 }
+
+declare module 'recoil-logger';

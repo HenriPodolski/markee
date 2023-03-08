@@ -4,11 +4,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createRoot } from 'react-dom/client';
 import { RecoilRoot } from 'recoil';
+import { RecoilDevTools } from 'recoil-gear';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
     <RecoilRoot>
+      <RecoilDevTools />
       <App />
     </RecoilRoot>
   </React.StrictMode>

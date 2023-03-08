@@ -1,24 +1,24 @@
 .App {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-areas: 'workspace' 'controls';
+  grid-template-columns: 1fr min-content;
+  grid-template-rows: 1fr;
   height: 100%;
+
+  @media screen and (min-width: 1024px) {
+    grid-template-areas: 'controls' 'workspace';
+    grid-template-columns: min-content 1fr;
+  }
 }
 
 .controlSection {
-  flex: 1 1 auto;
+  grid-area: controls;
 }
 
 .splitView {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
-
-  &Child {
-    flex: 1 1 auto;
-
-    &:first-child {
-      flex: 0 1 auto;
-    }
-  }
+  grid-area: workspace;
+  display: grid;
+  grid-template-areas: 'files editor preview';
+  grid-template-columns: min-content 1fr 1fr;
+  grid-template-rows: 1fr;
 }
