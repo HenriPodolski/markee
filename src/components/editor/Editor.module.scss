@@ -1,0 +1,17 @@
+.Editor {
+  grid-area: editor;
+  & > * {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100vh;
+  }
+
+  // editor specific styling
+  [class="ql-editor"] {
+    & > * {
+      word-break: break-word;
+      hyphens: auto;
+    }
+  }
+}

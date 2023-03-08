@@ -1,0 +1,13 @@
+.FileTreeIterator {
+
+}
+
+.listItem {
+  &Collapsed {
+    display: none;
+  }
+
+  & & {
+    padding-left: var(--size-5);
+  }
+}

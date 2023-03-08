@@ -1,0 +1,24 @@
+.App {
+  display: grid;
+  grid-template-areas: 'workspace' 'controls';
+  grid-template-columns: 1fr min-content;
+  grid-template-rows: 1fr;
+  height: 100%;
+
+  @media screen and (min-width: 1024px) {
+    grid-template-areas: 'controls' 'workspace';
+    grid-template-columns: min-content 1fr;
+  }
+}
+
+.controlSection {
+  grid-area: controls;
+}
+
+.splitView {
+  grid-area: workspace;
+  display: grid;
+  grid-template-areas: 'files editor preview';
+  grid-template-columns: min-content 1fr 1fr;
+  grid-template-rows: 1fr;
+}

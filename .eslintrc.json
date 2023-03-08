@@ -1,6 +1,15 @@
 {
   "extends": ["react-app", "prettier"],
+  "plugins": [
+    "react-hooks"
+  ],
   "rules": {
-    "quotes": ["error", "single"]
+    "quotes": ["error", "single"],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": [
+      "warn", {
+        "additionalHooks": "(useRecoilCallback|useRecoilTransaction_UNSTABLE)"
+      }
+    ]
   }
 }
