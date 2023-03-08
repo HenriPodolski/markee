@@ -1,5 +1,7 @@
 .Editor {
-  grid-area: editor;
+  grid-area: b;
+  display: flow-root;
+  overflow: auto;
   & > * {
     display: flex;
     flex-direction: column;

@@ -1,6 +1,7 @@
 .FileTree {
-  grid-area: files;
-  height: 100%;
+  grid-area: a;
+  display: flow-root;
+  overflow: auto;
 }
 
 .filetreeWrap {

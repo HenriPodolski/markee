@@ -1,13 +1,15 @@
 .App {
   display: grid;
   grid-template-areas: 'workspace' 'controls';
-  grid-template-columns: 1fr min-content;
-  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr min-content;
   height: 100%;
+  width: 100%;
 
   @media screen and (min-width: 1024px) {
     grid-template-areas: 'controls' 'workspace';
-    grid-template-columns: min-content 1fr;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content 1fr;
   }
 }
 
@@ -18,7 +20,8 @@
 .splitView {
   grid-area: workspace;
   display: grid;
-  grid-template-areas: 'files editor preview';
+  grid-template-areas: 'a b c';
   grid-template-columns: min-content 1fr 1fr;
-  grid-template-rows: 1fr;
+  overflow-y: hidden;
+  overflow-x: auto;
 }
