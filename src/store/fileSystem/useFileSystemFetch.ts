@@ -5,6 +5,7 @@ import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { uuid } from '../../lib/uuid';
 import fsPromiseSingleton from '../../lib/fsPromiseSingleton';
 import config from '../../config';
+import { FileSystemTypeEnum } from './fileSystem.enums';
 
 const fsPromise = fsPromiseSingleton.getInstance(config.fsNamespace);
 const recursiveWalkDir = async (
@@ -26,10 +27,13 @@ const recursiveWalkDir = async (
         id: uuid(),
         fullPath: currentItem,
         basePath: currentDir,
-        type: statResponse.isDirectory() ? 'directory' : 'file',
+        type: statResponse.isDirectory()
+          ? FileSystemTypeEnum.directory
+          : FileSystemTypeEnum.file,
         visible: level < 1,
         open: false,
         level,
+        modified: new Date(statResponse.mtimeMs),
       });
 
       if (statResponse.isDirectory()) {

@@ -1,5 +1,8 @@
 import fsPromiseSingleton from '../../lib/fsPromiseSingleton';
 import config from '../../config';
+import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
+import { SetterOrUpdater } from 'recoil';
+import { OpenFileState } from '../../interfaces/OpenFile.interface';
 
 const fsPromise = fsPromiseSingleton.getInstance(config.fsNamespace);
 
@@ -19,4 +22,39 @@ export const saveOpenFileContent = async (
     mode: 0o777,
     encoding: 'utf8',
   });
+
+  return await fsPromise.stat(filePath);
+};
+
+export const setOpenFileJoinFileSystem = async (
+  item: FileSystemItem,
+  setOpenFile: SetterOrUpdater<OpenFileState>,
+  fileSystem: FileSystemItem[],
+  setFileSystem: SetterOrUpdater<FileSystemItem[]>
+) => {
+  // Initial state is empty
+  const initialOpenFile = {
+    content: '',
+    fileSystemId: item.id,
+    path: item.fullPath,
+    loading: true,
+  };
+
+  const content = await loadOpenFileContent(item.fullPath);
+
+  // fill content after loading file
+  setOpenFile({
+    ...initialOpenFile,
+    content,
+    loading: false,
+  });
+
+  setFileSystem(
+    fileSystem.map((fileSystemItem: FileSystemItem) => {
+      return {
+        ...fileSystemItem,
+        open: item.id === fileSystemItem.id,
+      };
+    })
+  );
 };

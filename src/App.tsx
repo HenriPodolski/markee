@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Editor from './components/editor/Editor';
 import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
@@ -6,9 +6,46 @@ import styles from './App.module.scss';
 import Preview from './components/preview/Preview';
 import Navbar from './components/navbar/Navbar';
 import { useFileSystemFetch } from './store/fileSystem/useFileSystemFetch';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { fileSystemTreeSelector } from './store/fileSystem/fileSystem.selectors';
+import { setOpenFileJoinFileSystem } from './store/openFile/openFile.services';
+import { fileSystemState } from './store/fileSystem/fileSystem.atoms';
+import { openFileState } from './store/openFile/openFile.atoms';
+import { FileSystemItem } from './interfaces/FileSystemItem.interface';
+import { FileSystemTypeEnum } from './store/fileSystem/fileSystem.enums';
 
 const App = () => {
   useFileSystemFetch();
+  const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
+  const [openFile, setOpenFile] = useRecoilState(openFileState);
+  const tree = useRecoilValue(fileSystemTreeSelector('/'));
+
+  /**
+   * used to prepare editor default state
+   */
+  useEffect(() => {
+    if (openFile) {
+      return;
+    }
+    const prepareEditorDefaultState = async () => {
+      const item = tree.find(
+        (fileSystemItem: FileSystemItem) =>
+          fileSystemItem.type === FileSystemTypeEnum.file
+      );
+
+      if (item) {
+        await setOpenFileJoinFileSystem(
+          item,
+          setOpenFile,
+          fileSystem,
+          setFileSystem
+        );
+      }
+    };
+
+    prepareEditorDefaultState();
+  }, [tree, fileSystem, openFile]);
+
   // const [setIsSaving] = useState(false);
   // const fsRef = useRef(new LightningFS('markee'));
   //

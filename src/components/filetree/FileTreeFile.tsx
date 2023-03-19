@@ -5,7 +5,10 @@ import { ReactComponent as FileIcon } from '../../icons/file-document-outline.sv
 import { ReactComponent as FileEditIcon } from '../../icons/file-document-edit-outline.svg';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { useRecoilState } from 'recoil';
-import { loadOpenFileContent } from '../../store/openFile/openFile.services';
+import {
+  loadOpenFileContent,
+  setOpenFileJoinFileSystem,
+} from '../../store/openFile/openFile.services';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 
@@ -22,29 +25,12 @@ const FileTreeFile: React.FC<Props> = (props) => {
     if (openFile?.path === item.fullPath) {
       return;
     }
-    // Initial state is empty
-    const initialOpenFile = {
-      content: '',
-      path: item.fullPath,
-      loading: true,
-    };
-    setOpenFile(initialOpenFile);
-    const content = await loadOpenFileContent(item.fullPath);
 
-    // fill content after loading file
-    setOpenFile({
-      ...initialOpenFile,
-      content,
-      loading: false,
-    });
-
-    setFileSystem(
-      fileSystem.map((fileSystemItem: FileSystemItem) => {
-        return {
-          ...fileSystemItem,
-          open: item.id === fileSystemItem.id,
-        };
-      })
+    await setOpenFileJoinFileSystem(
+      item,
+      setOpenFile,
+      fileSystem,
+      setFileSystem
     );
   };
 

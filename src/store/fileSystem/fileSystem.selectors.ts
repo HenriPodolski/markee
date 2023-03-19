@@ -1,11 +1,15 @@
 import { selector, selectorFamily } from 'recoil';
 import { fileSystemState } from './fileSystem.atoms';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
+import { FileSystemSortedByEnum, FileSystemTypeEnum } from './fileSystem.enums';
 
 export const fileSystemTreeSelector = selectorFamily({
   key: 'fileSystemTreeSelector',
   get:
-    (currentBasePath: string) =>
+    (
+      currentBasePath: string,
+      sortedBy: FileSystemSortedByEnum = FileSystemSortedByEnum.time
+    ) =>
     ({ get }) => {
       const items = get(fileSystemState);
 
@@ -18,13 +22,31 @@ export const fileSystemTreeSelector = selectorFamily({
         })
         .map((item) => item)
         .sort((a, b) => {
-          if (a.name > b.name) return 1;
-          if (a.name < b.name) return -1;
+          if (
+            sortedBy === FileSystemSortedByEnum.alphabetical &&
+            a.name > b.name
+          )
+            return 1;
+          if (
+            sortedBy === FileSystemSortedByEnum.alphabetical &&
+            a.name < b.name
+          )
+            return -1;
+          if (
+            sortedBy === FileSystemSortedByEnum.time &&
+            a.modified > b.modified
+          )
+            return -1;
+          if (
+            sortedBy === FileSystemSortedByEnum.time &&
+            a.modified < b.modified
+          )
+            return 1;
           return 0;
         })
         .sort((a) => {
-          if (a.type === 'directory') return -1;
-          if (a.type === 'file') return 1;
+          if (a.type === FileSystemTypeEnum.directory) return -1;
+          if (a.type === FileSystemTypeEnum.file) return 1;
           return 0;
         });
     },

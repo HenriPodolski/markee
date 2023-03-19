@@ -8,6 +8,8 @@ export type Props = {
 };
 
 const Preview: React.FC<Props> = ({ className }: Props) => {
+  // Todo use selector of open file content that converts content
+  // to HTML
   const [globalContext] = useContext(GlobalContext);
   return (
     <div
