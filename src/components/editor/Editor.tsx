@@ -30,17 +30,10 @@ const Editor: React.FC<Props> = ({ className }) => {
   const onChange = async (content: string) => {
     // TODO check why onChange is triggered for other files
     // e.g.check journal.md click, after opening another file
-    // // TODO move conversion to md, html into selector
-    // md.current.set({
-    //   html: true,
-    // });
-    //
     // const markdown = toMarkdown(content, {
     //   gfm: true,
     //   converters: [],
     // });
-    // const html = md.current.render(markdown);
-    //
 
     console.log('onChange', content, openFile);
     const checkElement = document.createElement('div');
