@@ -28,14 +28,12 @@ const Editor: React.FC<Props> = ({ className }) => {
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
 
   const onChange = async (content: string) => {
-    // TODO check why onChange is triggered for other files
-    // e.g.check journal.md click, after opening another file
-    // const markdown = toMarkdown(content, {
-    //   gfm: true,
-    //   converters: [],
-    // });
+    const markdown = toMarkdown(content, {
+      gfm: true,
+      converters: [],
+    });
 
-    console.log('onChange', content, openFile);
+    console.log('onChange', content, markdown, openFile);
     const checkElement = document.createElement('div');
     checkElement.innerHTML = content;
     const checkText = checkElement.innerText;
