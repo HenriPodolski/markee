@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import Editor from './components/editor/Editor';
 import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
-// import { GlobalContext, globalContextDefault } from './context/global.context';
 import Preview from './components/preview/Preview';
 import Navbar from './components/navbar/Navbar';
 import { useFileSystemFetch } from './store/fileSystem/useFileSystemFetch';
@@ -123,7 +122,9 @@ const App = () => {
   return (
     <div className={styles.App}>
       <section className={styles.controlSection}>
-        <Navbar />
+        <Navbar className={styles.fileTreeNavbar} />
+        <Navbar className={styles.editorNavbar} />
+        <Navbar className={styles.previewNavbar} />
       </section>
       <section className={styles.splitView}>
         <FileTree className={styles.splitViewChild} />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import styles from './Preview.module.scss';
 /* eslint import/no-webpack-loader-syntax: off */
 import rootStyles from '!!raw-loader!./PreviewRoot.module.css';
@@ -11,7 +11,7 @@ export type Props = {
   className: string;
 };
 
-const Preview: React.FC<Props> = ({ className }: Props) => {
+const Preview: FunctionComponent<Props> = ({ className }: Props) => {
   const openFile = useRecoilValue(openFileState);
   return (
     <root.div className={cx(styles.Preview, className)}>

@@ -15,6 +15,23 @@
 
 .controlSection {
   grid-area: controls;
+  display: grid;
+  grid-template-areas: 'd e f';
+  grid-template-columns: min-content 1fr 1fr;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.fileTreeNavbar {
+  grid-area: d;
+}
+
+.editorNavbar {
+  grid-area: e;
+}
+
+.previewNavbar {
+  grid-area: f;
 }
 
 .splitView {

@@ -11,6 +11,7 @@
 
   // editor specific styling
   [class="ql-editor"] {
+    font-size: 1rem;
     & > * {
       word-break: break-word;
       hyphens: auto;
