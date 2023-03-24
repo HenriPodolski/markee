@@ -1,9 +1,6 @@
-declare var Trix: any;
-
-declare module JSX {
-  interface IntrinsicElements {
-    'trix-editor': any;
-  }
+declare module '!!raw-loader!*' {
+  const content: string;
+  export default content;
 }
 
 declare module 'recoil-logger';

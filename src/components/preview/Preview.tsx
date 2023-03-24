@@ -1,8 +1,11 @@
 import React from 'react';
 import styles from './Preview.module.scss';
+/* eslint import/no-webpack-loader-syntax: off */
+import rootStyles from '!!raw-loader!./PreviewRoot.module.css';
 import cx from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { openFileState } from '../../store/openFile/openFile.atoms';
+import root from 'react-shadow';
 
 export type Props = {
   className: string;
@@ -11,10 +14,13 @@ export type Props = {
 const Preview: React.FC<Props> = ({ className }: Props) => {
   const openFile = useRecoilValue(openFileState);
   return (
-    <div
-      className={cx(styles.Preview, className)}
-      dangerouslySetInnerHTML={{ __html: openFile?.content ?? '' }}
-    ></div>
+    <root.div className={cx(styles.Preview, className)}>
+      <div
+        className="PreviewInner"
+        dangerouslySetInnerHTML={{ __html: openFile?.content ?? '' }}
+      />
+      <style>{rootStyles}</style>
+    </root.div>
   );
 };
 
