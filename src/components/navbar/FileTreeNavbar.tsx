@@ -9,18 +9,18 @@ import cx from 'classnames';
 export type Props = {
   className?: string;
 };
-const Navbar: FunctionComponent<Props> = ({ className }) => {
+const FileTreeNavbar: FunctionComponent<Props> = ({ className }) => {
   return (
     <div className={cx(styles.Navbar, className)}>
       <ol className={styles.ControlsList}>
         <li>
-          <SaveFileControl />
+          <NewFileControl />
         </li>
         <li>
           <NewFolderControl />
         </li>
         <li>
-          <NewFileControl />
+          <SaveFileControl />
         </li>
         <li>
           <SettingsControl />
@@ -30,4 +30,4 @@ const Navbar: FunctionComponent<Props> = ({ className }) => {
   );
 };
 
-export default Navbar;
+export default FileTreeNavbar;

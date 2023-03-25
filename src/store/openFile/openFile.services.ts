@@ -3,6 +3,7 @@ import config from '../../config';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { SetterOrUpdater } from 'recoil';
 import { OpenFileState } from '../../interfaces/OpenFile.interface';
+import { FileSystemTypeEnum } from '../fileSystem/fileSystem.enums';
 
 const fsPromise = fsPromiseSingleton.getInstance(config.fsNamespace);
 
@@ -51,9 +52,13 @@ export const setOpenFileJoinFileSystem = async (
 
   setFileSystem(
     fileSystem.map((fileSystemItem: FileSystemItem) => {
+      const isDirectoryOpen =
+        fileSystemItem.type === FileSystemTypeEnum.directory &&
+        fileSystemItem.open;
+      const openActiveFile = item.id === fileSystemItem.id;
       return {
         ...fileSystemItem,
-        open: item.id === fileSystemItem.id,
+        open: isDirectoryOpen || openActiveFile,
       };
     })
   );

@@ -33,7 +33,6 @@ const Editor: React.FC<Props> = ({ className }) => {
       converters: [],
     });
 
-    console.log('onChange', content, markdown, openFile);
     const checkElement = document.createElement('div');
     checkElement.innerHTML = content;
     const checkText = checkElement.innerText;

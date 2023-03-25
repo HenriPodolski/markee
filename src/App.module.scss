@@ -17,9 +17,7 @@
   grid-area: controls;
   display: grid;
   grid-template-areas: 'd e f';
-  grid-template-columns: min-content 1fr 1fr;
-  overflow-y: auto;
-  overflow-x: hidden;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .fileTreeNavbar {
@@ -38,7 +36,7 @@
   grid-area: workspace;
   display: grid;
   grid-template-areas: 'a b c';
-  grid-template-columns: min-content 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   overflow-y: hidden;
   overflow-x: auto;
 }

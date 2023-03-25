@@ -2,9 +2,18 @@
   overflow-x: auto;
   overflow-y: hidden;
   padding: 20px;
+
+  @media screen and (min-width: 1024px) {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
 }
 
 .ControlsList {
   display: flex;
   gap: 20px;
+
+  @media screen and (min-width: 1024px) {
+    flex-wrap: wrap;
+  }
 }

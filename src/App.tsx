@@ -3,7 +3,7 @@ import Editor from './components/editor/Editor';
 import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
 import Preview from './components/preview/Preview';
-import Navbar from './components/navbar/Navbar';
+import FileTreeNavbar from './components/navbar/FileTreeNavbar';
 import { useFileSystemFetch } from './store/fileSystem/useFileSystemFetch';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { fileSystemTreeSelector } from './store/fileSystem/fileSystem.selectors';
@@ -12,6 +12,8 @@ import { fileSystemState } from './store/fileSystem/fileSystem.atoms';
 import { openFileState } from './store/openFile/openFile.atoms';
 import { FileSystemItem } from './interfaces/FileSystemItem.interface';
 import { FileSystemTypeEnum } from './store/fileSystem/fileSystem.enums';
+import EditorNavbar from './components/navbar/EditorNavbar';
+import PreviewNavbar from './components/navbar/PreviewNavbar';
 
 const App = () => {
   useFileSystemFetch();
@@ -122,9 +124,9 @@ const App = () => {
   return (
     <div className={styles.App}>
       <section className={styles.controlSection}>
-        <Navbar className={styles.fileTreeNavbar} />
-        <Navbar className={styles.editorNavbar} />
-        <Navbar className={styles.previewNavbar} />
+        <FileTreeNavbar className={styles.fileTreeNavbar} />
+        <EditorNavbar className={styles.editorNavbar} />
+        <PreviewNavbar className={styles.previewNavbar} />
       </section>
       <section className={styles.splitView}>
         <FileTree className={styles.splitViewChild} />
