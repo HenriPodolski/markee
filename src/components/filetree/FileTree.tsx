@@ -1,12 +1,7 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent } from 'react';
 import FileTreeIterator from './FileTreeIterator';
 import styles from './FileTree.module.scss';
 import cx from 'classnames';
-import { useRecoilValue } from 'recoil';
-import {
-  createFileSelector,
-  createFolderSelector,
-} from '../../store/app/app.selectors';
 
 export type Props = {
   className: string;

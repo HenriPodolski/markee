@@ -14,10 +14,6 @@ import { FileSystemItem } from './interfaces/FileSystemItem.interface';
 import { FileSystemTypeEnum } from './store/fileSystem/fileSystem.enums';
 import EditorNavbar from './components/navbar/EditorNavbar';
 import PreviewNavbar from './components/navbar/PreviewNavbar';
-import {
-  createFileSelector,
-  createFolderSelector,
-} from './store/app/app.selectors';
 
 const App = () => {
   useFileSystemFetch();
@@ -49,7 +45,7 @@ const App = () => {
     };
 
     prepareEditorDefaultState();
-  }, [tree, fileSystem, openFile]);
+  }, [tree, fileSystem, setFileSystem, openFile, setOpenFile]);
 
   // const [setIsSaving] = useState(false);
   // const fsRef = useRef(new LightningFS('markee'));

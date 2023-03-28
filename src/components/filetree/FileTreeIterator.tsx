@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent } from 'react';
 import styles from './FileTreeIterator.module.scss';
 import cx from 'classnames';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
@@ -20,14 +20,6 @@ const FileTreeIterator: FunctionComponent<Props> = ({ basePath = '/' }) => {
   const tree = useRecoilValue(fileSystemTreeSelector(basePath));
   const createFile = useRecoilValue(createFileSelector);
   const createFolder = useRecoilValue(createFolderSelector);
-
-  useMemo(() => {
-    if (basePath === createFile)
-      console.log(
-        'createFile (create a form and on blur save file if not empty and reset createFile or createFolder on blur)',
-        createFile
-      );
-  }, [createFile]);
 
   return (
     <>
