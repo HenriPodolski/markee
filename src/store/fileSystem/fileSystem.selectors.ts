@@ -65,13 +65,29 @@ export const fileSystemDirectoryChildrenSelector = selectorFamily({
     },
 });
 
+export const fileSystemActiveItemFolderSelector = selector({
+  key: 'fileSystemActiveItemFolderSelector',
+  get: ({ get }) => {
+    const items = get(fileSystemState);
+
+    const activeItem = items.find((item: FileSystemItem) => {
+      return item.active;
+    });
+
+    if (activeItem?.type === FileSystemTypeEnum.directory) {
+      return activeItem.fullPath;
+    }
+
+    return activeItem?.basePath;
+  },
+});
 export const fileSystemOpenFileSelector = selector({
   key: 'fileSystemOpenFileSelector',
   get: ({ get }) => {
     const items = get(fileSystemState);
 
     return items.find((item: FileSystemItem) => {
-      return item.type === 'file' && item.open;
+      return item.type === FileSystemTypeEnum.file && item.open;
     });
   },
   set: ({ set, get }, newValue) => {

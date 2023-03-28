@@ -59,6 +59,7 @@ export const setOpenFileJoinFileSystem = async (
       return {
         ...fileSystemItem,
         open: isDirectoryOpen || openActiveFile,
+        active: item.id === fileSystemItem.id,
       };
     })
   );

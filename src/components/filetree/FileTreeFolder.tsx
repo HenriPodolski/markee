@@ -28,6 +28,7 @@ const FileTreeFolder: React.FC<Props> = ({ item }) => {
       previousFileSystemTree: fileSytemCurrentState,
       updateItem: {
         open: !item.open,
+        active: true,
       },
     });
 

@@ -10,7 +10,16 @@ export const updateFileSystemItemById = ({
   previousFileSystemTree,
   updateItem,
 }: UpdateFileSystemByIdParams) => {
-  const updatedFileSystemTree = [...previousFileSystemTree];
+  const updatedFileSystemTree = [...previousFileSystemTree].map((item) => {
+    if (updateItem.active) {
+      return {
+        ...item,
+        active: false,
+      };
+    }
+
+    return item;
+  });
   const index = previousFileSystemTree.findIndex((item) => item.id === id);
 
   if (index !== undefined) {

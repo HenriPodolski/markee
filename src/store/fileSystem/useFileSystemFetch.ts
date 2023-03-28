@@ -32,6 +32,7 @@ const recursiveWalkDir = async (
           : FileSystemTypeEnum.file,
         visible: level < 1,
         open: false,
+        active: false,
         level,
         modified: new Date(statResponse.mtimeMs),
       });

@@ -8,6 +8,7 @@ export type FileSystemItem = {
   type: FileSystemTypeEnum;
   visible: boolean;
   open: boolean;
+  active: boolean;
   level: number;
   modified: Date;
 };
