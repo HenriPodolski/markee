@@ -1,17 +1,5 @@
+@import "../../styles/mixins";
+
 .FileTreeFolder {
-  display: flex;
-  align-items: center;
-  gap: var(--size-1);
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  margin-bottom: var(--size-2);
-
-  &:focus svg {
-    color: #06c;
-  }
-
-  & svg path {
-    fill: currentColor;
-  }
+  @include fileListItem;
 }

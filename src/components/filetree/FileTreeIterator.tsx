@@ -11,6 +11,8 @@ import {
   createFolderSelector,
 } from '../../store/app/app.selectors';
 import { FileSystemTypeEnum } from '../../store/fileSystem/fileSystem.enums';
+import FileTreeFileNameInput from './FileTreeFileNameInput';
+import FileTreeFolderNameInput from './FileTreeFolderNameInput';
 
 interface Props {
   basePath?: string;
@@ -26,7 +28,9 @@ const FileTreeIterator: FunctionComponent<Props> = ({ basePath = '/' }) => {
       {Boolean(tree && tree.length) && (
         <ol className={styles.FileTreeIterator}>
           {createFolder && createFolder === basePath && (
-            <li className={cx(styles.listItem)}>Create Folder Form Input</li>
+            <li className={cx(styles.listItem)}>
+              <FileTreeFolderNameInput />
+            </li>
           )}
           {tree.map((item: FileSystemItem, i: number) => {
             return (
@@ -43,7 +47,9 @@ const FileTreeIterator: FunctionComponent<Props> = ({ basePath = '/' }) => {
             );
           })}
           {createFile && createFile === basePath && (
-            <li className={cx(styles.listItem)}>Create File Form Input</li>
+            <li className={cx(styles.listItem)}>
+              <FileTreeFileNameInput />
+            </li>
           )}
           {tree.map((item: FileSystemItem, i: number) => {
             return (
