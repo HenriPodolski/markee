@@ -1,4 +1,8 @@
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
+import fsPromiseSingleton from '../../lib/fsPromiseSingleton';
+import config from '../../config';
+
+const fsPromise = fsPromiseSingleton.getInstance(config.fsNamespace);
 
 type UpdateFileSystemByIdParams = {
   id: string;
@@ -30,4 +34,12 @@ export const updateFileSystemItemById = ({
   }
 
   return updatedFileSystemTree;
+};
+
+export const createFile = async (filePath: string) => {
+  await fsPromise.writeFile(filePath, '', { encoding: 'utf8', mode: 0o777 });
+};
+
+export const createDirectory = async (directoryPath: string) => {
+  await fsPromise.mkdir(directoryPath);
 };

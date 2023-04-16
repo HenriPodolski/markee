@@ -9,6 +9,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { updateFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
 import { fileSystemDirectoryChildrenSelector } from '../../store/fileSystem/fileSystem.selectors';
+import FileTreeCheckbox from './FileTreeCheckbox';
+import { appState } from '../../store/app/app.atoms';
 
 interface Props {
   item: FileSystemItem;
@@ -19,6 +21,7 @@ const FileTreeFolder: React.FC<Props> = ({ item }) => {
   const directoryChildren = useRecoilValue(
     fileSystemDirectoryChildrenSelector(item.fullPath)
   );
+  const app = useRecoilValue(appState);
 
   const handleFolderClick = () => {
     let fileSytemCurrentState = fileSystem;
@@ -47,15 +50,20 @@ const FileTreeFolder: React.FC<Props> = ({ item }) => {
 
   return (
     <>
-      <button
-        className={cx(styles.FileTreeFolder, {
-          [styles.folderActive]: item.open,
-        })}
-        type="button"
-        onClick={handleFolderClick}
-      >
-        {item.open ? <FolderOpenIcon /> : <FolderIcon />} {item.name}
-      </button>
+      <div className={styles.FileTreeFolder}>
+        <button
+          className={cx(styles.Button, {
+            [styles.folderActive]: item.open,
+          })}
+          type="button"
+          onClick={handleFolderClick}
+        >
+          {item.open ? <FolderOpenIcon /> : <FolderIcon />} {item.name}
+        </button>
+        {app?.showFileDeletionUI && (
+          <FileTreeCheckbox id={item.id} fileName={item.name} />
+        )}
+      </div>
       <FileTreeIterator basePath={item.fullPath} />
     </>
   );

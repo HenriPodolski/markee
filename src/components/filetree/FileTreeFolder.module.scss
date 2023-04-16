@@ -1,5 +1,9 @@
 @import "../../styles/mixins";
 
 .FileTreeFolder {
+  position: relative;
+}
+
+.Button {
   @include fileListItem;
 }

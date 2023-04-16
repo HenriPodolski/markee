@@ -5,6 +5,7 @@ import NewFolderControl from './controls/NewFolderControl';
 import NewFileControl from './controls/NewFileControl';
 import SettingsControl from './controls/SettingsControl';
 import cx from 'classnames';
+import DeleteControl from './controls/DeleteControl';
 
 export type Props = {
   className?: string;
@@ -21,6 +22,9 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ className }) => {
         </li>
         <li>
           <SaveFileControl />
+        </li>
+        <li>
+          <DeleteControl />
         </li>
         <li>
           <SettingsControl />

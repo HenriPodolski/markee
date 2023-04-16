@@ -5,6 +5,7 @@ import NewFolderControl from './controls/NewFolderControl';
 import NewFileControl from './controls/NewFileControl';
 import SettingsControl from './controls/SettingsControl';
 import cx from 'classnames';
+import SwitchEditorModeControl from './controls/SwitchEditorModeControl';
 
 export type Props = {
   className?: string;
@@ -14,16 +15,7 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ className }) => {
     <div className={cx(styles.Navbar, className)}>
       <ol className={styles.ControlsList}>
         <li>
-          <SaveFileControl />
-        </li>
-        <li>
-          <NewFolderControl />
-        </li>
-        <li>
-          <NewFileControl />
-        </li>
-        <li>
-          <SettingsControl />
+          <SwitchEditorModeControl />
         </li>
       </ol>
     </div>
