@@ -9,7 +9,7 @@ type UpdateFileSystemByIdParams = {
   previousFileSystemTree: FileSystemItem[];
   updateItem: Partial<FileSystemItem>;
 };
-export const updateFileSystemItemById = ({
+export const getChangesFromFileSystemItemById = ({
   id,
   previousFileSystemTree,
   updateItem,

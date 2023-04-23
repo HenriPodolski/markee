@@ -7,7 +7,7 @@ import { ReactComponent as FolderOpenIcon } from '../../icons/folder-open.svg';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
-import { updateFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
+import { getChangesFromFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
 import { fileSystemDirectoryChildrenSelector } from '../../store/fileSystem/fileSystem.selectors';
 import FileTreeCheckbox from './FileTreeCheckbox';
 import { appState } from '../../store/app/app.atoms';
@@ -26,7 +26,7 @@ const FileTreeFolder: React.FC<Props> = ({ item }) => {
   const handleFolderClick = () => {
     let fileSytemCurrentState = fileSystem;
 
-    fileSytemCurrentState = updateFileSystemItemById({
+    fileSytemCurrentState = getChangesFromFileSystemItemById({
       id: item.id,
       previousFileSystemTree: fileSytemCurrentState,
       updateItem: {
@@ -36,7 +36,7 @@ const FileTreeFolder: React.FC<Props> = ({ item }) => {
     });
 
     directoryChildren.forEach((directoryItem) => {
-      fileSytemCurrentState = updateFileSystemItemById({
+      fileSytemCurrentState = getChangesFromFileSystemItemById({
         id: directoryItem.id,
         previousFileSystemTree: fileSytemCurrentState,
         updateItem: {

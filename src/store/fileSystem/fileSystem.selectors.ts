@@ -81,27 +81,26 @@ export const fileSystemActiveItemFolderSelector = selector({
     return activeItem?.basePath;
   },
 });
-export const fileSystemOpenFileSelector = selector({
-  key: 'fileSystemOpenFileSelector',
+export const fileSystemItemByIdSelector = selectorFamily({
+  key: 'fileSystemItemByIdSelector',
+  get:
+    (id: string) =>
+    ({ get }) => {
+      const items = get(fileSystemState);
+
+      return items.find((item: FileSystemItem) => {
+        return item.id === id;
+      });
+    },
+});
+
+export const fileSystemItemsMarkedForDeletion = selector({
+  key: 'fileSystemItemsMarkedForDeletion',
   get: ({ get }) => {
     const items = get(fileSystemState);
 
-    return items.find((item: FileSystemItem) => {
-      return item.type === FileSystemTypeEnum.file && item.open;
+    return items.filter((item: FileSystemItem) => {
+      return item.markedForDeletion;
     });
-  },
-  set: ({ set, get }, newValue) => {
-    if (newValue) {
-      const updatedValue = newValue as FileSystemItem;
-      const items = get(fileSystemState);
-
-      const updateItemIndex = items.findIndex(
-        (item) => updatedValue && item.id === updatedValue.id
-      );
-
-      items[updateItemIndex] = updatedValue;
-
-      set(fileSystemState, items);
-    }
   },
 });

@@ -11,4 +11,5 @@ export type FileSystemItem = {
   active: boolean;
   level: number;
   modified: Date;
+  markedForDeletion?: boolean;
 };

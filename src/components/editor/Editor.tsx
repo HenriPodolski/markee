@@ -15,7 +15,7 @@ import cx from 'classnames';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 import { useRecoilState } from 'recoil';
 import { saveOpenFileContent } from '../../store/openFile/openFile.services';
-import { updateFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
+import { getChangesFromFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 
 export type Props = {
@@ -40,7 +40,7 @@ const Editor: React.FC<Props> = ({ className }) => {
       setOpenFile({ ...openFile, content });
       const savedFile = await saveOpenFileContent(openFile?.path, content);
       setFileSystem(
-        updateFileSystemItemById({
+        getChangesFromFileSystemItemById({
           id: openFile.fileSystemId,
           previousFileSystemTree: fileSystem,
           updateItem: {

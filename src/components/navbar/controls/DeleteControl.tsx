@@ -2,12 +2,12 @@ import React, { FunctionComponent } from 'react';
 import styles from './Controls.module.scss';
 import { useSetRecoilState } from 'recoil';
 import { appState } from '../../../store/app/app.atoms';
+import { AppState } from '../../../interfaces/AppState.interface';
 
 const DeleteControl: FunctionComponent = () => {
   const setApp = useSetRecoilState(appState);
   const onButtonClick = () => {
-    console.log('DeleteControl Button clicked');
-    setApp((prev) => ({
+    setApp((prev: AppState) => ({
       ...prev,
       showFileDeletionUI: true,
     }));

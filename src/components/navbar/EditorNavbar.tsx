@@ -1,9 +1,5 @@
 import React, { FunctionComponent } from 'react';
 import styles from './Navbar.module.scss';
-import SaveFileControl from './controls/SaveFileControl';
-import NewFolderControl from './controls/NewFolderControl';
-import NewFileControl from './controls/NewFileControl';
-import SettingsControl from './controls/SettingsControl';
 import cx from 'classnames';
 import SwitchEditorModeControl from './controls/SwitchEditorModeControl';
 
