@@ -6,6 +6,8 @@ import { fileSystemItemsMarkedForDeletion } from '../../store/fileSystem/fileSys
 import { appState } from '../../store/app/app.atoms';
 import { AppState } from '../../interfaces/AppState.interface';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
+import { deleteFileSystemItem } from '../../store/fileSystem/fileSystem.services';
+import { FileSystemTypeEnum } from '../../store/fileSystem/fileSystem.enums';
 
 export type Props = {
   className?: string;
@@ -36,14 +38,17 @@ const FileTreeActionControl: FunctionComponent<Props> = ({
 
         setFileSystemItems(updatedFileSystemItems);
       },
-    []
+    [setApp, setFileSystemItems]
   );
 
   const handleDeleteButtonClick = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const fileSystemItems = await snapshot.getPromise(
+        const fileSystemItemsMarked = await snapshot.getPromise(
           fileSystemItemsMarkedForDeletion
+        );
+        const fileSystemItemsMarkedForDeletionIds = fileSystemItemsMarked.map(
+          (item) => item.id
         );
 
         setApp((prev: AppState) => ({
@@ -51,19 +56,51 @@ const FileTreeActionControl: FunctionComponent<Props> = ({
           showFileDeletionUI: false,
         }));
 
-        console.log('Todo: delete this items:', fileSystemItems);
+        setFileSystemItems((prev) => {
+          const updatedFileSystemItems = prev.filter((item) => {
+            return !fileSystemItemsMarkedForDeletionIds.includes(item.id);
+          });
+
+          return updatedFileSystemItems;
+        });
+
+        // delete in order that directories are empty
+        // before deletion (because files within directories will be marked recursively)
+        [...fileSystemItemsMarked]
+          .sort((a, b) => {
+            if (
+              a.type === FileSystemTypeEnum.directory &&
+              b.type === FileSystemTypeEnum.file
+            ) {
+              return 1;
+            }
+
+            if (
+              a.type === FileSystemTypeEnum.file &&
+              b.type === FileSystemTypeEnum.directory
+            ) {
+              return -1;
+            }
+
+            return 0;
+          })
+          .forEach(async (itemToDelete) => {
+            await deleteFileSystemItem(itemToDelete.fullPath);
+          });
+        console.log(
+          'Todo: delete this items:',
+          fileSystemItemsMarked,
+          fileSystemItemsMarkedForDeletionIds
+        );
       },
-    []
+    [setApp, setFileSystemItems]
   );
 
   return (
     <div className={cx(styles.FileTreeActionControl, className)}>
-      <div>
-        <output>{itemsMarkedForDeletion.length}</output> files marked
-      </div>
       {itemsMarkedForDeletion.length > 0 && (
         <button onClick={handleDeleteButtonClick}>
-          Delete {itemsMarkedForDeletion.length} files
+          Delete <sup>{itemsMarkedForDeletion.length}</sup>
         </button>
       )}
       <button onClick={handleCancelButtonClick}>Cancel</button>

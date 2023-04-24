@@ -20,7 +20,7 @@ const recursiveWalkDir = async (
   await Promise.all(
     dirPath.map(async (dirPathItem: string) => {
       const currentItem = `${currentDir}${dirPathItem}`;
-      let statResponse = await fsPromise.stat(currentItem);
+      const statResponse = await fsPromise.stat(currentItem);
 
       treeList.push({
         name: dirPathItem,

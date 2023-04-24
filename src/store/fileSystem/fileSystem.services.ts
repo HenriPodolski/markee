@@ -43,3 +43,13 @@ export const createFile = async (filePath: string) => {
 export const createDirectory = async (directoryPath: string) => {
   await fsPromise.mkdir(directoryPath);
 };
+
+export const deleteFileSystemItem = async (path: string) => {
+  const statResponse = await fsPromise.stat(path);
+
+  if (statResponse.isDirectory()) {
+    await fsPromise.rmdir(path);
+  } else {
+    await fsPromise.unlink(path);
+  }
+};
