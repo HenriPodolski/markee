@@ -2,6 +2,10 @@
 
 .FileTreeFile {
   position: relative;
+
+  &.SelectionActive {
+    margin-left: 3cqh;
+  }
 }
 
 .Button {

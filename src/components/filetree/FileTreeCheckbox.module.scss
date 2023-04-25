@@ -1,10 +1,11 @@
 .FileTreeCheckbox {
   position: absolute;
   z-index: 1;
-  top: 0;
-  right: 0;
+  top: 50%;
+  left: calc(var(--size-7) * -1);
   height: 100%;
   aspect-ratio: 1/1;
+  transform: translateY(-50%);
 }
 
 .Checkbox {

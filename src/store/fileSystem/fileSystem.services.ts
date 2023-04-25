@@ -9,6 +9,7 @@ type UpdateFileSystemByIdParams = {
   previousFileSystemTree: FileSystemItem[];
   updateItem: Partial<FileSystemItem>;
 };
+
 export const getChangesFromFileSystemItemById = ({
   id,
   previousFileSystemTree,
@@ -34,6 +35,40 @@ export const getChangesFromFileSystemItemById = ({
   }
 
   return updatedFileSystemTree;
+};
+
+export const applyChangesToFileSystemItems = ({
+  itemsToUpdateIds,
+  previousFileSystemTree,
+  updateObject,
+}: {
+  itemsToUpdateIds: FileSystemItem['id'][];
+  previousFileSystemTree: FileSystemItem[];
+  updateObject: Partial<FileSystemItem>;
+}) => {
+  if (updateObject.id) {
+    throw new Error('Cannot update id');
+  }
+
+  let updatedList = JSON.parse(JSON.stringify(previousFileSystemTree));
+  itemsToUpdateIds.forEach((itemsToUpdateId: FileSystemItem['id']) => {
+    console.log('updateSet', {
+      id: itemsToUpdateId,
+      updatedList,
+      updateItem: {
+        ...updateObject,
+      },
+    });
+    updatedList = getChangesFromFileSystemItemById({
+      id: itemsToUpdateId,
+      previousFileSystemTree: updatedList,
+      updateItem: {
+        ...updateObject,
+      },
+    });
+  });
+
+  return updatedList;
 };
 
 export const createFile = async (filePath: string) => {

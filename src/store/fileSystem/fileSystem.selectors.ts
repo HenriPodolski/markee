@@ -65,8 +65,8 @@ export const fileSystemDirectoryChildrenSelector = selectorFamily({
     },
 });
 
-export const fileSystemActiveItemFolderSelector = selector({
-  key: 'fileSystemActiveItemFolderSelector',
+export const fileSystemActiveItemDirectorySelector = selector({
+  key: 'fileSystemActiveItemDirectorySelector',
   get: ({ get }) => {
     const items = get(fileSystemState);
 

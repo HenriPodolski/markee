@@ -50,7 +50,11 @@ const FileTreeFolder: React.FC<Props> = ({ item }) => {
 
   return (
     <>
-      <div className={styles.FileTreeFolder}>
+      <div
+        className={cx(styles.FileTreeFolder, {
+          [styles.SelectionActive]: app?.showFileDeletionUI,
+        })}
+      >
         <button
           className={cx(styles.Button, {
             [styles.folderActive]: item.open,

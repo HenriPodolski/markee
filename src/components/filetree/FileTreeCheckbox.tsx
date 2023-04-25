@@ -5,7 +5,12 @@ import { ReactComponent as UnCheckedBox } from '../../icons/checkbox.svg';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { fileSystemItemByIdSelector } from '../../store/fileSystem/fileSystem.selectors';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
-import { getChangesFromFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
+import {
+  applyChangesToFileSystemItems,
+  getChangesFromFileSystemItemById,
+} from '../../store/fileSystem/fileSystem.services';
+import { FileSystemTypeEnum } from '../../store/fileSystem/fileSystem.enums';
+import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 
 export type Props = {
   id: string;
@@ -15,14 +20,41 @@ const FileTreeCheckbox: FunctionComponent<Props> = ({ id, fileName }) => {
   const fileSystemItem = useRecoilValue(fileSystemItemByIdSelector(id));
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
   const handleClick = () => {
-    const updatedFileSystem = getChangesFromFileSystemItemById({
-      id,
-      previousFileSystemTree: fileSystem,
-      updateItem: {
-        ...fileSystemItem,
-        markedForDeletion: !fileSystemItem?.markedForDeletion,
-      },
-    });
+    let updatedFileSystem = fileSystem;
+
+    if (fileSystemItem?.type === FileSystemTypeEnum.file && fileSystemItem) {
+      updatedFileSystem = getChangesFromFileSystemItemById({
+        id,
+        previousFileSystemTree: fileSystem,
+        updateItem: {
+          ...fileSystemItem,
+          markedForDeletion: !fileSystemItem?.markedForDeletion,
+        },
+      });
+    } else if (
+      fileSystemItem?.type === FileSystemTypeEnum.directory &&
+      fileSystemItem
+    ) {
+      const fileSystemItemsForDirectory = fileSystem.filter(
+        (directoryChildItem: FileSystemItem) => {
+          return (
+            directoryChildItem.basePath.startsWith(
+              `${fileSystemItem.fullPath}/`
+            ) || fileSystemItem.id === directoryChildItem.id
+          );
+        }
+      );
+
+      updatedFileSystem = applyChangesToFileSystemItems({
+        itemsToUpdateIds: fileSystemItemsForDirectory.map((item) => item.id),
+        previousFileSystemTree: fileSystem,
+        updateObject: {
+          markedForDeletion: !fileSystemItem?.markedForDeletion,
+        },
+      });
+
+      console.log('updatedFileSystem', updatedFileSystem);
+    }
 
     setFileSystem(updatedFileSystem);
   };

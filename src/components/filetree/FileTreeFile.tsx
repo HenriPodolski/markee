@@ -35,7 +35,11 @@ const FileTreeFile: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className={styles.FileTreeFile}>
+    <div
+      className={cx(styles.FileTreeFile, {
+        [styles.SelectionActive]: app?.showFileDeletionUI,
+      })}
+    >
       <button
         className={cx(styles.Button, {
           [styles.fileActive]: openFile?.path === item.fullPath,
