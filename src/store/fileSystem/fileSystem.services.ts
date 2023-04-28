@@ -52,13 +52,6 @@ export const applyChangesToFileSystemItems = ({
 
   let updatedList = JSON.parse(JSON.stringify(previousFileSystemTree));
   itemsToUpdateIds.forEach((itemsToUpdateId: FileSystemItem['id']) => {
-    console.log('updateSet', {
-      id: itemsToUpdateId,
-      updatedList,
-      updateItem: {
-        ...updateObject,
-      },
-    });
     updatedList = getChangesFromFileSystemItemById({
       id: itemsToUpdateId,
       previousFileSystemTree: updatedList,

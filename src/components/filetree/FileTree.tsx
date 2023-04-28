@@ -13,7 +13,7 @@ export type Props = {
 const FileTree: FunctionComponent<Props> = ({ className }: Props) => {
   const app = useRecoilValue(appState);
   return (
-    <div className={cx(styles.FileTree, className)}>
+    <div data-file-select-ui className={cx(styles.FileTree, className)}>
       {app?.showFileDeletionUI && <FileTreeActionControl />}
       <div className={styles.filetreeWrap}>
         <FileTreeIterator />

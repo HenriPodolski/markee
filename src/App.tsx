@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { MouseEvent, useEffect } from 'react';
 import Editor from './components/editor/Editor';
 import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
 import Preview from './components/preview/Preview';
 import FileTreeNavbar from './components/navbar/FileTreeNavbar';
 import { useFileSystemFetch } from './store/fileSystem/useFileSystemFetch';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { fileSystemTreeSelector } from './store/fileSystem/fileSystem.selectors';
 import { setOpenFileJoinFileSystem } from './store/openFile/openFile.services';
 import { fileSystemState } from './store/fileSystem/fileSystem.atoms';
@@ -14,12 +14,15 @@ import { FileSystemItem } from './interfaces/FileSystemItem.interface';
 import { FileSystemTypeEnum } from './store/fileSystem/fileSystem.enums';
 import EditorNavbar from './components/navbar/EditorNavbar';
 import PreviewNavbar from './components/navbar/PreviewNavbar';
+import { appState } from './store/app/app.atoms';
+import { AppState } from './interfaces/AppState.interface';
 
 const App = () => {
   useFileSystemFetch();
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const tree = useRecoilValue(fileSystemTreeSelector('/'));
+  const setApp = useSetRecoilState(appState);
 
   /**
    * used to prepare editor default state
@@ -121,8 +124,21 @@ const App = () => {
   //   updateFileTree: Date.now(),
   // });
   //
+
+  const handleAppClick = (evt: MouseEvent) => {
+    const clickedElement: HTMLElement = evt.target as HTMLElement;
+    const fileSelectUIParent = document.querySelector('[data-file-select-ui]');
+
+    if (!fileSelectUIParent?.contains(clickedElement)) {
+      setApp((prev: AppState) => ({
+        ...prev,
+        showFileDeletionUI: false,
+      }));
+    }
+  };
+
   return (
-    <div className={styles.App}>
+    <div onClick={handleAppClick} className={styles.App}>
       <section className={styles.controlSection}>
         <FileTreeNavbar className={styles.fileTreeNavbar} />
         <EditorNavbar className={styles.editorNavbar} />

@@ -52,8 +52,6 @@ const FileTreeCheckbox: FunctionComponent<Props> = ({ id, fileName }) => {
           markedForDeletion: !fileSystemItem?.markedForDeletion,
         },
       });
-
-      console.log('updatedFileSystem', updatedFileSystem);
     }
 
     setFileSystem(updatedFileSystem);
