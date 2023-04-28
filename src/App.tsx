@@ -125,6 +125,11 @@ const App = () => {
   // });
   //
 
+  /**
+   * used to reset UI elements and/or state
+   * when the user does something else
+   * @param evt
+   */
   const handleAppClick = (evt: MouseEvent) => {
     const clickedElement: HTMLElement = evt.target as HTMLElement;
     const fileSelectUIParent = document.querySelector('[data-file-select-ui]');

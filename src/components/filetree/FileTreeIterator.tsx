@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import styles from './FileTreeIterator.module.scss';
 import cx from 'classnames';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
@@ -24,50 +24,46 @@ const FileTreeIterator: FunctionComponent<Props> = ({ basePath = '/' }) => {
   const createFolder = useRecoilValue(createFolderSelector);
 
   return (
-    <>
-      {Boolean(tree && tree.length) && (
-        <ol className={styles.FileTreeIterator}>
-          {createFolder && createFolder === basePath && (
-            <li className={cx(styles.listItem)}>
-              <FileTreeFolderNameInput />
-            </li>
-          )}
-          {tree.map((item: FileSystemItem, i: number) => {
-            return (
-              <li
-                className={cx(styles.listItem, {
-                  [styles.listItemCollapsed]: !item.visible,
-                })}
-                key={`${item.name}-${i}`}
-              >
-                {item.type === FileSystemTypeEnum.directory && (
-                  <FileTreeFolder item={item} />
-                )}
-              </li>
-            );
-          })}
-          {createFile && createFile === basePath && (
-            <li className={cx(styles.listItem)}>
-              <FileTreeFileNameInput />
-            </li>
-          )}
-          {tree.map((item: FileSystemItem, i: number) => {
-            return (
-              <li
-                className={cx(styles.listItem, {
-                  [styles.listItemCollapsed]: !item.visible,
-                })}
-                key={`${item.name}-${i}`}
-              >
-                {item.type === FileSystemTypeEnum.file && (
-                  <FileTreeFile item={item} />
-                )}
-              </li>
-            );
-          })}
-        </ol>
+    <ol className={styles.FileTreeIterator}>
+      {createFolder && createFolder === basePath && (
+        <li className={cx(styles.listItem)}>
+          <FileTreeFolderNameInput />
+        </li>
       )}
-    </>
+      {tree.map((item: FileSystemItem, i: number) => {
+        return (
+          <li
+            className={cx(styles.listItem, {
+              [styles.listItemCollapsed]: !item.visible,
+            })}
+            key={`${item.name}-${i}`}
+          >
+            {item.type === FileSystemTypeEnum.directory && (
+              <FileTreeFolder item={item} />
+            )}
+          </li>
+        );
+      })}
+      {createFile && createFile === basePath && (
+        <li className={cx(styles.listItem)}>
+          <FileTreeFileNameInput />
+        </li>
+      )}
+      {tree.map((item: FileSystemItem, i: number) => {
+        return (
+          <li
+            className={cx(styles.listItem, {
+              [styles.listItemCollapsed]: !item.visible,
+            })}
+            key={`${item.name}-${i}`}
+          >
+            {item.type === FileSystemTypeEnum.file && (
+              <FileTreeFile item={item} />
+            )}
+          </li>
+        );
+      })}
+    </ol>
   );
 };
 

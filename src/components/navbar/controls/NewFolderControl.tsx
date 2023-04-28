@@ -10,12 +10,10 @@ const NewFolderControl: FunctionComponent = () => {
     fileSystemActiveItemDirectorySelector
   );
   const onButtonClick = () => {
-    if (activeFileSystemFolder) {
-      setApp({
-        ...app,
-        createFolder: activeFileSystemFolder,
-      });
-    }
+    setApp({
+      ...app,
+      createFolder: activeFileSystemFolder ?? '/',
+    });
   };
 
   return (
