@@ -7,6 +7,11 @@
   cursor: pointer;
   margin-bottom: var(--size-2);
 
+  svg {
+    min-width: min-content;
+    display: block;
+  }
+
   &Active {
     color: #06c;
   }

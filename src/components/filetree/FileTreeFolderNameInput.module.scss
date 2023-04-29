@@ -3,3 +3,7 @@
 .FileTreeFolderNameInput {
   @include fileListItem;
 }
+
+.InputField {
+  max-width: 100%;
+}

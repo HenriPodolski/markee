@@ -1,4 +1,4 @@
-import React, { FormEvent, FunctionComponent } from 'react';
+import React, { FormEvent, FunctionComponent, useState } from 'react';
 import styles from './FileTreeFileNameInput.module.scss';
 import { ReactComponent as FileIcon } from '../../icons/file-document-outline.svg';
 import { useScrollIntoViewOnMount } from '../../lib/hooks/useScrollIntoViewOnMount';
@@ -15,6 +15,7 @@ interface Props {}
 
 const FileTreeFileNameInput: FunctionComponent<Props> = () => {
   const [app, setApp] = useRecoilState(appState);
+  const [fileName, setFileName] = useState('');
   const createFileTransaction = useRecoilTransaction_UNSTABLE(
     ({ get, set }) =>
       (newFile: FileSystemItem) => {
@@ -33,20 +34,8 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
         });
       }
   );
-  const elementRef = useScrollIntoViewOnMount<HTMLFormElement>();
 
-  const handleBlur = () => {
-    if (elementRef.current) {
-      elementRef.current.submit();
-    }
-  };
-
-  const handleSubmit = async (evt: FormEvent) => {
-    evt.preventDefault();
-
-    const formData = new FormData(evt.target as HTMLFormElement);
-    const fileName = formData.get('file') as string;
-
+  const processFileCreation = async () => {
     // Todo: check if file name already exists in file system on that level
     if (fileName) {
       const extension = fileName.endsWith('.md') ? '' : '.md';
@@ -74,22 +63,32 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
     });
   };
 
+  const handleBlur = () => {
+    processFileCreation();
+  };
+
+  const handleSubmit = (evt: FormEvent) => {
+    evt.preventDefault();
+
+    processFileCreation();
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      ref={elementRef}
-      className={styles.FileTreeFileNameInput}
-    >
+    <form onSubmit={handleSubmit} className={styles.FileTreeFileNameInput}>
       <FileIcon />
       <input
         type="text"
         name="file"
+        className={styles.InputField}
+        onChange={(evt) => setFileName(evt.target.value)}
+        value={fileName}
         onBlur={handleBlur}
         autoFocus={true}
         placeholder="Enter file name..."
         required
         pattern="[a-zA-Z0-9][a-zA-Z0-9_-]*"
       />
+      <button type="submit">OK</button>
     </form>
   );
 };
