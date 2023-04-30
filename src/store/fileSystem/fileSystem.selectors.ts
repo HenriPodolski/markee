@@ -13,6 +13,10 @@ export const fileSystemTreeSelector = selectorFamily({
     ({ get }) => {
       const items = get(fileSystemState);
 
+      if (typeof items.filter !== 'function') {
+        console.log('items', items, typeof items);
+      }
+
       return items
         .filter((item) => {
           return (

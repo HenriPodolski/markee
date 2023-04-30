@@ -87,11 +87,6 @@ const FileTreeActionControl: FunctionComponent<Props> = ({
           .forEach(async (itemToDelete) => {
             await deleteFileSystemItem(itemToDelete.fullPath);
           });
-        console.log(
-          'Todo: delete this items:',
-          fileSystemItemsMarked,
-          fileSystemItemsMarkedForDeletionIds
-        );
       },
     [setApp, setFileSystemItems]
   );

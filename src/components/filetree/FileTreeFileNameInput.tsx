@@ -1,4 +1,9 @@
-import React, { FormEvent, FunctionComponent, useState } from 'react';
+import React, {
+  FormEvent,
+  FunctionComponent,
+  useEffect,
+  useState,
+} from 'react';
 import styles from './FileTreeFileNameInput.module.scss';
 import { ReactComponent as FileIcon } from '../../icons/file-document-outline.svg';
 import { useScrollIntoViewOnMount } from '../../lib/hooks/useScrollIntoViewOnMount';
@@ -16,15 +21,13 @@ interface Props {}
 const FileTreeFileNameInput: FunctionComponent<Props> = () => {
   const [app, setApp] = useRecoilState(appState);
   const [fileName, setFileName] = useState('');
+  const [submit, setSubmit] = useState(false);
   const createFileTransaction = useRecoilTransaction_UNSTABLE(
     ({ get, set }) =>
       (newFile: FileSystemItem) => {
         const fileSystem = get(fileSystemState);
 
-        set(fileSystemState, {
-          ...fileSystem,
-          ...newFile,
-        });
+        set(fileSystemState, [...fileSystem, newFile]);
 
         set(openFileState, {
           content: '',
@@ -34,6 +37,13 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
         });
       }
   );
+
+  useEffect(() => {
+    if (submit) {
+      processFileCreation();
+      setSubmit(false);
+    }
+  }, [submit]);
 
   const processFileCreation = async () => {
     // Todo: check if file name already exists in file system on that level
@@ -64,13 +74,13 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
   };
 
   const handleBlur = () => {
-    processFileCreation();
+    setSubmit(true);
   };
 
   const handleSubmit = (evt: FormEvent) => {
     evt.preventDefault();
-
-    processFileCreation();
+    // todo validation of file
+    setSubmit(true);
   };
 
   return (
@@ -84,9 +94,10 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
         value={fileName}
         onBlur={handleBlur}
         autoFocus={true}
+        autoComplete="off"
         placeholder="Enter file name..."
         required
-        pattern="[a-zA-Z0-9][a-zA-Z0-9_-]*"
+        pattern="[a-zA-Z0-9_\\-\\.]+"
       />
       <button type="submit">OK</button>
     </form>

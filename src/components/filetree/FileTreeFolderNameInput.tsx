@@ -1,7 +1,6 @@
 import React, { FormEvent, FunctionComponent, useState } from 'react';
 import styles from './FileTreeFolderNameInput.module.scss';
 import { ReactComponent as FolderIcon } from '../../icons/folder.svg';
-import { useScrollIntoViewOnMount } from '../../lib/hooks/useScrollIntoViewOnMount';
 import { useRecoilState, useRecoilTransaction_UNSTABLE } from 'recoil';
 import { appState } from '../../store/app/app.atoms';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
@@ -22,10 +21,7 @@ const FileTreeFolderNameInput: FunctionComponent<Props> = () => {
       (newDirectory: FileSystemItem) => {
         const fileSystem = get(fileSystemState);
 
-        set(fileSystemState, {
-          ...fileSystem,
-          ...newDirectory,
-        });
+        set(fileSystemState, [...fileSystem, newDirectory]);
 
         set(openFileState, {
           content: '',
@@ -85,7 +81,7 @@ const FileTreeFolderNameInput: FunctionComponent<Props> = () => {
         autoComplete="off"
         placeholder="Enter folder name..."
         required
-        pattern="[a-zA-Z0-9_-]*"
+        pattern="[a-zA-Z0-9_\\-\\.]+"
       />
       <button type="submit">OK</button>
     </form>
