@@ -6,7 +6,6 @@ import React, {
 } from 'react';
 import styles from './FileTreeFileNameInput.module.scss';
 import { ReactComponent as FileIcon } from '../../icons/file-document-outline.svg';
-import { useScrollIntoViewOnMount } from '../../lib/hooks/useScrollIntoViewOnMount';
 import { useRecoilState, useRecoilTransaction_UNSTABLE } from 'recoil';
 import { appState } from '../../store/app/app.atoms';
 import { uuid } from '../../lib/uuid';
@@ -15,19 +14,19 @@ import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { createFile } from '../../store/fileSystem/fileSystem.services';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { openFileState } from '../../store/openFile/openFile.atoms';
+import { ReactComponent as Check } from '../../icons/check.svg';
 
 interface Props {}
 
 const FileTreeFileNameInput: FunctionComponent<Props> = () => {
   const [app, setApp] = useRecoilState(appState);
   const [fileName, setFileName] = useState('');
-  const [submit, setSubmit] = useState(false);
   const createFileTransaction = useRecoilTransaction_UNSTABLE(
     ({ get, set }) =>
       (newFile: FileSystemItem) => {
         const fileSystem = get(fileSystemState);
 
-        set(fileSystemState, [...fileSystem, newFile]);
+        set(fileSystemState, [...fileSystem, { ...newFile }]);
 
         set(openFileState, {
           content: '',
@@ -37,13 +36,6 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
         });
       }
   );
-
-  useEffect(() => {
-    if (submit) {
-      processFileCreation();
-      setSubmit(false);
-    }
-  }, [submit]);
 
   const processFileCreation = async () => {
     // Todo: check if file name already exists in file system on that level
@@ -74,13 +66,13 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
   };
 
   const handleBlur = () => {
-    setSubmit(true);
+    processFileCreation();
   };
 
   const handleSubmit = (evt: FormEvent) => {
     evt.preventDefault();
     // todo validation of file
-    setSubmit(true);
+    processFileCreation();
   };
 
   return (
@@ -99,7 +91,10 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
         required
         pattern="[a-zA-Z0-9_\\-\\.]+"
       />
-      <button type="submit">OK</button>
+      <button className={styles.SubmitButton} type="submit">
+        <span className="visually-hidden">Create folder</span>
+        <Check />
+      </button>
     </form>
   );
 };

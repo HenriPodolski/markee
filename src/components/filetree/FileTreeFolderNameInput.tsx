@@ -9,6 +9,7 @@ import { uuid } from '../../lib/uuid';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 import { createDirectory } from '../../store/fileSystem/fileSystem.services';
+import { ReactComponent as Check } from '../../icons/check.svg';
 
 interface Props {}
 
@@ -70,20 +71,25 @@ const FileTreeFolderNameInput: FunctionComponent<Props> = () => {
   return (
     <form onSubmit={handleSubmit} className={styles.FileTreeFolderNameInput}>
       <FolderIcon />
-      <input
-        type="text"
-        name="folder"
-        className={styles.InputField}
-        onBlur={handleBlur}
-        onChange={(evt) => setDirectoryName(evt.target.value)}
-        value={directoryName}
-        autoFocus={true}
-        autoComplete="off"
-        placeholder="Enter folder name..."
-        required
-        pattern="[a-zA-Z0-9_\\-\\.]+"
-      />
-      <button type="submit">OK</button>
+      <div className={styles.InputWrap}>
+        <input
+          type="text"
+          name="folder"
+          className={styles.InputField}
+          onBlur={handleBlur}
+          onChange={(evt) => setDirectoryName(evt.target.value)}
+          value={directoryName}
+          autoFocus={true}
+          autoComplete="off"
+          placeholder="Enter folder name..."
+          required
+          pattern="[a-zA-Z0-9_\\-\\.]+"
+        />
+      </div>
+      <button className={styles.SubmitButton} type="submit">
+        <span className="visually-hidden">Create folder</span>
+        <Check />
+      </button>
     </form>
   );
 };

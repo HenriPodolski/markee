@@ -1,12 +1,4 @@
-@mixin fileListItem() {
-  display: flex;
-  align-items: center;
-  gap: var(--size-1);
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  margin-bottom: var(--size-2);
-
+@mixin uiIcon() {
   svg {
     min-width: min-content;
     display: block;
@@ -22,5 +14,45 @@
 
   & svg path {
     fill: currentColor;
+  }
+}
+
+@mixin fileListItem() {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--size-1);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-bottom: var(--size-2);
+
+  @include uiIcon;
+}
+
+@mixin fileSystemCreationForm {
+  @include fileListItem;
+  position: relative;
+
+  .InputWrap {
+    overflow: hidden;
+  }
+
+  .InputField {
+    display: block;
+    width: 100%;
+    padding-right: calc(1cqh + 24px)  ;
+  }
+
+  .SubmitButton {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    aspect-ratio: 1;
+    min-height: 100%;
+    cursor: pointer;
+
+    @include uiIcon;
   }
 }

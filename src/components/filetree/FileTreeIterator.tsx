@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import styles from './FileTreeIterator.module.scss';
 import cx from 'classnames';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
@@ -36,7 +36,7 @@ const FileTreeIterator: FunctionComponent<Props> = ({ basePath = '/' }) => {
             className={cx(styles.listItem, {
               [styles.listItemCollapsed]: !item.visible,
             })}
-            key={`${item.name}-${i}`}
+            key={`${item.fullPath}-${i}`}
           >
             {item.type === FileSystemTypeEnum.directory && (
               <FileTreeFolder item={item} />
