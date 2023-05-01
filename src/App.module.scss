@@ -7,6 +7,26 @@
   width: 100%;
   overflow: hidden;
 
+  & > * {
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  & > ::-webkit-scrollbar {
+    width: 0; /* Adjust width as needed */
+    height: 0;
+  }
+
+  & > ::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Set track color */
+  }
+
+  & > ::-webkit-scrollbar-thumb {
+    background-color: #888; /* Set thumb color */
+    border-radius: 10px; /* Add rounded corners to the thumb */
+  }
+
   @media screen and (min-width: 1024px) {
     grid-template-areas: 'controls' 'workspace';
     grid-template-columns: 1fr;

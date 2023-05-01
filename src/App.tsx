@@ -1,4 +1,4 @@
-import React, { MouseEvent, useEffect } from 'react';
+import React, { MouseEvent, UIEvent, useEffect, useRef } from 'react';
 import Editor from './components/editor/Editor';
 import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
@@ -23,7 +23,8 @@ const App = () => {
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const tree = useRecoilValue(fileSystemTreeSelector('/'));
   const setApp = useSetRecoilState(appState);
-
+  const controlSectionRef = useRef<HTMLElement>(null);
+  const splitViewRef = useRef<HTMLElement>(null);
   /**
    * used to prepare editor default state
    */
@@ -67,14 +68,40 @@ const App = () => {
     }
   };
 
+  const handleControlSectionScroll = (evt: UIEvent) => {
+    if (splitViewRef.current) {
+      splitViewRef.current.scrollTo({
+        left: (evt.target as HTMLElement).scrollLeft,
+        behavior: 'auto',
+      });
+    }
+  };
+
+  const handleSplitViewScroll = (evt: UIEvent) => {
+    if (controlSectionRef.current) {
+      controlSectionRef.current.scrollTo({
+        left: (evt.target as HTMLElement).scrollLeft,
+        behavior: 'auto',
+      });
+    }
+  };
+
   return (
     <div onClick={handleAppClick} className={styles.App}>
-      <section className={styles.controlSection}>
+      <section
+        ref={controlSectionRef}
+        onScroll={handleControlSectionScroll}
+        className={styles.controlSection}
+      >
         <FileTreeNavbar className={styles.fileTreeNavbar} />
         <EditorNavbar className={styles.editorNavbar} />
         <PreviewNavbar className={styles.previewNavbar} />
       </section>
-      <section className={styles.splitView}>
+      <section
+        ref={splitViewRef}
+        onScroll={handleSplitViewScroll}
+        className={styles.splitView}
+      >
         <FileTree className={styles.splitViewChild} />
         <Editor className={styles.splitViewChild} />
         <Preview className={styles.splitViewChild} />

@@ -1,4 +1,4 @@
-@mixin uiIcon() {
+@mixin ui-icon() {
   svg {
     min-width: min-content;
     display: block;
@@ -17,7 +17,7 @@
   }
 }
 
-@mixin fileListItem() {
+@mixin file-list-item() {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
@@ -27,11 +27,11 @@
   cursor: pointer;
   margin-bottom: var(--size-2);
 
-  @include uiIcon;
+  @include ui-icon;
 }
 
 @mixin fileSystemCreationForm {
-  @include fileListItem;
+  @include file-list-item;
   position: relative;
 
   .InputWrap {
@@ -53,6 +53,6 @@
     min-height: 100%;
     cursor: pointer;
 
-    @include uiIcon;
+    @include ui-icon;
   }
 }
