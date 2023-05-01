@@ -39,7 +39,7 @@ const FileTreeFolderNameInput: FunctionComponent<Props> = () => {
         name: directoryName as string,
         id: uuid(),
         fullPath: `${app?.createFolder}/${directoryName}`,
-        basePath: app?.createFolder as string,
+        basePath: `${app?.createFolder}/`,
         type: FileSystemTypeEnum.directory,
         visible: true,
         open: true,

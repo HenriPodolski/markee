@@ -20,7 +20,9 @@ export const fileSystemTreeSelector = selectorFamily({
             (currentBasePath !== '/' ? `${currentBasePath}/` : '/')
           );
         })
-        .map((item) => item)
+        .map((item) => {
+          return item;
+        })
         .sort((a, b) => {
           if (
             sortedBy === FileSystemSortedByEnum.alphabetical &&
