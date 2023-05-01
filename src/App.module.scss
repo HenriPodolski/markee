@@ -5,6 +5,7 @@
   grid-template-rows: 1fr min-content;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 
   @media screen and (min-width: 1024px) {
     grid-template-areas: 'controls' 'workspace';
@@ -17,7 +18,29 @@
   grid-area: controls;
   display: grid;
   grid-template-areas: 'd e f';
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 100% 100% 100%;
+  overflow: auto;
+  scroll-snap-type: x mandatory;
+
+  & > * {
+    scroll-snap-align: center;
+  }
+
+  @media screen and (min-width: 480px) {
+    grid-template-columns: 50% 50% 50%;
+
+    & > * {
+      scroll-snap-align: start;
+    }
+
+    & > *:last-child {
+      scroll-snap-align: end;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
 
 .fileTreeNavbar {
@@ -36,7 +59,28 @@
   grid-area: workspace;
   display: grid;
   grid-template-areas: 'a b c';
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 100% 100% 100%;
   overflow-y: hidden;
   overflow-x: auto;
+  scroll-snap-type: x mandatory;
+
+  & > * {
+    scroll-snap-align: center;
+  }
+
+  @media screen and (min-width: 480px) {
+    grid-template-columns: 50% 50% 50%;
+
+    & > * {
+      scroll-snap-align: start;
+    }
+
+    & > *:last-child {
+      scroll-snap-align: end;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
