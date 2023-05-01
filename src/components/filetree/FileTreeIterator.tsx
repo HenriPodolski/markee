@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent } from 'react';
 import styles from './FileTreeIterator.module.scss';
 import cx from 'classnames';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
