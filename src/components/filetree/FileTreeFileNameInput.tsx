@@ -1,9 +1,4 @@
-import React, {
-  FormEvent,
-  FunctionComponent,
-  useEffect,
-  useState,
-} from 'react';
+import React, { FormEvent, FunctionComponent, useState } from 'react';
 import styles from './FileTreeFileNameInput.module.scss';
 import { ReactComponent as FileIcon } from '../../icons/file-document-outline.svg';
 import { useRecoilState, useRecoilTransaction_UNSTABLE } from 'recoil';
