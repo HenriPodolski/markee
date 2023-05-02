@@ -16,6 +16,7 @@
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: auto;
+  height: 100%;
   min-width: 100%;
   grid-column-gap: 20px;
   grid-row-gap: 20px;
@@ -29,14 +30,17 @@
 
     &HasLogo {
       justify-content: flex-end;
+      align-items: center;
     }
   }
 
   &HasLogo > *:last-of-type {
     justify-self: flex-end;
+    align-self: center;
   }
 }
 
 .Logo {
   min-width: 100px;
+  font-size: 0.8125rem;
 }

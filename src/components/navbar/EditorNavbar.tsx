@@ -3,6 +3,8 @@ import styles from './Navbar.module.scss';
 import cx from 'classnames';
 // import SwitchEditorModeControl from './controls/SwitchEditorModeControl';
 import EditorToolbar from '../editor/EditorToolbar';
+import GoToFileTreeControl from './controls/GoToFileTreeControl';
+import GoToPreviewControl from './controls/GoToPreviewControl';
 
 export type Props = {
   className?: string;
@@ -13,7 +15,13 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
     <div id={id} className={cx(styles.Navbar, className)}>
       <ol className={styles.ControlsList}>
         <li>
+          <GoToFileTreeControl />
+        </li>
+        <li>
           <EditorToolbar />
+        </li>
+        <li>
+          <GoToPreviewControl />
         </li>
         <li>{/*<SwitchEditorModeControl />*/}</li>
       </ol>

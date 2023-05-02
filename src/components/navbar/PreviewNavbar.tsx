@@ -6,6 +6,7 @@ import NewFileControl from './controls/NewFileControl';
 import SettingsControl from './controls/SettingsControl';
 import cx from 'classnames';
 import { ReactComponent as MarkeeLogo } from '../../icons/markee-logo.svg';
+import GoToEditorControl from './controls/GoToEditorControl';
 
 export type Props = {
   className?: string;
@@ -15,9 +16,12 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
   return (
     <div id={id} className={cx(styles.Navbar, className)}>
       <ol className={cx(styles.ControlsList, styles.ControlsListHasLogo)}>
+        <li>
+          <GoToEditorControl />
+        </li>
         <li className={styles.Logo}>
           <MarkeeLogo />
-          /mɑrˈkiː/
+          /mɑːrˈkiː/ notes
         </li>
       </ol>
     </div>

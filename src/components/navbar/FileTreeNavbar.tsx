@@ -6,6 +6,7 @@ import NewFileControl from './controls/NewFileControl';
 import SettingsControl from './controls/SettingsControl';
 import cx from 'classnames';
 import DeleteControl from './controls/DeleteControl';
+import GoToEditorControl from './controls/GoToEditorControl';
 
 export type Props = {
   id?: string;
@@ -26,6 +27,9 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
         {/*</li>*/}
         <li>
           <DeleteControl />
+        </li>
+        <li>
+          <GoToEditorControl />
         </li>
         {/*<li>*/}
         {/*  <SettingsControl />*/}
