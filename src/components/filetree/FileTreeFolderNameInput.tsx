@@ -1,6 +1,6 @@
 import React, { FormEvent, FunctionComponent, useState } from 'react';
 import styles from './FileTreeFolderNameInput.module.scss';
-import { ReactComponent as FolderIcon } from '../../icons/folder.svg';
+import { ReactComponent as FolderIcon } from '../../icons/folder-outline.svg';
 import { useRecoilState, useRecoilTransaction_UNSTABLE } from 'recoil';
 import { appState } from '../../store/app/app.atoms';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';

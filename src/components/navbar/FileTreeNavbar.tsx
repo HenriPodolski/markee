@@ -21,15 +21,15 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
         <li>
           <NewFolderControl />
         </li>
-        <li>
-          <SaveFileControl />
-        </li>
+        {/*<li>*/}
+        {/*  <SaveFileControl />*/}
+        {/*</li>*/}
         <li>
           <DeleteControl />
         </li>
-        <li>
-          <SettingsControl />
-        </li>
+        {/*<li>*/}
+        {/*  <SettingsControl />*/}
+        {/*</li>*/}
       </ol>
     </div>
   );

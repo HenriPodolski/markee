@@ -45,6 +45,10 @@
   background-color: var(--color-grey-100);
   border-top: 2px solid var(--color-grey-200);
 
+  * {
+    user-select: none;
+  }
+
   & > * {
     scroll-snap-align: center;
   }

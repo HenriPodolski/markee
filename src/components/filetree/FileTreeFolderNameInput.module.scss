@@ -2,4 +2,8 @@
 
 .FileTreeFolderNameInput {
   @include fileSystemCreationForm;
+
+  svg {
+    width: 24px;
+  }
 }

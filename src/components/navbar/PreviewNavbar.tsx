@@ -17,6 +17,7 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
       <ol className={cx(styles.ControlsList, styles.ControlsListHasLogo)}>
         <li className={styles.Logo}>
           <MarkeeLogo />
+          /mɑrˈkiː/
         </li>
       </ol>
     </div>
