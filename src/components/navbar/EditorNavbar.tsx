@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import styles from './Navbar.module.scss';
 import cx from 'classnames';
-import SwitchEditorModeControl from './controls/SwitchEditorModeControl';
+// import SwitchEditorModeControl from './controls/SwitchEditorModeControl';
+import EditorToolbar from '../editor/EditorToolbar';
 
 export type Props = {
   className?: string;
@@ -12,8 +13,9 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
     <div id={id} className={cx(styles.Navbar, className)}>
       <ol className={styles.ControlsList}>
         <li>
-          <SwitchEditorModeControl />
+          <EditorToolbar />
         </li>
+        <li>{/*<SwitchEditorModeControl />*/}</li>
       </ol>
     </div>
   );

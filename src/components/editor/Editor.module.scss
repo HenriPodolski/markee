@@ -1,5 +1,6 @@
 .Editor {
   grid-area: b;
+  position: relative;
   display: flow-root;
   overflow: auto;
   & > * {
@@ -11,6 +12,7 @@
 
   // editor specific styling
   [class="ql-editor"] {
+    padding: var(--size-8);
     font-size: 1rem;
     & > * {
       word-break: break-word;

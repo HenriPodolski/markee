@@ -5,6 +5,7 @@ import NewFolderControl from './controls/NewFolderControl';
 import NewFileControl from './controls/NewFileControl';
 import SettingsControl from './controls/SettingsControl';
 import cx from 'classnames';
+import { ReactComponent as MarkeeLogo } from '../../icons/markee-logo.svg';
 
 export type Props = {
   className?: string;
@@ -13,18 +14,9 @@ export type Props = {
 const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
   return (
     <div id={id} className={cx(styles.Navbar, className)}>
-      <ol className={styles.ControlsList}>
-        <li>
-          <SaveFileControl />
-        </li>
-        <li>
-          <NewFolderControl />
-        </li>
-        <li>
-          <NewFileControl />
-        </li>
-        <li>
-          <SettingsControl />
+      <ol className={cx(styles.ControlsList, styles.ControlsListHasLogo)}>
+        <li className={styles.Logo}>
+          <MarkeeLogo />
         </li>
       </ol>
     </div>

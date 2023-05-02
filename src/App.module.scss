@@ -42,6 +42,8 @@
   overflow: auto;
   scroll-snap-type: x mandatory;
   scroll-behaviour: smooth;
+  background-color: var(--color-grey-100);
+  border-top: 2px solid var(--color-grey-200);
 
   & > * {
     scroll-snap-align: center;

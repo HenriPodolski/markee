@@ -22,16 +22,14 @@ const FileTreeFile: React.FC<Props> = (props) => {
   const app = useRecoilValue(appState);
 
   const handleFileClick = async () => {
-    if (openFile?.path === item.fullPath) {
-      return;
+    if (openFile?.path !== item.fullPath) {
+      await setOpenFileJoinFileSystem(
+        item,
+        setOpenFile,
+        fileSystem,
+        setFileSystem
+      );
     }
-
-    await setOpenFileJoinFileSystem(
-      item,
-      setOpenFile,
-      fileSystem,
-      setFileSystem
-    );
 
     const editorElement = document.querySelector('[id="editor"]');
     const previewElement = document.querySelector('[id="preview"]');

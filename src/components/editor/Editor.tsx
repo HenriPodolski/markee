@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import styles from './Editor.module.scss';
+import './quill.snow.scss';
 import cx from 'classnames';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 import { useRecoilState } from 'recoil';
@@ -61,10 +61,31 @@ const Editor: React.FC<Props> = ({ id, className }) => {
       {openFile && convertedContent && (
         <>
           <ReactQuill
-            key={convertedContent}
+            key={openFile.fileSystemId}
             defaultValue={convertedContent}
             onChange={onChange}
             theme="snow"
+            formats={[
+              'header',
+              'font',
+              'size',
+              'bold',
+              'italic',
+              'underline',
+              'strike',
+              'blockquote',
+              'list',
+              'bullet',
+              'indent',
+              'link',
+              'image',
+              'color',
+            ]}
+            modules={{
+              toolbar: {
+                container: '#editor-toolbar',
+              },
+            }}
           />
         </>
       )}
