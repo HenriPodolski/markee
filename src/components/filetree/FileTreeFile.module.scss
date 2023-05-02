@@ -10,4 +10,6 @@
 
 .Button {
   @include file-list-item;
+  min-height: 48px;
+  min-width: 100%;
 }

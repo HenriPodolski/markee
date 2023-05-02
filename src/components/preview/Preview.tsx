@@ -12,9 +12,10 @@ const md2html = new MarkdownIt();
 
 export type Props = {
   className: string;
+  id?: string;
 };
 
-const Preview: FunctionComponent<Props> = ({ className }: Props) => {
+const Preview: FunctionComponent<Props> = ({ id, className }: Props) => {
   const openFile = useRecoilValue(openFileState);
   const [convertedDoc, setConvertedDoc] = useState('');
 
@@ -26,7 +27,7 @@ const Preview: FunctionComponent<Props> = ({ className }: Props) => {
   }, [openFile?.content]);
 
   return (
-    <root.div className={cx(styles.Preview, className)}>
+    <root.div id={id} className={cx(styles.Preview, className)}>
       <div
         className="PreviewInner"
         dangerouslySetInnerHTML={{ __html: convertedDoc }}

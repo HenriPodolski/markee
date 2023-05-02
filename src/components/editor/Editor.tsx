@@ -13,6 +13,7 @@ import MarkdownIt from 'markdown-it';
 
 export type Props = {
   className: string;
+  id?: string;
 };
 
 const md2html = new MarkdownIt();
@@ -21,7 +22,7 @@ const html2md = new NodeHtmlMarkdown(
   /* customTransformers (optional) */ undefined,
   /* customCodeBlockTranslators (optional) */ undefined
 );
-const Editor: React.FC<Props> = ({ className }) => {
+const Editor: React.FC<Props> = ({ id, className }) => {
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
   const [convertedContent, setConvertedContent] = useState('');
@@ -56,10 +57,11 @@ const Editor: React.FC<Props> = ({ className }) => {
   };
 
   return (
-    <div className={cx(styles.Editor, className)}>
+    <div id={id} className={cx(styles.Editor, className)}>
       {openFile && convertedContent && (
         <>
           <ReactQuill
+            key={convertedContent}
             defaultValue={convertedContent}
             onChange={onChange}
             theme="snow"

@@ -93,18 +93,21 @@ const App = () => {
         onScroll={handleControlSectionScroll}
         className={styles.controlSection}
       >
-        <FileTreeNavbar className={styles.fileTreeNavbar} />
-        <EditorNavbar className={styles.editorNavbar} />
-        <PreviewNavbar className={styles.previewNavbar} />
+        <FileTreeNavbar
+          id="filetree-navbar"
+          className={styles.fileTreeNavbar}
+        />
+        <EditorNavbar id="editor-navbar" className={styles.editorNavbar} />
+        <PreviewNavbar id="preview-navbar" className={styles.previewNavbar} />
       </section>
       <section
         ref={splitViewRef}
         onScroll={handleSplitViewScroll}
         className={styles.splitView}
       >
-        <FileTree className={styles.splitViewChild} />
-        <Editor className={styles.splitViewChild} />
-        <Preview className={styles.splitViewChild} />
+        <FileTree id="filetree" className={styles.splitViewChild} />
+        <Editor id="editor" className={styles.splitViewChild} />
+        <Preview id="preview" className={styles.splitViewChild} />
       </section>
     </div>
   );

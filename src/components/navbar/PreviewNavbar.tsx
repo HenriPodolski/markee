@@ -8,10 +8,11 @@ import cx from 'classnames';
 
 export type Props = {
   className?: string;
+  id?: string;
 };
-const FileTreeNavbar: FunctionComponent<Props> = ({ className }) => {
+const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
   return (
-    <div className={cx(styles.Navbar, className)}>
+    <div id={id} className={cx(styles.Navbar, className)}>
       <ol className={styles.ControlsList}>
         <li>
           <SaveFileControl />

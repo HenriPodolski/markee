@@ -8,12 +8,13 @@ import { appState } from '../../store/app/app.atoms';
 
 export type Props = {
   className: string;
+  id?: string;
 };
 
-const FileTree: FunctionComponent<Props> = ({ className }: Props) => {
+const FileTree: FunctionComponent<Props> = ({ id, className }: Props) => {
   const app = useRecoilValue(appState);
   return (
-    <div data-file-select-ui className={cx(styles.FileTree, className)}>
+    <div id={id} data-file-select-ui className={cx(styles.FileTree, className)}>
       {app?.showFileDeletionUI && <FileTreeActionControl />}
       <div className={styles.filetreeWrap}>
         <FileTreeIterator />

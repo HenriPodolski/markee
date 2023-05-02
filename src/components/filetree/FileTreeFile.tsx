@@ -32,6 +32,25 @@ const FileTreeFile: React.FC<Props> = (props) => {
       fileSystem,
       setFileSystem
     );
+
+    const editorElement = document.querySelector('[id="editor"]');
+    const previewElement = document.querySelector('[id="preview"]');
+
+    if (editorElement && previewElement && editorElement.parentElement) {
+      const columnWidth = parseInt(
+        window
+          .getComputedStyle(editorElement.parentElement)
+          .getPropertyValue('grid-template-columns')
+      );
+      const windowWidth = window.innerWidth;
+      const factor = Math.round(windowWidth / columnWidth);
+
+      if (factor === 1) {
+        editorElement.scrollIntoView();
+      } else {
+        previewElement.scrollIntoView();
+      }
+    }
   };
 
   return (
