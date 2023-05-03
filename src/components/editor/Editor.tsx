@@ -63,6 +63,7 @@ const Editor: React.FC<Props> = ({ id, className }) => {
           <ReactQuill
             key={openFile.fileSystemId}
             defaultValue={convertedContent}
+            placeholder={'Type here...'}
             onChange={onChange}
             theme="snow"
             formats={[
