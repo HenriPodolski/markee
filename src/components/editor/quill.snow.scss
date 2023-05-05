@@ -846,7 +846,7 @@
 }
 .ql-toolbar.ql-snow {
     //display: none;
-    border: 1px solid #ccc;
+    border-bottom: 2px solid var(--color-grey-200);
     box-sizing: border-box;
     font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     padding: 8px;
@@ -939,8 +939,4 @@
 }
 .ql-snow a {
     color: #06c;
-}
-.ql-container.ql-snow {
-    border-left: 2px solid var(--color-grey-200);
-    border-right: 2px solid var(--color-grey-200);
 }

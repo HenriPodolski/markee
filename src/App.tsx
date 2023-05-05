@@ -94,7 +94,7 @@ const App = () => {
     if (breakpoint === Breakpoints.xs) {
       if (targetEl.scrollLeft === 0) {
         inView = [Views.filetree];
-      } else if (targetEl.scrollLeft === targetEl.offsetWidth) {
+      } else if (Math.round(targetEl.scrollLeft / targetEl.offsetWidth) === 1) {
         inView = [Views.editor];
       } else {
         inView = [Views.preview];

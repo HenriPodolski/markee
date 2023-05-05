@@ -40,6 +40,19 @@ const Editor: React.FC<Props> = ({ id, className }) => {
       if (editorElement) {
         editorElement.focus();
       }
+    } else if (
+      app?.breakpoint === Breakpoints.xs &&
+      !app?.inView?.includes(Views.editor)
+    ) {
+      const editorElement: HTMLElement | null =
+        document.querySelector('.ql-editor');
+      if (
+        editorElement &&
+        document.activeElement &&
+        editorElement === document.activeElement
+      ) {
+        editorElement.blur();
+      }
     }
   }, [app?.inView, app?.breakpoint]);
 
