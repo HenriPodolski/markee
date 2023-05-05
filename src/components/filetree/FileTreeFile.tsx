@@ -10,6 +10,7 @@ import { openFileState } from '../../store/openFile/openFile.atoms';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import FileTreeCheckbox from './FileTreeCheckbox';
 import { appState } from '../../store/app/app.atoms';
+import { Breakpoints } from '../../interfaces/AppState.interface';
 
 interface Props {
   item: FileSystemItem;
@@ -29,6 +30,10 @@ const FileTreeFile: React.FC<Props> = (props) => {
         fileSystem,
         setFileSystem
       );
+    }
+
+    if (app?.breakpoint !== Breakpoints.xs) {
+      return;
     }
 
     const editorElement = document.querySelector('[id="editor"]');

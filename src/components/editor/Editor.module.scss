@@ -1,3 +1,5 @@
+@import "../../styles/variables";
+
 .Editor {
   grid-area: b;
   position: relative;
@@ -11,12 +13,30 @@
   }
 
   // editor specific styling
-  [class="ql-editor"] {
-    padding: var(--size-8);
+  [class*="ql-container"] {
     font-size: 1rem;
+    height: auto;
+
     & > * {
       word-break: break-word;
       hyphens: auto;
+    }
+
+    @media screen and (min-width: $breakpoint-sm) {
+      padding: var(--size-8);
+    }
+  }
+
+  [class*="ql-editor"] {
+
+    height: auto;
+
+    @media screen and (min-width: $breakpoint-sm) {
+      padding: 0;
+      &[class*="ql-blank"]::before {
+        left: var(--size-8);
+        right: var(--size-8);
+      }
     }
   }
 }

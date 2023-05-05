@@ -1,3 +1,5 @@
+@import "./styles/variables";
+
 .App {
   display: grid;
   grid-template-areas: 'workspace' 'controls';
@@ -27,7 +29,7 @@
     border-radius: 10px; /* Add rounded corners to the thumb */
   }
 
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: $breakpoint-l) {
     grid-template-areas: 'controls' 'workspace';
     grid-template-columns: 1fr;
     grid-template-rows: min-content 1fr;
@@ -53,7 +55,7 @@
     scroll-snap-align: center;
   }
 
-  @media screen and (min-width: 480px) {
+  @media screen and (min-width: $breakpoint-sm) {
     grid-template-columns: 50% 50% 50%;
 
     & > * {
@@ -65,7 +67,7 @@
     }
   }
 
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: $breakpoint-l) {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
@@ -96,7 +98,7 @@
     scroll-snap-align: center;
   }
 
-  @media screen and (min-width: 480px) {
+  @media screen and (min-width: $breakpoint-sm) {
     grid-template-columns: 50% 50% 50%;
 
     & > * {
@@ -108,7 +110,7 @@
     }
   }
 
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: $breakpoint-l) {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }

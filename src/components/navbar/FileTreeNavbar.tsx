@@ -7,12 +7,16 @@ import SettingsControl from './controls/SettingsControl';
 import cx from 'classnames';
 import DeleteControl from './controls/DeleteControl';
 import GoToEditorControl from './controls/GoToEditorControl';
+import { useRecoilValue } from 'recoil';
+import { appState } from '../../store/app/app.atoms';
+import { Breakpoints } from '../../interfaces/AppState.interface';
 
 export type Props = {
   id?: string;
   className?: string;
 };
 const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
+  const app = useRecoilValue(appState);
   return (
     <div id={id} className={cx(styles.Navbar, className)}>
       <ol className={styles.ControlsList}>
@@ -28,9 +32,11 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
         <li>
           <DeleteControl />
         </li>
-        <li>
-          <GoToEditorControl />
-        </li>
+        {app?.breakpoint === Breakpoints.xs && (
+          <li>
+            <GoToEditorControl />
+          </li>
+        )}
         {/*<li>*/}
         {/*  <SettingsControl />*/}
         {/*</li>*/}

@@ -4,7 +4,16 @@ import { ReactComponent as FileTreeIcon } from '../../../icons/file-tree-outline
 import cx from 'classnames';
 
 const GoToFileTreeControl: FunctionComponent = () => {
-  const onButtonClick = async () => {};
+  const onButtonClick = async () => {
+    const filetreeElement = document.getElementById('filetree');
+    const splitViewElement = document.getElementById('split-view-section');
+    if (filetreeElement && splitViewElement) {
+      splitViewElement.scrollTo({
+        left: filetreeElement.offsetLeft,
+        behavior: 'auto',
+      });
+    }
+  };
 
   return (
     <button
