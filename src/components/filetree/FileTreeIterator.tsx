@@ -25,8 +25,6 @@ const FileTreeIterator: FunctionComponent<Props> = ({ basePath = '/' }) => {
   const createFile = useRecoilValue(createFileSelector);
   const createFolder = useRecoilValue(createFolderSelector);
 
-  console.log('tree', fileSystem);
-
   return (
     <ol className={styles.FileTreeIterator}>
       {createFolder && createFolder === basePath && (

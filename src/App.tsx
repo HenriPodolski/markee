@@ -23,6 +23,7 @@ import PreviewNavbar from './components/navbar/PreviewNavbar';
 import { appState } from './store/app/app.atoms';
 import { AppState, Breakpoints, Views } from './interfaces/AppState.interface';
 import debounce from 'lodash.debounce';
+import cx from 'classnames';
 
 const App = () => {
   useFileSystemFetch();
@@ -134,11 +135,19 @@ const App = () => {
   const handleAppClick = (evt: MouseEvent) => {
     const clickedElement: HTMLElement = evt.target as HTMLElement;
     const fileSelectUIParent = document.querySelector('[data-file-select-ui]');
+    const editorUIParent = document.querySelector('[data-editor-ui]');
 
     if (!fileSelectUIParent?.contains(clickedElement)) {
       setApp((prev: AppState) => ({
         ...prev,
         showFileDeletionUI: false,
+      }));
+    }
+
+    if (!editorUIParent?.contains(clickedElement)) {
+      setApp((prev: AppState) => ({
+        ...prev,
+        editorActive: false,
       }));
     }
   };
@@ -171,7 +180,10 @@ const App = () => {
       <section
         id="control-section"
         onScroll={handleControlSectionScroll}
-        className={styles.controlSection}
+        className={cx(styles.controlSection, {
+          [styles.controlSectionHide]:
+            app?.breakpoint === Breakpoints.xs && app?.editorActive,
+        })}
       >
         <FileTreeNavbar
           id="filetree-navbar"

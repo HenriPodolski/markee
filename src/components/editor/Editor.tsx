@@ -1,17 +1,21 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 import ReactQuill from 'react-quill';
 import styles from './Editor.module.scss';
 import './quill.snow.scss';
 import cx from 'classnames';
 import { openFileState } from '../../store/openFile/openFile.atoms';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { saveOpenFileContent } from '../../store/openFile/openFile.services';
 import { getChangesFromFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import MarkdownIt from 'markdown-it';
 import { appState } from '../../store/app/app.atoms';
-import { Breakpoints, Views } from '../../interfaces/AppState.interface';
+import {
+  AppState,
+  Breakpoints,
+  Views,
+} from '../../interfaces/AppState.interface';
 import EditorToolbar, { modules, formats } from './EditorToolbar';
 import EditorMiniNav from './EditorMiniNav';
 
@@ -30,33 +34,34 @@ const Editor: React.FC<Props> = ({ id, className }) => {
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
   const [convertedContent, setConvertedContent] = useState<string>('');
-  const app = useRecoilValue(appState);
+  const [app, setApp] = useRecoilState(appState);
+  const editorRef = useRef<ReactQuill>(null);
 
-  useMemo(() => {
+  useEffect(() => {
+    return () => {
+      console.log('shut down');
+      setApp((prev: AppState) => ({
+        ...prev,
+        editorActive: false,
+      }));
+    };
+  }, []);
+
+  useEffect(() => {
     if (
       app?.breakpoint === Breakpoints.xs &&
-      app?.inView?.includes(Views.editor)
+      app?.inView?.includes(Views.editor) &&
+      editorRef.current
     ) {
-      const editorElement: HTMLElement | null =
-        document.querySelector('.ql-editor');
-      if (editorElement) {
-        editorElement.focus();
-      }
+      editorRef.current.focus();
     } else if (
       app?.breakpoint === Breakpoints.xs &&
-      !app?.inView?.includes(Views.editor)
+      !app?.inView?.includes(Views.editor) &&
+      editorRef.current
     ) {
-      const editorElement: HTMLElement | null =
-        document.querySelector('.ql-editor');
-      if (
-        editorElement &&
-        document.activeElement &&
-        editorElement === document.activeElement
-      ) {
-        editorElement.blur();
-      }
+      editorRef.current.blur();
     }
-  }, [app?.inView, app?.breakpoint]);
+  }, [editorRef.current, app?.inView, app?.breakpoint]);
 
   useMemo(() => {
     if (openFile?.content) {
@@ -65,7 +70,7 @@ const Editor: React.FC<Props> = ({ id, className }) => {
     }
   }, [openFile?.content]);
 
-  const onChange = async (content: string) => {
+  const handleChange = async (content: string) => {
     const markdown = html2md.translate(content);
     // this block is used to check if there is any text content
     const checkElement = document.createElement('div');
@@ -93,21 +98,43 @@ const Editor: React.FC<Props> = ({ id, className }) => {
     }
   };
 
+  const handleFocus = () => {
+    console.log('focus');
+    setApp((prev: AppState) => ({
+      ...prev,
+      editorActive: true,
+    }));
+  };
+
+  const handleBlur = () => {
+    console.log('blur');
+    setApp((prev: AppState) => ({
+      ...prev,
+      editorActive: false,
+    }));
+  };
+
   return (
     <div id={id} className={cx(styles.Editor, className)}>
       {openFile && (
         <>
           <EditorMiniNav />
-          <ReactQuill
-            key={`editor-${openFile.fileSystemId}`}
-            defaultValue={convertedContent}
-            placeholder={'Type here...'}
-            onChange={onChange}
-            theme="snow"
-            modules={modules}
-            formats={formats}
-          />
-          <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
+          <div className={styles.TextareaWrap} data-editor-ui>
+            <ReactQuill
+              key={`editor-${openFile.fileSystemId}`}
+              ref={editorRef}
+              defaultValue={convertedContent}
+              placeholder={'Type here...'}
+              onChange={handleChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              preserveWhitespace={true}
+              theme="snow"
+              modules={modules}
+              formats={formats}
+            />
+            <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
+          </div>
         </>
       )}
     </div>

@@ -16,4 +16,5 @@ export type AppState = {
   showFileDeletionUI?: boolean;
   breakpoint?: Breakpoints;
   inView?: Views[];
+  editorActive?: boolean;
 } | null;

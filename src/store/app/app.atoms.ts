@@ -5,5 +5,6 @@ export const appState = atom<AppState>({
   key: 'appState',
   default: {
     breakpoint: Breakpoints.xs,
+    editorActive: false,
   },
 });

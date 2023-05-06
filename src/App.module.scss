@@ -70,6 +70,12 @@
   @media screen and (min-width: $breakpoint-l) {
     grid-template-columns: 1fr 1fr 1fr;
   }
+
+  &Hide {
+    visibility: hidden;
+    height: 0;
+    border: none;
+  }
 }
 
 .fileTreeNavbar {
