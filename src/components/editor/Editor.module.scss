@@ -3,10 +3,15 @@
 .Editor {
   grid-area: b;
   position: relative;
-  display: flow-root;
+  display: block;
+  height: 100vh;
   overflow: auto;
   border-left: 2px solid var(--color-grey-300);
   border-right: 2px solid var(--color-grey-300);
+
+  @media screen and (min-width: $breakpoint-sm) {
+    height: auto;
+  }
 
   [class*="quill"] {
     min-height: 100%;
@@ -31,6 +36,7 @@
   }
 
   [class*="ql-editor"] {
+    display: block;
     height: auto;
     min-height: 100%;
     left: var(--size-1);
@@ -62,7 +68,8 @@
 }
 
 .TextareaWrap {
-  display: flex;
+  position: relative;
+  display: grid;
   flex-direction: column;
   min-height: 100%;
 }
