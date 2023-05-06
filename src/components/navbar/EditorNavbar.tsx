@@ -14,28 +14,33 @@ export type Props = {
 const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
   const app = useRecoilValue(appState);
   return (
-    <div id={id} className={cx(styles.Navbar, className)}>
-      <ol className={cx(styles.ControlsList, styles.ControlsListIsCenter)}>
-        {(app?.breakpoint === Breakpoints.xs ||
-          (app?.breakpoint === Breakpoints.sm &&
+    <div
+      id={id}
+      className={cx(styles.Navbar, className, {
+        [styles.Hide]: app?.breakpoint === Breakpoints.xs,
+      })}
+    >
+      {app?.breakpoint !== Breakpoints.xs && (
+        <ol className={cx(styles.ControlsList, styles.ControlsListIsCenter)}>
+          {app?.breakpoint === Breakpoints.sm &&
             !app.inView?.includes(
               Views.filetree
-            ))) /* filetree is not visible yet */ && (
-          <li>
-            <GoToFileTreeControl />
-          </li>
-        )}
-        <li>{/*<SwitchEditorModeControl />*/}</li>
-        {(app?.breakpoint === Breakpoints.xs ||
-          (app?.breakpoint === Breakpoints.sm &&
+            ) /* filetree is not visible yet */ && (
+              <li>
+                <GoToFileTreeControl />
+              </li>
+            )}
+          <li>{/*<SwitchEditorModeControl />*/}</li>
+          {app?.breakpoint === Breakpoints.sm &&
             !app.inView?.includes(
               Views.preview
-            ))) /* preview is not visible yet */ && (
-          <li>
-            <GoToPreviewControl />
-          </li>
-        )}
-      </ol>
+            ) /* preview is not visible yet */ && (
+              <li>
+                <GoToPreviewControl />
+              </li>
+            )}
+        </ol>
+      )}
     </div>
   );
 };

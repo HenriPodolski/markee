@@ -23,9 +23,11 @@
   align-items: center;
   gap: var(--size-1);
   border: none;
-  background-color: transparent;
   cursor: pointer;
   margin-bottom: var(--size-2);
+  padding: var(--size-2) var(--size-3);
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
 
   @include ui-icon;
 }

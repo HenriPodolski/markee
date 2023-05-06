@@ -5,14 +5,8 @@
   position: relative;
   display: flow-root;
   overflow: auto;
-  border-left: 2px solid var(--color-grey-200);
-  border-right: 2px solid var(--color-grey-200);
-
-  & > * {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
+  border-left: 2px solid var(--color-grey-300);
+  border-right: 2px solid var(--color-grey-300);
 
   [class*="quill"] {
     min-height: 100%;
@@ -48,6 +42,18 @@
         left: var(--size-8);
         right: var(--size-8);
       }
+    }
+  }
+
+  [class*="ql-toolbar"] {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--color-white);
+    z-index: 1;
+
+    &[class*="ql-snow"] {
+      border-top: 2px solid var(--color-grey-300);
+      border-bottom: none;
     }
   }
 }

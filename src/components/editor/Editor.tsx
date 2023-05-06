@@ -12,6 +12,8 @@ import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import MarkdownIt from 'markdown-it';
 import { appState } from '../../store/app/app.atoms';
 import { Breakpoints, Views } from '../../interfaces/AppState.interface';
+import EditorToolbar, { modules, formats } from './EditorToolbar';
+import EditorMiniNav from './EditorMiniNav';
 
 export type Props = {
   className: string;
@@ -95,29 +97,17 @@ const Editor: React.FC<Props> = ({ id, className }) => {
     <div id={id} className={cx(styles.Editor, className)}>
       {openFile && (
         <>
+          <EditorMiniNav />
           <ReactQuill
             key={openFile.fileSystemId}
             defaultValue={convertedContent}
             placeholder={'Type here...'}
             onChange={onChange}
             theme="snow"
-            formats={[
-              'header',
-              'font',
-              'size',
-              'bold',
-              'italic',
-              'underline',
-              'strike',
-              'blockquote',
-              'list',
-              'bullet',
-              'indent',
-              'link',
-              'image',
-              'color',
-            ]}
+            modules={modules}
+            formats={formats}
           />
+          <EditorToolbar />
         </>
       )}
     </div>

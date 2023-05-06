@@ -2,6 +2,8 @@
   grid-area: a;
   display: flow-root;
   overflow: auto;
+  min-height: 100%;
+  background-color: var(--color-grey-200);
 
   * {
     user-select: none;
