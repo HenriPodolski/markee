@@ -99,7 +99,7 @@ const Editor: React.FC<Props> = ({ id, className }) => {
         <>
           <EditorMiniNav />
           <ReactQuill
-            key={openFile.fileSystemId}
+            key={`editor-${openFile.fileSystemId}`}
             defaultValue={convertedContent}
             placeholder={'Type here...'}
             onChange={onChange}
@@ -107,7 +107,7 @@ const Editor: React.FC<Props> = ({ id, className }) => {
             modules={modules}
             formats={formats}
           />
-          <EditorToolbar />
+          <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
         </>
       )}
     </div>

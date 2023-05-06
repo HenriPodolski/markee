@@ -1,4 +1,10 @@
-import React, { MouseEvent, UIEvent, useEffect, useRef } from 'react';
+import React, {
+  MouseEvent,
+  UIEvent,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import Editor from './components/editor/Editor';
 import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
@@ -26,6 +32,46 @@ const App = () => {
   const [app, setApp] = useRecoilState(appState);
   const splitViewRef = useRef<HTMLElement>(null);
 
+  const setInView = useCallback(
+    (breakpoint: Breakpoints = Breakpoints.xs) => {
+      if (!splitViewRef.current) {
+        setApp((prev: AppState) => ({
+          ...prev,
+          inView: [],
+        }));
+        return;
+      }
+      const targetEl = splitViewRef.current;
+      let inView: Views[] = [];
+
+      if (breakpoint === Breakpoints.xs) {
+        if (targetEl.scrollLeft === 0) {
+          inView = [Views.filetree];
+        } else if (
+          Math.round(targetEl.scrollLeft / targetEl.offsetWidth) === 1
+        ) {
+          inView = [Views.editor];
+        } else {
+          inView = [Views.preview];
+        }
+      } else if (breakpoint === Breakpoints.sm) {
+        if (targetEl.scrollLeft === 0) {
+          inView = [Views.filetree, Views.editor];
+        } else {
+          inView = [Views.editor, Views.preview];
+        }
+      } else {
+        inView = [Views.filetree, Views.editor, Views.preview];
+      }
+
+      setApp((prev: AppState) => ({
+        ...prev,
+        inView,
+      }));
+    },
+    [setApp]
+  );
+
   useEffect(() => {
     const setBreakpointState = () => {
       const computedBreakpoint = window
@@ -52,7 +98,7 @@ const App = () => {
     return () => {
       window.removeEventListener('resize', resizeListener);
     };
-  }, []);
+  }, [setApp, setInView]);
 
   /**
    * used to prepare editor default state
@@ -79,41 +125,6 @@ const App = () => {
 
     prepareEditorDefaultState();
   }, [tree, fileSystem, setFileSystem, openFile, setOpenFile]);
-
-  const setInView = (breakpoint: Breakpoints = Breakpoints.xs) => {
-    if (!splitViewRef.current) {
-      setApp((prev: AppState) => ({
-        ...prev,
-        inView: [],
-      }));
-      return;
-    }
-    const targetEl = splitViewRef.current;
-    let inView: Views[] = [];
-
-    if (breakpoint === Breakpoints.xs) {
-      if (targetEl.scrollLeft === 0) {
-        inView = [Views.filetree];
-      } else if (Math.round(targetEl.scrollLeft / targetEl.offsetWidth) === 1) {
-        inView = [Views.editor];
-      } else {
-        inView = [Views.preview];
-      }
-    } else if (breakpoint === Breakpoints.sm) {
-      if (targetEl.scrollLeft === 0) {
-        inView = [Views.filetree, Views.editor];
-      } else {
-        inView = [Views.editor, Views.preview];
-      }
-    } else {
-      inView = [Views.filetree, Views.editor, Views.preview];
-    }
-
-    setApp((prev: AppState) => ({
-      ...prev,
-      inView,
-    }));
-  };
 
   /**
    * used to reset UI elements and/or state

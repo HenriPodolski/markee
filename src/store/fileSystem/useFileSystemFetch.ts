@@ -21,10 +21,21 @@ const recursiveWalkDir = async (
     dirPath.map(async (dirPathItem: string) => {
       const currentItem = `${currentDir}${dirPathItem}`;
       const statResponse = await fsPromise.stat(currentItem);
+      let title = '';
+      let summary = '';
+
+      if (statResponse.isFile()) {
+        const content: string = (await fsPromise.readFile(currentItem, {
+          encoding: 'utf8',
+        })) as string;
+        console.log('content', currentItem, content);
+      }
 
       treeList.push({
         name: dirPathItem,
         id: uuid(),
+        title,
+        summary,
         fullPath: currentItem,
         basePath: currentDir,
         type: statResponse.isDirectory()

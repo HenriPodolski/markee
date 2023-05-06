@@ -39,8 +39,10 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
       const newFile = {
         name: `${fileName}${extension}`,
         id: uuid(),
-        fullPath: `${app?.createFile}/${fileName}${extension}`,
-        basePath: `${app?.createFile}/`,
+        fullPath: `${
+          app?.createFile === '/' ? '/' : `${app?.createFile}/`
+        }${fileName}${extension}`,
+        basePath: app?.createFile === '/' ? '/' : `${app?.createFile}`,
         type: FileSystemTypeEnum.file,
         visible: true,
         open: true,

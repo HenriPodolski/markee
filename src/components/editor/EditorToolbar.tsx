@@ -1,6 +1,7 @@
 import React, { useState, MouseEvent } from 'react';
 import { Quill } from 'react-quill';
 import './quill.snow.scss';
+import styles from './EditorToolbar.module.scss';
 
 // Custom Undo button icon component for Quill editor. You can import it directly
 // from 'quill/assets/icons/undo.svg' but I found that a number of loaders do not
@@ -99,7 +100,7 @@ export const EditorToolbar = () => {
   };
 
   return (
-    <div id="toolbar">
+    <div className={styles.EditorToolbar} id="toolbar">
       <span className="ql-formats">
         <button className="ql-bold" />
         <button className="ql-italic" />
@@ -110,15 +111,11 @@ export const EditorToolbar = () => {
         <button className="ql-list" value="ordered" />
         <button className="ql-list" value="bullet" />
       </span>
-      <span className="ql-formats">
-        <button
-          onClick={handleDialogButtonClick}
-          value="dialog-more-less"
-          className="ql-list"
-        >
+      <div className="ql-formats">
+        <button onClick={handleDialogButtonClick} value="dialog-more-less">
           {!dialogOpen ? 'More' : 'Less'}
         </button>
-      </span>
+      </div>
       <dialog open={dialogOpen}>
         <span className="ql-formats">
           <select className="ql-font" defaultValue="arial">
@@ -167,14 +164,14 @@ export const EditorToolbar = () => {
           <button className="ql-code-block" />
           <button className="ql-clean" />
         </span>
-        <span className="ql-formats">
-          <button className="ql-undo">
-            <CustomUndo />
-          </button>
-          <button className="ql-redo">
-            <CustomRedo />
-          </button>
-        </span>
+        {/*<span className="ql-formats">*/}
+        {/*  <button className="ql-undo">*/}
+        {/*    <CustomUndo />*/}
+        {/*  </button>*/}
+        {/*  <button className="ql-redo">*/}
+        {/*    <CustomRedo />*/}
+        {/*  </button>*/}
+        {/*</span>*/}
       </dialog>
     </div>
   );

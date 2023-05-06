@@ -13,15 +13,19 @@ import {
 import { FileSystemTypeEnum } from '../../store/fileSystem/fileSystem.enums';
 import FileTreeFileNameInput from './FileTreeFileNameInput';
 import FileTreeFolderNameInput from './FileTreeFolderNameInput';
+import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 
 interface Props {
   basePath?: string;
 }
 
 const FileTreeIterator: FunctionComponent<Props> = ({ basePath = '/' }) => {
+  const fileSystem = useRecoilValue(fileSystemState);
   const tree = useRecoilValue(fileSystemTreeSelector(basePath));
   const createFile = useRecoilValue(createFileSelector);
   const createFolder = useRecoilValue(createFolderSelector);
+
+  console.log('tree', fileSystem);
 
   return (
     <ol className={styles.FileTreeIterator}>

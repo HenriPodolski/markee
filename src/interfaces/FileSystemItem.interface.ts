@@ -2,6 +2,8 @@ import { FileSystemTypeEnum } from '../store/fileSystem/fileSystem.enums';
 
 export type FileSystemItem = {
   name: string;
+  title?: string;
+  summary?: string;
   id: string;
   fullPath: string;
   basePath: string;
