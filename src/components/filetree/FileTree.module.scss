@@ -1,3 +1,5 @@
+@import "../../styles/variables";
+
 .FileTree {
   grid-area: a;
   display: flow-root;
@@ -11,5 +13,9 @@
 }
 
 .filetreeWrap {
-  padding: 0 var(--size-6) var(--size-8) var(--size-6);
+  padding: var(--size-6) var(--size-8);
+
+  @media screen and (min-width: $breakpoint-l) {
+    padding-top: 0;
+  }
 }

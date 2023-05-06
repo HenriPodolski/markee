@@ -5,11 +5,11 @@
   }
 
   &Active {
-    color: #06c;
+    color: var(--color-blue-700);
   }
 
   &:focus svg {
-    color: #06c;
+    color: var(--color-blue-700);
   }
 
   & svg path {

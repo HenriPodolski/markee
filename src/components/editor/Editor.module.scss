@@ -35,6 +35,7 @@
     min-height: 100%;
     left: var(--size-1);
     right: var(--size-1);
+    caret-color: var(--color-blue-700);
 
     @media screen and (min-width: $breakpoint-sm) {
       padding: 0;
