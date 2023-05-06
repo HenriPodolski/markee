@@ -20,11 +20,22 @@ const recursiveWalkDir = async (
   await Promise.all(
     dirPath.map(async (dirPathItem: string) => {
       const currentItem = `${currentDir}${dirPathItem}`;
-      let statResponse = await fsPromise.stat(currentItem);
+      const statResponse = await fsPromise.stat(currentItem);
+      let title = '';
+      let summary = '';
+
+      if (statResponse.isFile()) {
+        const content: string = (await fsPromise.readFile(currentItem, {
+          encoding: 'utf8',
+        })) as string;
+        console.log('content', currentItem, content);
+      }
 
       treeList.push({
         name: dirPathItem,
         id: uuid(),
+        title,
+        summary,
         fullPath: currentItem,
         basePath: currentDir,
         type: statResponse.isDirectory()
@@ -32,6 +43,7 @@ const recursiveWalkDir = async (
           : FileSystemTypeEnum.file,
         visible: level < 1,
         open: false,
+        active: false,
         level,
         modified: new Date(statResponse.mtimeMs),
       });

@@ -1,0 +1,37 @@
+.EditorMiniNav {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.NavList {
+  display: grid;
+  flex: 1 1 auto;
+  grid-auto-flow: column;
+  grid-template-columns: auto;
+
+  & > *:first-of-type {
+    justify-self: flex-start;
+  }
+
+  & > *:last-of-type {
+    justify-self: flex-end;
+  }
+}
+
+.BackButton {
+  width: calc(26px + ((var(--size-3) + 4px) * 2));
+  height: calc(26px + ((var(--size-3) + 4px) * 2));
+  padding: calc(var(--size-3) + 4px);
+}
+
+.SaveButton {
+  width: calc(30px + (var(--size-3) * 2));
+  height: calc(30px + (var(--size-3) * 2));
+  padding: var(--size-3);
+}
+

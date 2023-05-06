@@ -1,21 +1,15 @@
+@import "../../styles/mixins";
+
 .FileTreeFile {
-  display: flex;
-  align-items: center;
-  gap: var(--size-1);
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  margin-bottom: var(--size-2);
+  position: relative;
 
-  &Active {
-    color: #06c;
+  &.SelectionActive {
+    margin-left: 3cqh;
   }
+}
 
-  &:focus svg {
-    color: #06c;
-  }
-
-  & svg path {
-    fill: currentColor;
-  }
+.Button {
+  @include file-list-item;
+  min-height: 48px;
+  min-width: 100%;
 }

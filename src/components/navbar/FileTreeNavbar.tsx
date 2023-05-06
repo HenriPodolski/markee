@@ -5,13 +5,20 @@ import NewFolderControl from './controls/NewFolderControl';
 import NewFileControl from './controls/NewFileControl';
 import SettingsControl from './controls/SettingsControl';
 import cx from 'classnames';
+import DeleteControl from './controls/DeleteControl';
+import GoToEditorControl from './controls/GoToEditorControl';
+import { useRecoilValue } from 'recoil';
+import { appState } from '../../store/app/app.atoms';
+import { Breakpoints } from '../../interfaces/AppState.interface';
 
 export type Props = {
+  id?: string;
   className?: string;
 };
-const FileTreeNavbar: FunctionComponent<Props> = ({ className }) => {
+const FileTreeNavbar: FunctionComponent<Props> = ({ id, className }) => {
+  const app = useRecoilValue(appState);
   return (
-    <div className={cx(styles.Navbar, className)}>
+    <div id={id} className={cx(styles.Navbar, className)}>
       <ol className={styles.ControlsList}>
         <li>
           <NewFileControl />
@@ -19,12 +26,20 @@ const FileTreeNavbar: FunctionComponent<Props> = ({ className }) => {
         <li>
           <NewFolderControl />
         </li>
+        {/*<li>*/}
+        {/*  <SaveFileControl />*/}
+        {/*</li>*/}
         <li>
-          <SaveFileControl />
+          <DeleteControl />
         </li>
-        <li>
-          <SettingsControl />
-        </li>
+        {app?.breakpoint === Breakpoints.xs && (
+          <li>
+            <GoToEditorControl />
+          </li>
+        )}
+        {/*<li>*/}
+        {/*  <SettingsControl />*/}
+        {/*</li>*/}
       </ol>
     </div>
   );

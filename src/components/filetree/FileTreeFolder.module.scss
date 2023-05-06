@@ -1,17 +1,19 @@
+@import "../../styles/mixins";
+
 .FileTreeFolder {
-  display: flex;
-  align-items: center;
-  gap: var(--size-1);
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  margin-bottom: var(--size-2);
+  position: relative;
 
-  &:focus svg {
-    color: #06c;
+  &.SelectionActive {
+    margin-left: 3cqh;
   }
+}
 
-  & svg path {
-    fill: currentColor;
+.Button {
+  @include file-list-item;
+  min-height: 48px;
+  min-width: 100%;
+
+  svg {
+    width: 24px;
   }
 }

@@ -1,4 +1,10 @@
-import React, { useEffect } from 'react';
+import React, {
+  MouseEvent,
+  UIEvent,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import Editor from './components/editor/Editor';
 import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
@@ -14,12 +20,86 @@ import { FileSystemItem } from './interfaces/FileSystemItem.interface';
 import { FileSystemTypeEnum } from './store/fileSystem/fileSystem.enums';
 import EditorNavbar from './components/navbar/EditorNavbar';
 import PreviewNavbar from './components/navbar/PreviewNavbar';
+import { appState } from './store/app/app.atoms';
+import { AppState, Breakpoints, Views } from './interfaces/AppState.interface';
+import debounce from 'lodash.debounce';
+import cx from 'classnames';
 
 const App = () => {
   useFileSystemFetch();
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const tree = useRecoilValue(fileSystemTreeSelector('/'));
+  const [app, setApp] = useRecoilState(appState);
+  const splitViewRef = useRef<HTMLElement>(null);
+
+  const setInView = useCallback(
+    (breakpoint: Breakpoints = Breakpoints.xs) => {
+      if (!splitViewRef.current) {
+        setApp((prev: AppState) => ({
+          ...prev,
+          inView: [],
+        }));
+        return;
+      }
+      const targetEl = splitViewRef.current;
+      let inView: Views[] = [];
+
+      if (breakpoint === Breakpoints.xs) {
+        if (targetEl.scrollLeft === 0) {
+          inView = [Views.filetree];
+        } else if (
+          Math.round(targetEl.scrollLeft / targetEl.offsetWidth) === 1
+        ) {
+          inView = [Views.editor];
+        } else {
+          inView = [Views.preview];
+        }
+      } else if (breakpoint === Breakpoints.sm) {
+        if (targetEl.scrollLeft === 0) {
+          inView = [Views.filetree, Views.editor];
+        } else {
+          inView = [Views.editor, Views.preview];
+        }
+      } else {
+        inView = [Views.filetree, Views.editor, Views.preview];
+      }
+
+      setApp((prev: AppState) => ({
+        ...prev,
+        inView,
+      }));
+    },
+    [setApp]
+  );
+
+  useEffect(() => {
+    const setBreakpointState = () => {
+      const computedBreakpoint = window
+        .getComputedStyle(document.body, '::after')
+        .getPropertyValue('content');
+      const breakpoint =
+        Breakpoints[
+          computedBreakpoint.replace(/"/g, '') as keyof typeof Breakpoints
+        ];
+
+      setApp((prev: AppState) => ({
+        ...prev,
+        breakpoint,
+      }));
+      setInView(breakpoint);
+    };
+    const resizeListener = debounce(() => {
+      setBreakpointState();
+    }, 100);
+
+    window.addEventListener('resize', resizeListener);
+    setBreakpointState();
+
+    return () => {
+      window.removeEventListener('resize', resizeListener);
+    };
+  }, [setApp, setInView]);
 
   /**
    * used to prepare editor default state
@@ -45,93 +125,82 @@ const App = () => {
     };
 
     prepareEditorDefaultState();
-  }, [tree, fileSystem, openFile]);
+  }, [tree, fileSystem, setFileSystem, openFile, setOpenFile]);
 
-  // const [setIsSaving] = useState(false);
-  // const fsRef = useRef(new LightningFS('markee'));
-  //
-  // const handleSave = async (filePath, fileContent) => {
-  //   const fs = fsRef.current;
-  //   setIsSaving(true);
-  //
-  //   console.log('filePath', filePath, fileContent);
-  //
-  //   // get current open file path
-  //   // get the markdown from editor instance
-  //   // save
-  //   await fs.promises.writeFile(filePath, fileContent, { encoding: 'utf8' });
-  //   setIsSaving(false);
-  // };
-  //
-  // const handleCreateNewFile = async (filePath, fileContent = '') => {
-  //   console.log('createNewFile', filePath, fileContent);
-  //   const fs = fsRef.current;
-  //
-  //   await fs.promises.writeFile(filePath, fileContent, {
-  //     encoding: 'utf8',
-  //   });
-  // };
-  //
-  // const handleNewFile = async (focusedFolder, openFilePath) => {
-  //   let createPath = '';
-  //
-  //   if (focusedFolder) {
-  //     createPath = focusedFolder;
-  //   } else if (openFilePath) {
-  //     const filepathSplit = openFilePath.split('/');
-  //     filepathSplit.pop();
-  //     createPath = filepathSplit.join('/');
-  //   }
-  //
-  //   setGlobalState({
-  //     ...globalState,
-  //     newFileCreateRequest: {
-  //       createPath,
-  //       level: createPath.split('/').filter((pathPart) => Boolean(pathPart))
-  //         .length,
-  //     },
-  //   });
-  // };
-  //
-  // const handleNewFolder = (focusedFolder, openFilePath) => {
-  //   // case undefined for both -> create on the top level
-  //   console.log('handleNewFolder', focusedFolder, openFilePath);
-  // };
-  //
-  // const handleEditorChange = ({ markdown, html, content }) => {
-  //   setGlobalState({
-  //     ...globalState,
-  //     editorFileMarkdown: markdown,
-  //     editorFileHTML: html,
-  //     editorFileContent: content,
-  //   });
-  // };
-  //
-  // const [globalState, setGlobalState] = useState({
-  //   ...globalContextDefault,
-  //   onCreateNewFile: handleCreateNewFile,
-  //   onSave: handleSave,
-  //   onNewFile: handleNewFile,
-  //   onNewFolder: handleNewFolder,
-  //   newFileCreateRequest: null,
-  //   isSaving: false,
-  //   html: '',
-  //   fs: fsRef.current,
-  //   editorFileContent: '',
-  //   updateFileTree: Date.now(),
-  // });
-  //
+  /**
+   * used to reset UI elements and/or state
+   * when the user does something else
+   * @param evt
+   */
+  const handleAppClick = (evt: MouseEvent) => {
+    const clickedElement: HTMLElement = evt.target as HTMLElement;
+    const fileSelectUIParent = document.querySelector('[data-file-select-ui]');
+    const editorUIParent = document.querySelector('[data-editor-ui]');
+
+    if (!fileSelectUIParent?.contains(clickedElement)) {
+      setApp((prev: AppState) => ({
+        ...prev,
+        showFileDeletionUI: false,
+      }));
+    }
+
+    if (!editorUIParent?.contains(clickedElement)) {
+      setApp((prev: AppState) => ({
+        ...prev,
+        editorActive: false,
+      }));
+    }
+  };
+
+  const handleControlSectionScroll = (evt: UIEvent) => {
+    const splitViewElement = document.getElementById('split-view-section');
+    if (splitViewElement) {
+      splitViewElement.scrollTo({
+        left: (evt.target as HTMLElement).scrollLeft,
+        behavior: 'auto',
+      });
+    }
+  };
+
+  const handleSplitViewScroll = (evt: UIEvent) => {
+    const controlSectionElement = document.getElementById('control-section');
+    const evtTarget = evt.target as HTMLElement;
+    if (controlSectionElement) {
+      controlSectionElement.scrollTo({
+        left: evtTarget.scrollLeft,
+        behavior: 'auto',
+      });
+    }
+
+    setInView(app?.breakpoint);
+  };
+
   return (
-    <div className={styles.App}>
-      <section className={styles.controlSection}>
-        <FileTreeNavbar className={styles.fileTreeNavbar} />
-        <EditorNavbar className={styles.editorNavbar} />
-        <PreviewNavbar className={styles.previewNavbar} />
+    <div onClick={handleAppClick} className={styles.App}>
+      <section
+        id="control-section"
+        onScroll={handleControlSectionScroll}
+        className={cx(styles.controlSection, {
+          [styles.controlSectionHide]:
+            app?.breakpoint === Breakpoints.xs && app?.editorActive,
+        })}
+      >
+        <FileTreeNavbar
+          id="filetree-navbar"
+          className={styles.fileTreeNavbar}
+        />
+        <EditorNavbar id="editor-navbar" className={styles.editorNavbar} />
+        <PreviewNavbar id="preview-navbar" className={styles.previewNavbar} />
       </section>
-      <section className={styles.splitView}>
-        <FileTree className={styles.splitViewChild} />
-        <Editor className={styles.splitViewChild} />
-        <Preview className={styles.splitViewChild} />
+      <section
+        id="split-view-section"
+        ref={splitViewRef}
+        onScroll={handleSplitViewScroll}
+        className={styles.splitView}
+      >
+        <FileTree id="filetree" className={styles.splitViewChild} />
+        <Editor id="editor" className={styles.splitViewChild} />
+        <Preview id="preview" className={styles.splitViewChild} />
       </section>
     </div>
   );

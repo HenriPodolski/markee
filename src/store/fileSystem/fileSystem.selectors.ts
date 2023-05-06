@@ -20,7 +20,9 @@ export const fileSystemTreeSelector = selectorFamily({
             (currentBasePath !== '/' ? `${currentBasePath}/` : '/')
           );
         })
-        .map((item) => item)
+        .map((item) => {
+          return item;
+        })
         .sort((a, b) => {
           if (
             sortedBy === FileSystemSortedByEnum.alphabetical &&
@@ -65,27 +67,42 @@ export const fileSystemDirectoryChildrenSelector = selectorFamily({
     },
 });
 
-export const fileSystemOpenFileSelector = selector({
-  key: 'fileSystemOpenFileSelector',
+export const fileSystemActiveItemDirectorySelector = selector({
+  key: 'fileSystemActiveItemDirectorySelector',
   get: ({ get }) => {
     const items = get(fileSystemState);
 
-    return items.find((item: FileSystemItem) => {
-      return item.type === 'file' && item.open;
+    const activeItem = items.find((item: FileSystemItem) => {
+      return item.active;
     });
+
+    if (activeItem?.type === FileSystemTypeEnum.directory) {
+      return activeItem.fullPath;
+    }
+
+    return activeItem?.basePath;
   },
-  set: ({ set, get }, newValue) => {
-    if (newValue) {
-      const updatedValue = newValue as FileSystemItem;
+});
+export const fileSystemItemByIdSelector = selectorFamily({
+  key: 'fileSystemItemByIdSelector',
+  get:
+    (id: string) =>
+    ({ get }) => {
       const items = get(fileSystemState);
 
-      const updateItemIndex = items.findIndex(
-        (item) => updatedValue && item.id === updatedValue.id
-      );
+      return items.find((item: FileSystemItem) => {
+        return item.id === id;
+      });
+    },
+});
 
-      items[updateItemIndex] = updatedValue;
+export const fileSystemItemsMarkedForDeletion = selector({
+  key: 'fileSystemItemsMarkedForDeletion',
+  get: ({ get }) => {
+    const items = get(fileSystemState);
 
-      set(fileSystemState, items);
-    }
+    return items.filter((item: FileSystemItem) => {
+      return item.markedForDeletion;
+    });
   },
 });

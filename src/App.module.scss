@@ -1,3 +1,5 @@
+@import "./styles/variables";
+
 .App {
   display: grid;
   grid-template-areas: 'workspace' 'controls';
@@ -5,8 +7,29 @@
   grid-template-rows: 1fr min-content;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 
-  @media screen and (min-width: 1024px) {
+  & > * {
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  & > ::-webkit-scrollbar {
+    width: 0; /* Adjust width as needed */
+    height: 0;
+  }
+
+  & > ::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Set track color */
+  }
+
+  & > ::-webkit-scrollbar-thumb {
+    background-color: #888; /* Set thumb color */
+    border-radius: 10px; /* Add rounded corners to the thumb */
+  }
+
+  @media screen and (min-width: $breakpoint-l) {
     grid-template-areas: 'controls' 'workspace';
     grid-template-columns: 1fr;
     grid-template-rows: min-content 1fr;
@@ -17,7 +40,42 @@
   grid-area: controls;
   display: grid;
   grid-template-areas: 'd e f';
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 100% 100% 100%;
+  overflow: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behaviour: smooth;
+  background-color: var(--color-grey-200);
+  border-top: 2px solid var(--color-grey-300);
+
+  * {
+    user-select: none;
+  }
+
+  & > * {
+    scroll-snap-align: center;
+  }
+
+  @media screen and (min-width: $breakpoint-sm) {
+    grid-template-columns: 50% 50% 50%;
+
+    & > * {
+      scroll-snap-align: start;
+    }
+
+    & > *:last-child {
+      scroll-snap-align: end;
+    }
+  }
+
+  @media screen and (min-width: $breakpoint-l) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  &Hide {
+    visibility: hidden;
+    height: 0;
+    border: none;
+  }
 }
 
 .fileTreeNavbar {
@@ -36,7 +94,29 @@
   grid-area: workspace;
   display: grid;
   grid-template-areas: 'a b c';
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 100% 100% 100%;
   overflow-y: hidden;
   overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behaviour: smooth;
+
+  & > * {
+    scroll-snap-align: center;
+  }
+
+  @media screen and (min-width: $breakpoint-sm) {
+    grid-template-columns: 50% 50% 50%;
+
+    & > * {
+      scroll-snap-align: start;
+    }
+
+    & > *:last-child {
+      scroll-snap-align: end;
+    }
+  }
+
+  @media screen and (min-width: $breakpoint-l) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
