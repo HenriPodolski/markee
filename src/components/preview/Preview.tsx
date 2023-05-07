@@ -6,9 +6,6 @@ import cx from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 import root from 'react-shadow';
-import MarkdownIt from 'markdown-it';
-
-const md2html = new MarkdownIt();
 
 export type Props = {
   className: string;
@@ -17,20 +14,12 @@ export type Props = {
 
 const Preview: FunctionComponent<Props> = ({ id, className }: Props) => {
   const openFile = useRecoilValue(openFileState);
-  const [convertedDoc, setConvertedDoc] = useState('');
-
-  useMemo(() => {
-    if (openFile?.content) {
-      const renderedMarkup = md2html.render(openFile.content);
-      setConvertedDoc(renderedMarkup);
-    }
-  }, [openFile?.content]);
 
   return (
     <root.div id={id} className={cx(styles.Preview, className)}>
       <div
         className="PreviewInner"
-        dangerouslySetInnerHTML={{ __html: convertedDoc }}
+        dangerouslySetInnerHTML={{ __html: openFile?.content as string }}
       />
       <style>{rootStyles}</style>
     </root.div>

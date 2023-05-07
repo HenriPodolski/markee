@@ -1,47 +1,54 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { NodeHtmlMarkdown } from 'node-html-markdown';
-import ReactQuill from 'react-quill';
+import React, { FunctionComponent, useEffect } from 'react';
 import styles from './Editor.module.scss';
-import './quill.snow.scss';
 import cx from 'classnames';
 import { openFileState } from '../../store/openFile/openFile.atoms';
-import { useRecoilState } from 'recoil';
-import { saveOpenFileContent } from '../../store/openFile/openFile.services';
-import { getChangesFromFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
-import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
-import MarkdownIt from 'markdown-it';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { appState } from '../../store/app/app.atoms';
-import {
-  AppState,
-  Breakpoints,
-  Views,
-} from '../../interfaces/AppState.interface';
-import EditorToolbar, { modules, formats } from './EditorToolbar';
+import { AppState } from '../../interfaces/AppState.interface';
+import EditorToolbar from './EditorToolbar';
 import EditorMiniNav from './EditorMiniNav';
+import { $getRoot, $getSelection } from 'lexical';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import EditorAutoFocusPlugin from './EditorAutoFocusPlugin';
+
+const theme = {
+  // Theme styling goes here
+};
+
+// When the editor changes, you can get notified via the
+// LexicalOnChangePlugin!
+const onChange = (editorState: any) => {
+  editorState.read(() => {
+    // Read the contents of the EditorState here.
+    const root = $getRoot();
+    const selection = $getSelection();
+
+    console.log(root, selection);
+  });
+};
+
+const onError = (error: any) => {
+  console.error(error);
+};
 
 export type Props = {
   className: string;
   id?: string;
 };
 
-const md2html = new MarkdownIt({
-  html: true,
-  breaks: true,
-});
-const html2md = new NodeHtmlMarkdown(
-  /* options (optional) */ {
-    preferNativeParser: true,
-
-    blockElements: [],
-  },
-  /* customTransformers (optional) */ undefined,
-  /* customCodeBlockTranslators (optional) */ undefined
-);
-const Editor: React.FC<Props> = ({ id, className }) => {
+const Editor: FunctionComponent<Props> = ({ id, className }) => {
   const [openFile, setOpenFile] = useRecoilState(openFileState);
-  const [convertedContent, setConvertedContent] = useState<string>('');
-  const [app, setApp] = useRecoilState(appState);
-  const editorRef = useRef<ReactQuill>(null);
+  const setApp = useSetRecoilState(appState);
+  const initialConfig = {
+    namespace: 'MarkeeEditor',
+    theme,
+    onError,
+  };
 
   useEffect(() => {
     return () => {
@@ -52,48 +59,32 @@ const Editor: React.FC<Props> = ({ id, className }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (
-      app?.breakpoint === Breakpoints.xs &&
-      app?.inView?.includes(Views.editor) &&
-      editorRef.current
-    ) {
-      editorRef.current.focus();
-    } else if (
-      app?.breakpoint === Breakpoints.xs &&
-      !app?.inView?.includes(Views.editor) &&
-      editorRef.current
-    ) {
-      editorRef.current.blur();
-    }
-  }, [editorRef.current, app?.inView, app?.breakpoint]);
-
-  useMemo(() => {
-    if (openFile?.content) {
-      const renderedMarkup = md2html
-        .render(openFile.content)
-        .replace(/[\r\n]+/g, '');
-      setConvertedContent(renderedMarkup);
-    }
-  }, [openFile?.content]);
+  // useMemo(() => {
+  //   if (openFile?.content) {
+  //     const renderedMarkup = md2html
+  //       .render(openFile.content)
+  //       .replace(/[\r\n]+/g, '');
+  //     setConvertedContent(renderedMarkup);
+  //   }
+  // }, [openFile?.content]);
 
   const handleChange = async (content: string) => {
-    const revisedContent = content.replace('<p><br></p>', '');
-    const markdown = html2md.translate(revisedContent);
-    // this block is used to check if there is any text content
-    const checkElement = document.createElement('div');
-    checkElement.innerHTML = revisedContent;
-    const checkText = checkElement.innerText;
-
-    if (
-      openFile &&
-      openFile.path &&
-      !openFile.loading &&
-      checkText &&
-      openFile.content !== markdown
-    ) {
-      setOpenFile({ ...openFile, content: markdown, saved: false });
-    }
+    // const revisedContent = content.replace('<p><br></p>', '');
+    // const markdown = html2md.translate(revisedContent);
+    // // this block is used to check if there is any text content
+    // const checkElement = document.createElement('div');
+    // checkElement.innerHTML = revisedContent;
+    // const checkText = checkElement.innerText;
+    //
+    // if (
+    //   openFile &&
+    //   openFile.path &&
+    //   !openFile.loading &&
+    //   checkText &&
+    //   openFile.content !== markdown
+    // ) {
+    //   setOpenFile({ ...openFile, content: markdown, saved: false });
+    // }
   };
 
   const handleFocus = () => {
@@ -115,20 +106,30 @@ const Editor: React.FC<Props> = ({ id, className }) => {
       {openFile && (
         <>
           <EditorMiniNav />
-          <div className={styles.TextareaWrap} data-editor-ui>
-            <ReactQuill
-              key={`editor-${openFile.fileSystemId}`}
-              ref={editorRef}
-              defaultValue={convertedContent}
-              placeholder={'Type here...'}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              preserveWhitespace={true}
-              theme="snow"
-              modules={modules}
-              formats={formats}
-            />
+          <div className={styles.TextareaWrap} data-editor-ui={true}>
+            {/*<ReactQuill*/}
+            {/*  key={`editor-${openFile.fileSystemId}`}*/}
+            {/*  ref={editorRef}*/}
+            {/*  defaultValue={convertedContent}*/}
+            {/*  placeholder={'Type here...'}*/}
+            {/*  onChange={handleChange}*/}
+            {/*  onFocus={handleFocus}*/}
+            {/*  onBlur={handleBlur}*/}
+            {/*  preserveWhitespace={true}*/}
+            {/*  theme="snow"*/}
+            {/*  modules={modules}*/}
+            {/*  formats={formats}*/}
+            {/*/>*/}
+            <LexicalComposer initialConfig={initialConfig}>
+              <RichTextPlugin
+                contentEditable={<ContentEditable />}
+                placeholder={<div>Enter some text...</div>}
+                ErrorBoundary={LexicalErrorBoundary}
+              />
+              <OnChangePlugin onChange={onChange} />
+              <HistoryPlugin />
+              <EditorAutoFocusPlugin />
+            </LexicalComposer>
             <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
           </div>
         </>
