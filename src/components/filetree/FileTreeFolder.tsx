@@ -2,8 +2,8 @@ import React from 'react';
 import cx from 'classnames';
 import styles from './FileTreeFolder.module.scss';
 import FileTreeIterator from './FileTreeIterator';
-import { ReactComponent as FolderIcon } from '../../icons/folder-outline.svg';
-import { ReactComponent as FolderOpenIcon } from '../../icons/folder-open-outline.svg';
+import { ReactComponent as NoteBookIcon } from '../../icons/book.svg';
+import { ReactComponent as NoteBookOpenIcon } from '../../icons/book.svg';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
@@ -62,7 +62,7 @@ const FileTreeFolder: React.FC<Props> = ({ item }) => {
           type="button"
           onClick={handleFolderClick}
         >
-          {item.open ? <FolderOpenIcon /> : <FolderIcon />} {item.name}
+          {item.open ? <NoteBookOpenIcon /> : <NoteBookIcon />} {item.name}
         </button>
         {app?.showFileDeletionUI && (
           <FileTreeCheckbox id={item.id} fileName={item.name} />

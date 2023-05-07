@@ -1,6 +1,6 @@
 @mixin ui-icon() {
   svg {
-    min-width: min-content;
+    min-width: 20px;
     display: block;
     max-width: 100%;
     max-height: 100%;

@@ -3,7 +3,7 @@ import styles from './Controls.module.scss';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { appState } from '../../../store/app/app.atoms';
 import { fileSystemActiveItemDirectorySelector } from '../../../store/fileSystem/fileSystem.selectors';
-import { ReactComponent as NewFolderIcon } from '../../../icons/folder-plus-outline.svg';
+import { ReactComponent as NewNoteBookIcon } from '../../../icons/book-plus.svg';
 import cx from 'classnames';
 const NewFolderControl: FunctionComponent = () => {
   const [app, setApp] = useRecoilState(appState);
@@ -23,7 +23,7 @@ const NewFolderControl: FunctionComponent = () => {
       type="button"
       onClick={onButtonClick}
     >
-      <NewFolderIcon />
+      <NewNoteBookIcon />
       New Folder
     </button>
   );

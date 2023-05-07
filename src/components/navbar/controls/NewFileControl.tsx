@@ -3,7 +3,7 @@ import styles from './Controls.module.scss';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { appState } from '../../../store/app/app.atoms';
 import { fileSystemActiveItemDirectorySelector } from '../../../store/fileSystem/fileSystem.selectors';
-import { ReactComponent as NewFileIcon } from '../../../icons/file-document-plus-outline.svg';
+import { ReactComponent as NewNoteIcon } from '../../../icons/note-plus.svg';
 import cx from 'classnames';
 
 const NewFileControl: FunctionComponent = () => {
@@ -24,7 +24,7 @@ const NewFileControl: FunctionComponent = () => {
       type="button"
       onClick={onButtonClick}
     >
-      <NewFileIcon />
+      <NewNoteIcon />
       New Note
     </button>
   );

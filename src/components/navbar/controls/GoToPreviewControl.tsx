@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styles from './Controls.module.scss';
-import { ReactComponent as PreviewIcon } from '../../../icons/eye-outline.svg';
+import { ReactComponent as PreviewIcon } from '../../../icons/eye.svg';
 import cx from 'classnames';
 
 const GoToPreviewControl: FunctionComponent = () => {

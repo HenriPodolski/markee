@@ -1,6 +1,6 @@
 import React, { FormEvent, FunctionComponent, useState } from 'react';
 import styles from './FileTreeFileNameInput.module.scss';
-import { ReactComponent as FileIcon } from '../../icons/file-document-outline.svg';
+import { ReactComponent as NotePlusIcon } from '../../icons/note-plus.svg';
 import { useRecoilState, useRecoilTransaction_UNSTABLE } from 'recoil';
 import { appState } from '../../store/app/app.atoms';
 import { uuid } from '../../lib/uuid';
@@ -74,7 +74,7 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.FileTreeFileNameInput}>
-      <FileIcon />
+      <NotePlusIcon />
       <input
         type="text"
         name="file"

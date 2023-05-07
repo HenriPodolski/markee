@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styles from './Controls.module.scss';
-import { ReactComponent as EditorIcon } from '../../../icons/file-document-edit-outline.svg';
+import { ReactComponent as EditorIcon } from '../../../icons/pencil.svg';
 import cx from 'classnames';
 
 const GoToEditorControl: FunctionComponent = () => {
