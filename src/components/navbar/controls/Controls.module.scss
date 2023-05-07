@@ -23,8 +23,6 @@
   }
 
   & > *:first-child {
-    margin-right: 6px;
-
     @media screen and (min-width: $breakpoint-l) {
       margin-bottom: 6px;
     }

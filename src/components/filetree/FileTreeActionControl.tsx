@@ -8,6 +8,8 @@ import { AppState } from '../../interfaces/AppState.interface';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { deleteFileSystemItem } from '../../store/fileSystem/fileSystem.services';
 import { FileSystemTypeEnum } from '../../store/fileSystem/fileSystem.enums';
+import { ReactComponent as DeleteIcon } from '../../icons/delete.svg';
+import { ReactComponent as CancelIcon } from '../../icons/cancel.svg';
 
 export type Props = {
   className?: string;
@@ -93,12 +95,21 @@ const FileTreeActionControl: FunctionComponent<Props> = ({
 
   return (
     <div className={cx(styles.FileTreeActionControl, className)}>
-      {itemsMarkedForDeletion.length > 0 && (
-        <button onClick={handleDeleteButtonClick}>
-          Delete <sup>{itemsMarkedForDeletion.length}</sup>
-        </button>
-      )}
-      <button onClick={handleCancelButtonClick}>Cancel</button>
+      <button
+        className={styles.ActionButton}
+        onClick={handleDeleteButtonClick}
+        disabled={itemsMarkedForDeletion.length === 0}
+      >
+        <DeleteIcon />
+        <span className={styles.ActionButtonLabel}>Delete</span>
+        <sup className={styles.ActionButtonBadge}>
+          <span>{itemsMarkedForDeletion.length}</span>
+        </sup>
+      </button>
+      <button className={styles.ActionButton} onClick={handleCancelButtonClick}>
+        <CancelIcon />
+        <span className={styles.ActionButtonLabel}>Cancel</span>
+      </button>
     </div>
   );
 };

@@ -70,7 +70,7 @@ const FileTreeFile: React.FC<Props> = (props) => {
         onClick={handleFileClick}
       >
         {openFile?.path === item.fullPath ? <NoteEditIcon /> : <NoteIcon />}{' '}
-        {item.name}
+        <span className={styles.ButtonLabel}>{item.name}</span>
       </button>
       {app?.showFileDeletionUI && (
         <FileTreeCheckbox id={item.id} fileName={item.name} />

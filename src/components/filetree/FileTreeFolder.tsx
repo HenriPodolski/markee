@@ -62,7 +62,8 @@ const FileTreeFolder: React.FC<Props> = ({ item }) => {
           type="button"
           onClick={handleFolderClick}
         >
-          {item.open ? <NoteBookOpenIcon /> : <NoteBookIcon />} {item.name}
+          {item.open ? <NoteBookOpenIcon /> : <NoteBookIcon />}
+          <span className={styles.ButtonLabel}>{item.name}</span>
         </button>
         {app?.showFileDeletionUI && (
           <FileTreeCheckbox id={item.id} fileName={item.name} />

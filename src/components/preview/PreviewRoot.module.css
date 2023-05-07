@@ -1,4 +1,4 @@
 .PreviewInner {
-  padding: 1rem;
+  padding: var(--size-3);
   font-size: 1rem;
 }
