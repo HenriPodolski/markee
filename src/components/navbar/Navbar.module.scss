@@ -5,7 +5,7 @@
   align-items: center;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 20px;
+  padding: var(--size-2) var(--size-3);
 
   @media screen and (min-width: $breakpoint-l) {
     align-items: flex-start;

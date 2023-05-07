@@ -24,22 +24,27 @@ export type Props = {
   id?: string;
 };
 
-const md2html = new MarkdownIt();
+const md2html = new MarkdownIt({
+  html: true,
+  breaks: true,
+});
 const html2md = new NodeHtmlMarkdown(
-  /* options (optional) */ {},
+  /* options (optional) */ {
+    preferNativeParser: true,
+
+    blockElements: [],
+  },
   /* customTransformers (optional) */ undefined,
   /* customCodeBlockTranslators (optional) */ undefined
 );
 const Editor: React.FC<Props> = ({ id, className }) => {
   const [openFile, setOpenFile] = useRecoilState(openFileState);
-  const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
   const [convertedContent, setConvertedContent] = useState<string>('');
   const [app, setApp] = useRecoilState(appState);
   const editorRef = useRef<ReactQuill>(null);
 
   useEffect(() => {
     return () => {
-      console.log('shut down');
       setApp((prev: AppState) => ({
         ...prev,
         editorActive: false,
@@ -65,16 +70,19 @@ const Editor: React.FC<Props> = ({ id, className }) => {
 
   useMemo(() => {
     if (openFile?.content) {
-      const renderedMarkup = md2html.render(openFile.content);
+      const renderedMarkup = md2html
+        .render(openFile.content)
+        .replace(/[\r\n]+/g, '');
       setConvertedContent(renderedMarkup);
     }
   }, [openFile?.content]);
 
   const handleChange = async (content: string) => {
-    const markdown = html2md.translate(content);
+    const revisedContent = content.replace('<p><br></p>', '');
+    const markdown = html2md.translate(revisedContent);
     // this block is used to check if there is any text content
     const checkElement = document.createElement('div');
-    checkElement.innerHTML = content;
+    checkElement.innerHTML = revisedContent;
     const checkText = checkElement.innerText;
 
     if (
@@ -84,22 +92,11 @@ const Editor: React.FC<Props> = ({ id, className }) => {
       checkText &&
       openFile.content !== markdown
     ) {
-      setOpenFile({ ...openFile, content: markdown });
-      const savedFile = await saveOpenFileContent(openFile?.path, markdown);
-      setFileSystem(
-        getChangesFromFileSystemItemById({
-          id: openFile.fileSystemId,
-          previousFileSystemTree: fileSystem,
-          updateItem: {
-            modified: new Date(savedFile.mtimeMs),
-          },
-        })
-      );
+      setOpenFile({ ...openFile, content: markdown, saved: false });
     }
   };
 
   const handleFocus = () => {
-    console.log('focus');
     setApp((prev: AppState) => ({
       ...prev,
       editorActive: true,
@@ -107,7 +104,6 @@ const Editor: React.FC<Props> = ({ id, className }) => {
   };
 
   const handleBlur = () => {
-    console.log('blur');
     setApp((prev: AppState) => ({
       ...prev,
       editorActive: false,

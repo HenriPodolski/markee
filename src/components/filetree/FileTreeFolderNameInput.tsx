@@ -29,6 +29,7 @@ const FileTreeFolderNameInput: FunctionComponent<Props> = () => {
           fileSystemId: newDirectory.id,
           path: newDirectory.fullPath,
           loading: false,
+          saved: true,
         });
       }
   );

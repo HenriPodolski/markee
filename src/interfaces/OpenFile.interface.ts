@@ -6,4 +6,5 @@ export type OpenFileState = {
   fileSystemId: string;
   path: string;
   loading: boolean;
+  saved: boolean;
 } | null;

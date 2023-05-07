@@ -39,6 +39,7 @@ export const setOpenFileJoinFileSystem = async (
     fileSystemId: item.id,
     path: item.fullPath,
     loading: true,
+    saved: true,
   };
 
   const content = await loadOpenFileContent(item.fullPath);

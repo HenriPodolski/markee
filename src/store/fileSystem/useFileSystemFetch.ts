@@ -28,7 +28,6 @@ const recursiveWalkDir = async (
         const content: string = (await fsPromise.readFile(currentItem, {
           encoding: 'utf8',
         })) as string;
-        console.log('content', currentItem, content);
       }
 
       treeList.push({

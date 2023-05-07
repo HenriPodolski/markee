@@ -36,5 +36,20 @@
   width: calc(30px + (var(--size-3) * 2));
   height: calc(30px + (var(--size-3) * 2));
   padding: var(--size-3);
+  cursor: pointer;
+
+  svg {
+    color: var(--color-black);
+    path {
+      fill: currentColor;
+    }
+  }
+
+  &[disabled] {
+    cursor: auto;
+    svg {
+      color: var(--color-grey-400);
+    }
+  }
 }
 
