@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useCallback, useEffect } from 'react';
 import styles from './Editor.module.scss';
 import cx from 'classnames';
 import { openFileState } from '../../store/openFile/openFile.atoms';
@@ -15,21 +15,20 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import EditorAutoFocusPlugin from './EditorAutoFocusPlugin';
+import {
+  $convertFromMarkdownString,
+  $convertToMarkdownString,
+} from '@lexical/markdown';
+// lexical, taken from here: https://codesandbox.io/s/lexical-markdown-plugin-example-4076jq?from-embed=&file=/src/styles.css
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { ListItemNode, ListNode } from '@lexical/list';
+import { CodeHighlightNode, CodeNode } from '@lexical/code';
+import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { DEFAULT_TRANSFORMERS } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 
 const theme = {
   // Theme styling goes here
-};
-
-// When the editor changes, you can get notified via the
-// LexicalOnChangePlugin!
-const onChange = (editorState: any) => {
-  editorState.read(() => {
-    // Read the contents of the EditorState here.
-    const root = $getRoot();
-    const selection = $getSelection();
-
-    console.log(root, selection);
-  });
 };
 
 const onError = (error: any) => {
@@ -44,11 +43,27 @@ export type Props = {
 const Editor: FunctionComponent<Props> = ({ id, className }) => {
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const setApp = useSetRecoilState(appState);
-  const initialConfig = {
+  const editorConfig = {
     namespace: 'MarkeeEditor',
     theme,
+    nodes: [
+      HeadingNode,
+      ListNode,
+      ListItemNode,
+      QuoteNode,
+      CodeNode,
+      CodeHighlightNode,
+      TableNode,
+      TableCellNode,
+      TableRowNode,
+      AutoLinkNode,
+      LinkNode,
+    ],
     onError,
   };
+  const loadedEditorState = useCallback(() => {
+    return $convertFromMarkdownString(openFile?.content ?? '');
+  }, [openFile?.content]);
 
   useEffect(() => {
     return () => {
@@ -67,6 +82,26 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
   //     setConvertedContent(renderedMarkup);
   //   }
   // }, [openFile?.content]);
+
+  // When the editor changes, you can get notified via the
+  // LexicalOnChangePlugin!
+  const onChange = (editorState: any) => {
+    editorState.read(() => {
+      // Read the contents of the EditorState here.
+      const root = $getRoot();
+
+      const markdown = $convertToMarkdownString(DEFAULT_TRANSFORMERS, root);
+      if (
+        openFile &&
+        openFile.path &&
+        !openFile.loading &&
+        openFile.content !== markdown
+      ) {
+        setOpenFile({ ...openFile, content: markdown, saved: false });
+        console.log(markdown);
+      }
+    });
+  };
 
   const handleChange = async (content: string) => {
     // const revisedContent = content.replace('<p><br></p>', '');
@@ -120,7 +155,12 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
             {/*  modules={modules}*/}
             {/*  formats={formats}*/}
             {/*/>*/}
-            <LexicalComposer initialConfig={initialConfig}>
+            <LexicalComposer
+              initialConfig={{
+                ...editorConfig,
+                editorState: loadedEditorState,
+              }}
+            >
               <RichTextPlugin
                 contentEditable={<ContentEditable />}
                 placeholder={<div>Enter some text...</div>}
