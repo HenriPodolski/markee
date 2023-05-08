@@ -1,4 +1,5 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import React, { useEffect } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { appState } from '../../store/app/app.atoms';
 import { Views } from '../../interfaces/AppState.interface';
 import styles from './EditorMiniNav.module.scss';
@@ -9,12 +10,14 @@ import { saveOpenFileContent } from '../../store/openFile/openFile.services';
 import { getChangesFromFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { openFileState } from '../../store/openFile/openFile.atoms';
+import { OpenFileState } from '../../interfaces/OpenFile.interface';
 
 const EditorMiniNav = () => {
   const app = useRecoilValue(appState);
   const openFile = useRecoilValue(openFileState);
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
-  const handleSaveButtonClick = async () => {
+  const setOpenFile = useSetRecoilState(openFileState);
+  const save = async () => {
     if (!openFile?.path) {
       console.error('File has no path');
     }
@@ -31,6 +34,31 @@ const EditorMiniNav = () => {
         },
       })
     );
+
+    setOpenFile((prev: OpenFileState) => {
+      return {
+        ...prev,
+        saved: true,
+      } as OpenFileState;
+    });
+  };
+
+  useEffect(() => {
+    const handleSaveShortcut = async (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        event.preventDefault();
+        await save();
+      }
+    };
+
+    document.addEventListener('keydown', handleSaveShortcut);
+    return () => {
+      document.removeEventListener('keydown', handleSaveShortcut);
+    };
+  }, []);
+
+  const handleSaveButtonClick = async () => {
+    await save();
     moveToFiletree();
   };
 
@@ -54,7 +82,7 @@ const EditorMiniNav = () => {
         )}
         <li>
           <button
-            // disabled={openFile?.saved}
+            disabled={openFile?.saved}
             onClick={handleSaveButtonClick}
             className={styles.SaveButton}
           >

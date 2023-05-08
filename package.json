@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@isomorphic-git/lightning-fs": "^4.6.0",
+    "@lexical/headless": "^0.10.0",
     "@lexical/react": "^0.10.0",
     "classnames": "^2.3.1",
     "isomorphic-git": "^1.10.4",

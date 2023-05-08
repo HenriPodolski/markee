@@ -19,7 +19,7 @@ const Preview: FunctionComponent<Props> = ({ id, className }: Props) => {
     <root.div id={id} className={cx(styles.Preview, className)}>
       <div
         className="PreviewInner"
-        dangerouslySetInnerHTML={{ __html: openFile?.content as string }}
+        dangerouslySetInnerHTML={{ __html: openFile?.html as string }}
       />
       <style>{rootStyles}</style>
     </root.div>

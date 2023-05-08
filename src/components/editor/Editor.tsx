@@ -7,7 +7,7 @@ import { appState } from '../../store/app/app.atoms';
 import { AppState } from '../../interfaces/AppState.interface';
 import EditorToolbar from './EditorToolbar';
 import EditorMiniNav from './EditorMiniNav';
-import { $getRoot, $getSelection } from 'lexical';
+import { $getRoot } from 'lexical';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -26,6 +26,7 @@ import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { DEFAULT_TRANSFORMERS } from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import EditorSyncHTMLStatePlugin from './EditorSyncHTMLStatePlugin';
 
 const theme = {
   // Theme styling goes here
@@ -40,27 +41,31 @@ export type Props = {
   id?: string;
 };
 
+export const editorNodes = [
+  HeadingNode,
+  ListNode,
+  ListItemNode,
+  QuoteNode,
+  CodeNode,
+  CodeHighlightNode,
+  TableNode,
+  TableCellNode,
+  TableRowNode,
+  AutoLinkNode,
+  LinkNode,
+];
+
+export const editorConfig = {
+  namespace: 'MarkeeEditor',
+  theme,
+  nodes: editorNodes,
+  onError,
+};
+
 const Editor: FunctionComponent<Props> = ({ id, className }) => {
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const setApp = useSetRecoilState(appState);
-  const editorConfig = {
-    namespace: 'MarkeeEditor',
-    theme,
-    nodes: [
-      HeadingNode,
-      ListNode,
-      ListItemNode,
-      QuoteNode,
-      CodeNode,
-      CodeHighlightNode,
-      TableNode,
-      TableCellNode,
-      TableRowNode,
-      AutoLinkNode,
-      LinkNode,
-    ],
-    onError,
-  };
+
   const loadedEditorState = useCallback(() => {
     return $convertFromMarkdownString(openFile?.content ?? '');
   }, [openFile?.content]);
@@ -141,21 +146,9 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
       {openFile && (
         <>
           <EditorMiniNav />
-          <div className={styles.TextareaWrap} data-editor-ui={true}>
-            {/*<ReactQuill*/}
-            {/*  key={`editor-${openFile.fileSystemId}`}*/}
-            {/*  ref={editorRef}*/}
-            {/*  defaultValue={convertedContent}*/}
-            {/*  placeholder={'Type here...'}*/}
-            {/*  onChange={handleChange}*/}
-            {/*  onFocus={handleFocus}*/}
-            {/*  onBlur={handleBlur}*/}
-            {/*  preserveWhitespace={true}*/}
-            {/*  theme="snow"*/}
-            {/*  modules={modules}*/}
-            {/*  formats={formats}*/}
-            {/*/>*/}
+          <div className={styles.EditorWrap} data-editor-ui={true}>
             <LexicalComposer
+              key={`editor-${openFile.fileSystemId}`}
               initialConfig={{
                 ...editorConfig,
                 editorState: loadedEditorState,
@@ -169,6 +162,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
               <OnChangePlugin onChange={onChange} />
               <HistoryPlugin />
               <EditorAutoFocusPlugin />
+              <EditorSyncHTMLStatePlugin />
             </LexicalComposer>
             <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
           </div>
