@@ -1,10 +1,9 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import React, { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 import { OpenFileState } from '../../interfaces/OpenFile.interface';
 import { $generateHtmlFromNodes } from '@lexical/html';
-import { $getRoot, RootNode } from 'lexical';
 
 const EditorSyncHTMLStatePlugin: FunctionComponent = () => {
   const [editor] = useLexicalComposerContext();
@@ -36,7 +35,7 @@ const EditorSyncHTMLStatePlugin: FunctionComponent = () => {
     return () => {
       removeUpdateListener();
     };
-  }, [editor]);
+  }, [setOpenFileState, editor]);
 
   return null;
 };

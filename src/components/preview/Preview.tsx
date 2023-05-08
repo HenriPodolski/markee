@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import styles from './Preview.module.scss';
 /* eslint import/no-webpack-loader-syntax: off */
 import rootStyles from '!!raw-loader!./PreviewRoot.module.css';
