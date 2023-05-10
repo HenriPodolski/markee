@@ -25,13 +25,9 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
-import { DEFAULT_TRANSFORMERS } from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import { TRANSFORMERS } from '@lexical/markdown';
 import EditorSyncHTMLStatePlugin from './EditorSyncHTMLStatePlugin';
-import root from 'react-shadow';
-
-const theme = {
-  // Theme styling goes here
-};
+import editorRTETheme from './EditorRTETheme';
 
 const onError = (error: any) => {
   console.error(error);
@@ -58,7 +54,7 @@ export const editorNodes = [
 
 export const editorConfig = {
   namespace: 'MarkeeEditor',
-  theme,
+  theme: editorRTETheme,
   nodes: editorNodes,
   onError,
 };
@@ -87,7 +83,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
       // Read the contents of the EditorState here.
       const root = $getRoot();
 
-      const markdown = $convertToMarkdownString(DEFAULT_TRANSFORMERS, root);
+      const markdown = $convertToMarkdownString(TRANSFORMERS, root);
       if (
         openFile &&
         openFile.path &&
@@ -123,7 +119,10 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
       {openFile && (
         <>
           <EditorMiniNav />
-          <div className={cx(styles.EditorWrap)} data-editor-ui={true}>
+          <div
+            className={cx(styles.EditorWrap, 'editor-container')}
+            data-editor-ui={true}
+          >
             <LexicalComposer
               key={`editor-${openFile.fileSystemId}`}
               initialConfig={{
@@ -131,18 +130,25 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
                 editorState: loadedEditorState,
               }}
             >
-              <RichTextPlugin
-                contentEditable={<ContentEditable />}
-                placeholder={<div>Enter some text...</div>}
-                ErrorBoundary={LexicalErrorBoundary}
-              />
-              <OnChangePlugin onChange={onChange} />
-              <HistoryPlugin />
-              <EditorAutoFocusPlugin />
-              <EditorSyncHTMLStatePlugin />
+              <div className={'editor-inner'}>
+                <RichTextPlugin
+                  contentEditable={
+                    <ContentEditable className={'editor-contenteditable'} />
+                  }
+                  placeholder={
+                    <div className={'editor-placeholder'}>
+                      Enter some text...
+                    </div>
+                  }
+                  ErrorBoundary={LexicalErrorBoundary}
+                />
+                <OnChangePlugin onChange={onChange} />
+                <HistoryPlugin />
+                <EditorAutoFocusPlugin />
+                <EditorSyncHTMLStatePlugin />
+              </div>
+              <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
             </LexicalComposer>
-
-            <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
           </div>
         </>
       )}

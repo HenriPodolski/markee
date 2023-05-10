@@ -1,5 +1,6 @@
 @import "../../styles/variables";
 @import "../../styles/mixins";
+@import "./editor-theme";
 
 .Editor {
   grid-area: b;
@@ -13,13 +14,15 @@
     height: auto;
   }
 
+  @include editor-theme;
+
   [class*="quill"] {
     min-height: 100%;
     height: auto;
   }
 
   // editor specific styling
-  [class*="ql-container"] {
+  [class*="editor-inner"] {
     font-size: 1rem;
     min-height: 100%;
     height: auto;
@@ -35,7 +38,7 @@
     }
   }
 
-  [class*="ql-editor"] {
+  [class*="editor-contenteditable"] {
     display: block;
     height: auto;
     min-height: 100%;

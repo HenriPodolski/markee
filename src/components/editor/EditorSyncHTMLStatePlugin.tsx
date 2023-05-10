@@ -16,7 +16,7 @@ const EditorSyncHTMLStatePlugin: FunctionComponent = () => {
       setOpenFileState((prev) => {
         return {
           ...prev,
-          html: htmlString,
+          html: htmlString.replace(/class="[a-z- ]+?"/gim, ''),
         } as OpenFileState;
       });
     };
