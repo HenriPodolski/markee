@@ -127,6 +127,15 @@ const App = () => {
     prepareEditorDefaultState();
   }, [tree, fileSystem, setFileSystem, openFile, setOpenFile]);
 
+  useEffect(() => {
+    setApp((prev) => {
+      return {
+        ...prev,
+        editorActive: app?.inView?.includes(Views.editor),
+      };
+    });
+  }, [app?.inView]);
+
   /**
    * used to reset UI elements and/or state
    * when the user does something else
@@ -135,19 +144,11 @@ const App = () => {
   const handleAppClick = (evt: MouseEvent) => {
     const clickedElement: HTMLElement = evt.target as HTMLElement;
     const fileSelectUIParent = document.querySelector('[data-file-select-ui]');
-    const editorUIParent = document.querySelector('[data-editor-ui]');
 
     if (!fileSelectUIParent?.contains(clickedElement)) {
       setApp((prev: AppState) => ({
         ...prev,
         showFileDeletionUI: false,
-      }));
-    }
-
-    if (!editorUIParent?.contains(clickedElement)) {
-      setApp((prev: AppState) => ({
-        ...prev,
-        editorActive: false,
       }));
     }
   };

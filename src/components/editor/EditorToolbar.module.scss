@@ -1,6 +1,10 @@
+@import "../../styles/mixins";
+
 .EditorToolbar {
   position: sticky;
   bottom: 0;
+  background-color: var(--color-white);
+  @include shadow-top;
   * {
     user-select: none;
   }

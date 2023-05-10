@@ -9,6 +9,7 @@
   align-items: center;
   background-color: var(--color-white);
   @include shadow-bottom;
+  border-top: 2px solid var(--color-white);
 }
 
 .NavList {

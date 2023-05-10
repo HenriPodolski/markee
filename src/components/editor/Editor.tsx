@@ -27,6 +27,7 @@ import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { DEFAULT_TRANSFORMERS } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import EditorSyncHTMLStatePlugin from './EditorSyncHTMLStatePlugin';
+import root from 'react-shadow';
 
 const theme = {
   // Theme styling goes here
@@ -79,15 +80,6 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
     };
   }, []);
 
-  // useMemo(() => {
-  //   if (openFile?.content) {
-  //     const renderedMarkup = md2html
-  //       .render(openFile.content)
-  //       .replace(/[\r\n]+/g, '');
-  //     setConvertedContent(renderedMarkup);
-  //   }
-  // }, [openFile?.content]);
-
   // When the editor changes, you can get notified via the
   // LexicalOnChangePlugin!
   const onChange = (editorState: any) => {
@@ -103,7 +95,6 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
         openFile.content !== markdown
       ) {
         setOpenFile({ ...openFile, content: markdown, saved: false });
-        console.log(markdown);
       }
     });
   };
@@ -127,26 +118,12 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
     // }
   };
 
-  const handleFocus = () => {
-    setApp((prev: AppState) => ({
-      ...prev,
-      editorActive: true,
-    }));
-  };
-
-  const handleBlur = () => {
-    setApp((prev: AppState) => ({
-      ...prev,
-      editorActive: false,
-    }));
-  };
-
   return (
     <div id={id} className={cx(styles.Editor, className)}>
       {openFile && (
         <>
           <EditorMiniNav />
-          <div className={styles.EditorWrap} data-editor-ui={true}>
+          <div className={cx(styles.EditorWrap)} data-editor-ui={true}>
             <LexicalComposer
               key={`editor-${openFile.fileSystemId}`}
               initialConfig={{
@@ -164,6 +141,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
               <EditorAutoFocusPlugin />
               <EditorSyncHTMLStatePlugin />
             </LexicalComposer>
+
             <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
           </div>
         </>
