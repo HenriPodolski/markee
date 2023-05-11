@@ -119,16 +119,16 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
       {openFile && (
         <>
           <EditorMiniNav />
-          <div
-            className={cx(styles.EditorWrap, 'editor-container')}
-            data-editor-ui={true}
+          <LexicalComposer
+            key={`editor-${openFile.fileSystemId}`}
+            initialConfig={{
+              ...editorConfig,
+              editorState: loadedEditorState,
+            }}
           >
-            <LexicalComposer
-              key={`editor-${openFile.fileSystemId}`}
-              initialConfig={{
-                ...editorConfig,
-                editorState: loadedEditorState,
-              }}
+            <div
+              className={cx(styles.EditorWrap, 'editor-container')}
+              data-editor-ui={true}
             >
               <div className={'editor-inner'}>
                 <RichTextPlugin
@@ -147,9 +147,9 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
                 <EditorAutoFocusPlugin />
                 <EditorSyncHTMLStatePlugin />
               </div>
-              <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
-            </LexicalComposer>
-          </div>
+            </div>
+            <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
+          </LexicalComposer>
         </>
       )}
     </div>

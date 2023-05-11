@@ -6,6 +6,9 @@
   grid-area: b;
   position: relative;
   height: 100vh;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
   overflow: auto;
   border-left: 2px solid var(--color-grey-300);
   border-right: 2px solid var(--color-grey-300);
@@ -23,10 +26,12 @@
 
   // editor specific styling
   [class*="editor-inner"] {
+    position: relative;
     font-size: 1rem;
+    flex: 1 1 auto;
     min-height: 100%;
     height: auto;
-    padding: var(--size-1);
+    padding: var(--size-3);
 
     & > * {
       word-break: break-word;
@@ -41,7 +46,6 @@
   [class*="editor-contenteditable"] {
     display: block;
     height: auto;
-    min-height: 100%;
     left: var(--size-1);
     right: var(--size-1);
     caret-color: var(--color-blue-700);
@@ -52,6 +56,15 @@
         left: var(--size-8);
         right: var(--size-8);
       }
+    }
+  }
+
+  [class*="editor-placeholder"] {
+    top: var(--size-3);
+    left: var(--size-3);
+    @media screen and (min-width: $breakpoint-sm) {
+      top: var(--size-8);
+      left: var(--size-8);
     }
   }
 
@@ -72,9 +85,5 @@
 .EditorWrap {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
-
-  & > *:first-child {
-    flex: 1 1 auto;
-  }
+  flex: 1 1 auto;
 }
