@@ -2,6 +2,7 @@ import { selector, selectorFamily } from 'recoil';
 import { fileSystemState } from './fileSystem.atoms';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { FileSystemSortedByEnum, FileSystemTypeEnum } from './fileSystem.enums';
+import { openFileState } from '../openFile/openFile.atoms';
 
 export const fileSystemTreeSelector = selectorFamily({
   key: 'fileSystemTreeSelector',
@@ -104,5 +105,18 @@ export const fileSystemItemsMarkedForDeletion = selector({
     return items.filter((item: FileSystemItem) => {
       return item.markedForDeletion;
     });
+  },
+});
+
+export const fileSystemItemOfOpenFileSelector = selector({
+  key: 'fileSystemItemOfOpenFileSelector',
+  get: ({ get }) => {
+    const openFile = get(openFileState);
+    const fileSystemItems = get(fileSystemState);
+    const foundItem = fileSystemItems.find((item: FileSystemItem) => {
+      return openFile?.fileSystemId && item.id === openFile?.fileSystemId;
+    });
+
+    return foundItem;
   },
 });

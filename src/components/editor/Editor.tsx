@@ -2,7 +2,7 @@ import React, { FunctionComponent, useCallback, useEffect } from 'react';
 import styles from './Editor.module.scss';
 import cx from 'classnames';
 import { openFileState } from '../../store/openFile/openFile.atoms';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { appState } from '../../store/app/app.atoms';
 import { AppState } from '../../interfaces/AppState.interface';
 import EditorMiniNav from './EditorMiniNav';
@@ -24,6 +24,8 @@ import editorRTETheme from './EditorRTETheme';
 import EditorToolbarPlugin from './EditorToolbarPlugin';
 import EditorSyncStateOnAnyChangePlugin from './EditorSyncStateOnAnyChangePlugin';
 import { useTranslation } from 'react-i18next';
+import { fileSystemItemOfOpenFileSelector } from '../../store/fileSystem/fileSystem.selectors';
+import DateOutput from '../shared/DateOutput';
 
 const onError = (error: any) => {
   console.error(error);
@@ -56,13 +58,22 @@ export const editorConfig = {
 };
 
 const Editor: FunctionComponent<Props> = ({ id, className }) => {
-  const { t } = useTranslation('editor');
+  const { t, i18n } = useTranslation('editor');
   const [openFile] = useRecoilState(openFileState);
   const setApp = useSetRecoilState(appState);
+  const fileSystemItem = useRecoilValue(fileSystemItemOfOpenFileSelector);
 
   const loadedEditorState = useCallback(() => {
     return $convertFromMarkdownString(openFile?.content ?? '');
   }, [openFile?.content]);
+
+  const modifiedDate = useCallback(() => {
+    if (fileSystemItem?.modified) {
+      return new Date(fileSystemItem.modified);
+    }
+
+    return null;
+  }, [fileSystemItem?.modified]);
 
   useEffect(() => {
     return () => {
@@ -99,9 +110,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
                   className={styles.TitleInput}
                   type="text"
                 />
-                <time className={styles.DateOutput} dateTime="20:00">
-                  Heute, 20:00 Uhr
-                </time>
+                {modifiedDate() && <DateOutput date={modifiedDate() as Date} />}
               </div>
               <div className={'editor-inner'}>
                 <RichTextPlugin

@@ -4,5 +4,7 @@
   "collection_one": "Sammlung",
   "collection_other": "Sammlungen",
   "note_one": "Notiz",
-  "note_other": "Notizen"
+  "note_other": "Notizen",
+  "date-time-output": "{{val, datetime}}",
+  "date-relative-time-output": "{{val, relativetime(style: long; numeric: auto)}}"
 }
