@@ -513,7 +513,7 @@ export default function ToolbarPlugin() {
   }, [editor, isLink]);
 
   return (
-    <div className="toolbar" ref={toolbarRef}>
+    <div className={styles.EditorToolbarPlugin} ref={toolbarRef}>
       {supportedBlockTypes.has(blockType) && (
         <>
           <button

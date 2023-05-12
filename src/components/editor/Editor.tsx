@@ -24,6 +24,7 @@ import { AutoLinkNode, LinkNode } from '@lexical/link';
 import editorRTETheme from './EditorRTETheme';
 import EditorToolbarPlugin from './EditorToolbarPlugin';
 import EditorSyncStateOnAnyChangePlugin from './EditorSyncStateOnAnyChangePlugin';
+import { useTranslation } from 'react-i18next';
 
 const onError = (error: any) => {
   console.error(error);
@@ -56,7 +57,8 @@ export const editorConfig = {
 };
 
 const Editor: FunctionComponent<Props> = ({ id, className }) => {
-  const [openFile, setOpenFile] = useRecoilState(openFileState);
+  const { t } = useTranslation('editor');
+  const [openFile] = useRecoilState(openFileState);
   const setApp = useSetRecoilState(appState);
 
   const loadedEditorState = useCallback(() => {
@@ -99,7 +101,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
                   }
                   placeholder={
                     <div className={'editor-placeholder'}>
-                      Enter some text...
+                      {t('editor-placeholder')}
                     </div>
                   }
                   ErrorBoundary={LexicalErrorBoundary}

@@ -10,10 +10,12 @@ import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 import { createDirectory } from '../../store/fileSystem/fileSystem.services';
 import { ReactComponent as Check } from '../../icons/check.svg';
+import { useTranslation } from 'react-i18next';
 
 interface Props {}
 
 const FileTreeFolderNameInput: FunctionComponent<Props> = () => {
+  const { t } = useTranslation('filetree');
   const [app, setApp] = useRecoilState(appState);
   const [directoryName, setDirectoryName] = useState('');
 
@@ -84,7 +86,7 @@ const FileTreeFolderNameInput: FunctionComponent<Props> = () => {
           value={directoryName}
           autoFocus={true}
           autoComplete="off"
-          placeholder="Enter folder name..."
+          placeholder={t('note-creation-placeholder') as string}
           required
           pattern="[a-zA-Z0-9_\\-\\.]+"
         />

@@ -5,7 +5,9 @@ import { appState } from '../../../store/app/app.atoms';
 import { AppState } from '../../../interfaces/AppState.interface';
 import { ReactComponent as DeleteSelectIcon } from '../../../icons/delete.svg';
 import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 const DeleteControl: FunctionComponent = () => {
+  const { t } = useTranslation('navbar');
   const setApp = useSetRecoilState(appState);
   const onButtonClick = (evt: MouseEvent) => {
     evt.stopPropagation();
@@ -22,7 +24,7 @@ const DeleteControl: FunctionComponent = () => {
       onClick={onButtonClick}
     >
       <DeleteSelectIcon />
-      Delete
+      {t('delete-button-label')}
     </button>
   );
 };

@@ -2,8 +2,11 @@ import React, { FunctionComponent } from 'react';
 import styles from './Controls.module.scss';
 import { ReactComponent as EditorIcon } from '../../../icons/pencil.svg';
 import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 const GoToEditorControl: FunctionComponent = () => {
+  const { t } = useTranslation('navbar');
+
   const onButtonClick = async () => {
     const editorElement = document.getElementById('editor');
     const splitViewElement = document.getElementById('split-view-section');
@@ -22,7 +25,7 @@ const GoToEditorControl: FunctionComponent = () => {
       onClick={onButtonClick}
     >
       <EditorIcon />
-      Editor
+      {t('editor-view-button-label')}
     </button>
   );
 };

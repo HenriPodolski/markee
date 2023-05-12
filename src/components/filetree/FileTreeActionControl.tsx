@@ -10,6 +10,7 @@ import { deleteFileSystemItem } from '../../store/fileSystem/fileSystem.services
 import { FileSystemTypeEnum } from '../../store/fileSystem/fileSystem.enums';
 import { ReactComponent as DeleteIcon } from '../../icons/delete.svg';
 import { ReactComponent as CancelIcon } from '../../icons/cancel.svg';
+import { useTranslation } from 'react-i18next';
 
 export type Props = {
   className?: string;
@@ -18,6 +19,7 @@ export type Props = {
 const FileTreeActionControl: FunctionComponent<Props> = ({
   className,
 }: Props) => {
+  const { t } = useTranslation('filetree');
   const itemsMarkedForDeletion = useRecoilValue(
     fileSystemItemsMarkedForDeletion
   );
@@ -101,14 +103,18 @@ const FileTreeActionControl: FunctionComponent<Props> = ({
         disabled={itemsMarkedForDeletion.length === 0}
       >
         <DeleteIcon />
-        <span className={styles.ActionButtonLabel}>Delete</span>
+        <span className={styles.ActionButtonLabel}>
+          {t('delete-action-button-label')}
+        </span>
         <sup className={styles.ActionButtonBadge}>
           <span>{itemsMarkedForDeletion.length}</span>
         </sup>
       </button>
       <button className={styles.ActionButton} onClick={handleCancelButtonClick}>
         <CancelIcon />
-        <span className={styles.ActionButtonLabel}>Cancel</span>
+        <span className={styles.ActionButtonLabel}>
+          {t('cancel-delete-action-button-label')}
+        </span>
       </button>
     </div>
   );

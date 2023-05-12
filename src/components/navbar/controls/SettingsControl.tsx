@@ -1,7 +1,9 @@
 import React, { FunctionComponent } from 'react';
 import styles from './Controls.module.scss';
+import { useTranslation } from 'react-i18next';
 
 const SettingsControl: FunctionComponent = () => {
+  const { t } = useTranslation('navbar');
   const onButtonClick = () => {
     console.log('Button clicked');
   };
@@ -12,7 +14,7 @@ const SettingsControl: FunctionComponent = () => {
       type="button"
       onClick={onButtonClick}
     >
-      Settings
+      {t('settings-button-label')}
     </button>
   );
 };

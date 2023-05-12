@@ -125,7 +125,7 @@
     display: inline-block;
     height: 8px;
     width: 8px;
-    background-image: url(images/icons/chevron-down[class*=svg]);
+    //background-image: url(images/icons/chevron-down.svg);
   }
 
   #block-controls button:hover {
@@ -145,31 +145,31 @@
   }
 
   #block-controls span[class*=block-type][class*=paragraph] {
-    background-image: url(images/icons/text-paragraph.svg);
+    //background-image: url(images/icons/text-paragraph.svg);
   }
 
   #block-controls span[class*=block-type][class*=h1] {
-    background-image: url(images/icons/type-h1[class*=svg]);
+    //background-image: url(images/icons/type-h1[class*=svg]);
   }
 
   #block-controls span[class*=block-type][class*=h2] {
-    background-image: url(images/icons/type-h2.svg);
+    //background-image: url(images/icons/type-h2.svg);
   }
 
   #block-controls span[class*=block-type][class*=quote] {
-    background-image: url(images/icons/chat-square-quote.svg);
+    //background-image: url(images/icons/chat-square-quote.svg);
   }
 
   #block-controls span[class*=block-type][class*=ul] {
-    background-image: url(images/icons/list-ul.svg);
+    //background-image: url(images/icons/list-ul.svg);
   }
 
   #block-controls span[class*=block-type][class*=ol] {
-    background-image: url(images/icons/list-ol.svg);
+    //background-image: url(images/icons/list-ol.svg);
   }
 
   #block-controls span[class*=block-type][class*=code] {
-    background-image: url(images/icons/code.svg);
+    //background-image: url(images/icons/code.svg);
   }
 
   [class*=dropdown] {
@@ -270,7 +270,7 @@
   }
 
   [class*=link-editor] div[class*=link-edit] {
-    background-image: url(images/icons/pencil-fill.svg);
+    //background-image: url(images/icons/pencil-fill.svg);
     background-size: 16px;
     background-position: center;
     background-repeat: no-repeat;
@@ -324,86 +324,86 @@
   }
 
   i[class*=undo] {
-    background-image: url(images/icons/arrow-counterclockwise.svg);
+    //background-image: url(images/icons/arrow-counterclockwise.svg);
   }
 
   i[class*=redo] {
-    background-image: url(images/icons/arrow-clockwise.svg);
+    //background-image: url(images/icons/arrow-clockwise.svg);
   }
 
   [class*=icon][class*=paragraph] {
-    background-image: url(images/icons/text-paragraph.svg);
+    //background-image: url(images/icons/text-paragraph.svg);
   }
 
   [class*=icon][class*=large-heading],
   [class*=icon][class*=h1] {
-    background-image: url(images/icons/type-h1.svg);
+    //background-image: url(images/icons/type-h1.svg);
   }
 
   [class*=icon][class*=small-heading],
   [class*=icon][class*=h2] {
-    background-image: url(images/icons/type-h2.svg);
+    //background-image: url(images/icons/type-h2.svg);
   }
 
   [class*=icon][class*=bullet-list],
   [class*=icon][class*=ul] {
-    background-image: url(images/icons/list-ul.svg);
+    //background-image: url(images/icons/list-ul.svg);
   }
 
   [class*=icon][class*=numbered-list],
   [class*=icon][class*=ol] {
-    background-image: url(images/icons/list-ol.svg);
+    //background-image: url(images/icons/list-ol.svg);
   }
 
   [class*=icon][class*=quote] {
-    background-image: url(images/icons/chat-square-quote.svg);
+    //background-image: url(images/icons/chat-square-quote.svg);
   }
 
   [class*=icon][class*=code] {
-    background-image: url(images/icons/code.svg);
+    //background-image: url(images/icons/code.svg);
   }
 
   i[class*=bold] {
-    background-image: url(images/icons/type-bold.svg);
+    //background-image: url(images/icons/type-bold.svg);
   }
 
   i[class*=italic] {
-    background-image: url(images/icons/type-italic.svg);
+    //background-image: url(images/icons/type-italic.svg);
   }
 
   i[class*=underline] {
-    background-image: url(images/icons/type-underline.svg);
+    //background-image: url(images/icons/type-underline.svg);
   }
 
   i[class*=strikethrough] {
-    background-image: url(images/icons/type-strikethrough.svg);
+    //background-image: url(images/icons/type-strikethrough.svg);
   }
 
   i[class*=code] {
-    background-image: url(images/icons/code.svg);
+    //background-image: url(images/icons/code.svg);
   }
 
   i[class*=link] {
-    background-image: url(images/icons/link.svg);
+    //background-image: url(images/icons/link.svg);
   }
 
   i[class*=left-align] {
-    background-image: url(images/icons/text-left.svg);
+    //background-image: url(images/icons/text-left.svg);
   }
 
   i[class*=center-align] {
-    background-image: url(images/icons/text-center.svg);
+    //background-image: url(images/icons/text-center.svg);
   }
 
   i[class*=right-align] {
-    background-image: url(images/icons/text-right.svg);
+    //background-image: url(images/icons/text-right.svg);
   }
 
   i[class*=justify-align] {
-    background-image: url(images/icons/justify.svg);
+    //background-image: url(images/icons/justify.svg);
   }
 
   i[class*=markdown] {
-    background-image: url(images/icons/markdown[class*=svg]);
+    //background-image: url(images/icons/markdown[class*=svg]);
   }
 }

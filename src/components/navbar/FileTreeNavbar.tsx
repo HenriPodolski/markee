@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styles from './Navbar.module.scss';
-import SaveFileControl from './controls/SaveFileControl';
+import SyncFilesControl from './controls/SyncFilesControl';
 import NewFolderControl from './controls/NewFolderControl';
 import NewFileControl from './controls/NewFileControl';
 import SettingsControl from './controls/SettingsControl';

@@ -10,8 +10,10 @@ import { saveOpenFileContent } from '../../store/openFile/openFile.services';
 import { getChangesFromFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { openFileState } from '../../store/openFile/openFile.atoms';
+import { useTranslation } from 'react-i18next';
 
 const EditorMiniNav = () => {
+  const { t } = useTranslation('editor');
   const app = useRecoilValue(appState);
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
@@ -70,9 +72,12 @@ const EditorMiniNav = () => {
             <button
               onClick={handleBackButtonClick}
               className={styles.BackButton}
+              title={t('mini-navbar-back-a11y-label') as string}
             >
               <ArrowLeftIcon />
-              <span className="visually-hidden">Back</span>
+              <span className="visually-hidden">
+                {t('mini-navbar-back-a11y-label')}
+              </span>
             </button>
           </li>
         )}
@@ -81,9 +86,12 @@ const EditorMiniNav = () => {
             disabled={openFile?.saved}
             onClick={handleSaveButtonClick}
             className={styles.SaveButton}
+            title={t('mini-navbar-save-a11y-label') as string}
           >
             <CheckIcon />
-            <span className="visually-hidden">Save</span>
+            <span className="visually-hidden">
+              {t('mini-navbar-save-a11y-label')}
+            </span>
           </button>
         </li>
       </ol>

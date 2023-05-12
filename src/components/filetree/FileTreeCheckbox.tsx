@@ -11,12 +11,14 @@ import {
 } from '../../store/fileSystem/fileSystem.services';
 import { FileSystemTypeEnum } from '../../store/fileSystem/fileSystem.enums';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
+import { useTranslation } from 'react-i18next';
 
 export type Props = {
   id: string;
   fileName: string;
 };
 const FileTreeCheckbox: FunctionComponent<Props> = ({ id, fileName }) => {
+  const { t } = useTranslation('filetree');
   const fileSystemItem = useRecoilValue(fileSystemItemByIdSelector(id));
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
   const handleClick = () => {
@@ -60,7 +62,9 @@ const FileTreeCheckbox: FunctionComponent<Props> = ({ id, fileName }) => {
   return (
     <form className={styles.FileTreeCheckbox}>
       <label htmlFor={`checkbox-${id}`}>
-        <span className="visually-hidden">Select {fileName}</span>
+        <span className="visually-hidden">
+          {t('select-checkbox-a11y-label', { fileName })}
+        </span>
         {fileSystemItem?.markedForDeletion ? <CheckedBox /> : <UnCheckedBox />}
       </label>
       <input

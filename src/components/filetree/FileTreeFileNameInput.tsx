@@ -10,10 +10,12 @@ import { createFile } from '../../store/fileSystem/fileSystem.services';
 import { FileSystemItem } from '../../interfaces/FileSystemItem.interface';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 import { ReactComponent as Check } from '../../icons/check.svg';
+import { useTranslation } from 'react-i18next';
 
 interface Props {}
 
 const FileTreeFileNameInput: FunctionComponent<Props> = () => {
+  const { t } = useTranslation('filetree');
   const [app, setApp] = useRecoilState(appState);
   const [fileName, setFileName] = useState('');
   const createFileTransaction = useRecoilTransaction_UNSTABLE(
@@ -85,7 +87,7 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
         onBlur={handleBlur}
         autoFocus={true}
         autoComplete="off"
-        placeholder="Enter file name..."
+        placeholder={t('note-creation-placeholder') as string}
         required
         pattern="[a-zA-Z0-9_\\-\\.]+"
       />

@@ -3,8 +3,10 @@ import styles from './Controls.module.scss';
 import { useRecoilValue } from 'recoil';
 import { openFileState } from '../../../store/openFile/openFile.atoms';
 import { saveOpenFileContent } from '../../../store/openFile/openFile.services';
+import { useTranslation } from 'react-i18next';
 
-const SaveFileControl: FunctionComponent = () => {
+const SyncFilesControl: FunctionComponent = () => {
+  const { t } = useTranslation('navbar');
   const openFile = useRecoilValue(openFileState);
 
   const onButtonClick = async () => {
@@ -20,9 +22,9 @@ const SaveFileControl: FunctionComponent = () => {
       type="button"
       onClick={onButtonClick}
     >
-      Save
+      {t('sync-button-label')}
     </button>
   );
 };
 
-export default SaveFileControl;
+export default SyncFilesControl;

@@ -5,7 +5,9 @@ import { appState } from '../../../store/app/app.atoms';
 import { fileSystemActiveItemDirectorySelector } from '../../../store/fileSystem/fileSystem.selectors';
 import { ReactComponent as NewNoteBookIcon } from '../../../icons/book-plus.svg';
 import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 const NewFolderControl: FunctionComponent = () => {
+  const { t } = useTranslation('navbar');
   const [app, setApp] = useRecoilState(appState);
   const activeFileSystemFolder = useRecoilValue(
     fileSystemActiveItemDirectorySelector
@@ -24,7 +26,7 @@ const NewFolderControl: FunctionComponent = () => {
       onClick={onButtonClick}
     >
       <NewNoteBookIcon />
-      New Folder
+      {t('new-collection-button-label')}
     </button>
   );
 };
