@@ -87,3 +87,23 @@
   flex-direction: column;
   flex: 1 1 auto;
 }
+
+.TitleForm {
+  display: flex;
+  flex-direction: column;
+  padding: var(--size-3) var(--size-3) 0 var(--size-3);
+
+  @media screen and (min-width: $breakpoint-sm) {
+    padding: var(--size-8) var(--size-8) 0 var(--size-8);
+  }
+}
+
+.TitleInput {
+  caret-color: var(--color-blue-700);
+  font-weight: bold;
+  font-size: var(--scale-3);
+}
+
+.DateOutput {
+  font-size: var(--scale-000);
+}

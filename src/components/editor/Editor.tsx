@@ -5,7 +5,6 @@ import { openFileState } from '../../store/openFile/openFile.atoms';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { appState } from '../../store/app/app.atoms';
 import { AppState } from '../../interfaces/AppState.interface';
-import EditorToolbar from './EditorToolbar';
 import EditorMiniNav from './EditorMiniNav';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
@@ -94,6 +93,16 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
               className={cx(styles.EditorWrap, 'editor-container')}
               data-editor-ui={true}
             >
+              <div className={styles.TitleForm}>
+                <input
+                  placeholder={t('title-placeholder') as string}
+                  className={styles.TitleInput}
+                  type="text"
+                />
+                <time className={styles.DateOutput} dateTime="20:00">
+                  Heute, 20:00 Uhr
+                </time>
+              </div>
               <div className={'editor-inner'}>
                 <RichTextPlugin
                   contentEditable={
