@@ -10,21 +10,22 @@ import { saveOpenFileContent } from '../../store/openFile/openFile.services';
 import { getChangesFromFileSystemItemById } from '../../store/fileSystem/fileSystem.services';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { openFileState } from '../../store/openFile/openFile.atoms';
-import { OpenFileState } from '../../interfaces/OpenFile.interface';
 
 const EditorMiniNav = () => {
   const app = useRecoilValue(appState);
-  const openFile = useRecoilValue(openFileState);
+  const [openFile, setOpenFile] = useRecoilState(openFileState);
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
-  const setOpenFile = useSetRecoilState(openFileState);
+
   const save = async () => {
     if (!openFile?.path) {
       console.error('File has no path');
     }
+
     const savedFile = await saveOpenFileContent(
       openFile?.path as string,
       openFile?.content as string
     );
+
     setFileSystem(
       getChangesFromFileSystemItemById({
         id: openFile?.fileSystemId as string,
@@ -35,12 +36,7 @@ const EditorMiniNav = () => {
       })
     );
 
-    setOpenFile((prev: OpenFileState) => {
-      return {
-        ...prev,
-        saved: true,
-      } as OpenFileState;
-    });
+    setOpenFile((prev) => ({ ...prev, saved: true }));
   };
 
   useEffect(() => {
@@ -55,7 +51,7 @@ const EditorMiniNav = () => {
     return () => {
       document.removeEventListener('keydown', handleSaveShortcut);
     };
-  }, []);
+  }, [openFile?.content]);
 
   const handleSaveButtonClick = async () => {
     await save();

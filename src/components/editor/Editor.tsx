@@ -7,27 +7,23 @@ import { appState } from '../../store/app/app.atoms';
 import { AppState } from '../../interfaces/AppState.interface';
 import EditorToolbar from './EditorToolbar';
 import EditorMiniNav from './EditorMiniNav';
-import { $getRoot } from 'lexical';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import EditorAutoFocusPlugin from './EditorAutoFocusPlugin';
-import {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-} from '@lexical/markdown';
+import { $convertFromMarkdownString } from '@lexical/markdown';
 // lexical, taken from here: https://codesandbox.io/s/lexical-markdown-plugin-example-4076jq?from-embed=&file=/src/styles.css
+// more examples: https://codesandbox.io/u/akmarzhan1, https://codesandbox.io/search?refinementList%5Btemplate%5D=&refinementList%5Bnpm_dependencies.dependency%5D%5B0%5D=lexical&page=1&configure%5BhitsPerPage%5D=12
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
-import { TRANSFORMERS } from '@lexical/markdown';
-import EditorSyncHTMLStatePlugin from './EditorSyncHTMLStatePlugin';
 import editorRTETheme from './EditorRTETheme';
+import EditorToolbarPlugin from './EditorToolbarPlugin';
+import EditorSyncStateOnAnyChangePlugin from './EditorSyncStateOnAnyChangePlugin';
 
 const onError = (error: any) => {
   console.error(error);
@@ -78,41 +74,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
 
   // When the editor changes, you can get notified via the
   // LexicalOnChangePlugin!
-  const onChange = (editorState: any) => {
-    editorState.read(() => {
-      // Read the contents of the EditorState here.
-      const root = $getRoot();
-
-      const markdown = $convertToMarkdownString(TRANSFORMERS, root);
-      if (
-        openFile &&
-        openFile.path &&
-        !openFile.loading &&
-        openFile.content !== markdown
-      ) {
-        setOpenFile({ ...openFile, content: markdown, saved: false });
-      }
-    });
-  };
-
-  const handleChange = async (content: string) => {
-    // const revisedContent = content.replace('<p><br></p>', '');
-    // const markdown = html2md.translate(revisedContent);
-    // // this block is used to check if there is any text content
-    // const checkElement = document.createElement('div');
-    // checkElement.innerHTML = revisedContent;
-    // const checkText = checkElement.innerText;
-    //
-    // if (
-    //   openFile &&
-    //   openFile.path &&
-    //   !openFile.loading &&
-    //   checkText &&
-    //   openFile.content !== markdown
-    // ) {
-    //   setOpenFile({ ...openFile, content: markdown, saved: false });
-    // }
-  };
+  const handleChange = (editorState: any) => {};
 
   return (
     <div id={id} className={cx(styles.Editor, className)}>
@@ -142,13 +104,14 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
                   }
                   ErrorBoundary={LexicalErrorBoundary}
                 />
-                <OnChangePlugin onChange={onChange} />
+                <EditorSyncStateOnAnyChangePlugin onChange={handleChange} />
                 <HistoryPlugin />
                 <EditorAutoFocusPlugin />
-                <EditorSyncHTMLStatePlugin />
               </div>
             </div>
-            <EditorToolbar key={`editor-toolbar-${openFile.fileSystemId}`} />
+            <EditorToolbarPlugin
+              key={`editor-toolbar-${openFile.fileSystemId}`}
+            />
           </LexicalComposer>
         </>
       )}

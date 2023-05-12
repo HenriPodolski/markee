@@ -1,11 +1,7 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import {
-  AppState,
-  Breakpoints,
-  Views,
-} from '../../interfaces/AppState.interface';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { Breakpoints, Views } from '../../interfaces/AppState.interface';
+import { useRecoilState } from 'recoil';
 import { appState } from '../../store/app/app.atoms';
 import { BLUR_COMMAND, COMMAND_PRIORITY_LOW, FOCUS_COMMAND } from 'lexical';
 
