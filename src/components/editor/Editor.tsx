@@ -1,4 +1,12 @@
-import React, { FunctionComponent, useCallback, useEffect } from 'react';
+import React, {
+  ChangeEvent,
+  ChangeEventHandler,
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import styles from './Editor.module.scss';
 import cx from 'classnames';
 import { openFileState } from '../../store/openFile/openFile.atoms';
@@ -58,7 +66,8 @@ export const editorConfig = {
 };
 
 const Editor: FunctionComponent<Props> = ({ id, className }) => {
-  const { t, i18n } = useTranslation('editor');
+  const { t } = useTranslation('editor');
+  const [title, setTitle] = useState('');
   const [openFile] = useRecoilState(openFileState);
   const setApp = useSetRecoilState(appState);
   const fileSystemItem = useRecoilValue(fileSystemItemOfOpenFileSelector);
@@ -76,6 +85,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
   }, [fileSystemItem?.modified]);
 
   useEffect(() => {
+    setTitle('');
     return () => {
       setApp((prev: AppState) => ({
         ...prev,
@@ -84,9 +94,38 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
     };
   }, []);
 
-  // When the editor changes, you can get notified via the
-  // LexicalOnChangePlugin!
-  const handleChange = (editorState: any) => {};
+  useEffect(() => {
+    // loads document -> use title from store
+    setTitle(fileSystemItem?.title ?? '');
+  }, [fileSystemItem?.title, fileSystemItem?.id]);
+
+  const handleTitleChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    setTitle(evt.target.value);
+  };
+
+  // if store title empty, use first line
+  // if changed by the user, use this
+
+  const handleEditorTextChange = (content: string) => {
+    if (fileSystemItem?.title) {
+      return;
+    }
+
+    const matches = content.match(/.*/);
+    if (matches?.[0]) {
+      let cleanTitle = matches[0].replaceAll(/[^a-zA-Z0-9,\-_ ]+/gm, '');
+      if (cleanTitle.length > 20) {
+        cleanTitle = cleanTitle.substring(0, 20);
+        const lastSpaceIndex = cleanTitle.lastIndexOf(' ');
+        cleanTitle = lastSpaceIndex
+          ? cleanTitle.substring(0, lastSpaceIndex)
+          : cleanTitle;
+      }
+      setTitle(cleanTitle ?? fileSystemItem?.title ?? '');
+    } else {
+      setTitle('');
+    }
+  };
 
   return (
     <div id={id} className={cx(styles.Editor, className)}>
@@ -108,9 +147,18 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
                 <input
                   placeholder={t('title-placeholder') as string}
                   className={styles.TitleInput}
+                  onChange={handleTitleChange}
+                  value={title}
+                  minLength={2}
+                  maxLength={20}
                   type="text"
                 />
-                {modifiedDate() && <DateOutput date={modifiedDate() as Date} />}
+                {modifiedDate() && (
+                  <DateOutput
+                    key={`date-output-${fileSystemItem?.id}`}
+                    date={modifiedDate() as Date}
+                  />
+                )}
               </div>
               <div className={'editor-inner'}>
                 <RichTextPlugin
@@ -124,7 +172,9 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
                   }
                   ErrorBoundary={LexicalErrorBoundary}
                 />
-                <EditorSyncStateOnAnyChangePlugin onChange={handleChange} />
+                <EditorSyncStateOnAnyChangePlugin
+                  onChange={handleEditorTextChange}
+                />
                 <HistoryPlugin />
                 <EditorAutoFocusPlugin />
               </div>

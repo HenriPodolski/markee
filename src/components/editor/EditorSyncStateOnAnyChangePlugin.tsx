@@ -10,7 +10,7 @@ import { useRecoilState } from 'recoil';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 
 export type Props = {
-  onChange: (editorState: EditorState, editor: LexicalEditor) => void;
+  onChange?: (content: string) => void;
 };
 const EditorSyncStateOnAnyChangePlugin: FunctionComponent<Props> = ({
   onChange,
@@ -25,6 +25,10 @@ const EditorSyncStateOnAnyChangePlugin: FunctionComponent<Props> = ({
         const root = $getRoot();
         const htmlString = $generateHtmlFromNodes(editor, null);
         const markdown = $convertToMarkdownString(TRANSFORMERS, root);
+
+        if (onChange) {
+          onChange(root.getTextContent());
+        }
 
         if (openFile && openFile.path && !openFile.loading) {
           setOpenFile((prev) => {
