@@ -1,6 +1,6 @@
 import { FunctionComponent, useLayoutEffect, useState } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getRoot, EditorState, LexicalEditor } from 'lexical';
+import { $getRoot } from 'lexical';
 import debounce from 'lodash.debounce';
 import { TRANSFORMERS } from '@lexical/markdown';
 import { $convertToMarkdownString } from '@lexical/markdown';
@@ -10,37 +10,52 @@ import { useRecoilState } from 'recoil';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 
 export type Props = {
-  onChange?: (content: string) => void;
+  onChange?: (content: string, title?: string) => void;
+  title?: string;
 };
 const EditorSyncStateOnAnyChangePlugin: FunctionComponent<Props> = ({
   onChange,
+  title,
 }) => {
   const [editor] = useLexicalComposerContext();
   const [content, setContent] = useState('');
   const [openFile, setOpenFile] = useRecoilState(openFileState);
 
+  const announceChange = () => {
+    editor.getEditorState().read(() => {
+      const root = $getRoot();
+      const htmlString = $generateHtmlFromNodes(editor, null);
+      // convert to markdown, save meta data as YAML frontmatter
+      const markdown = `
+        ${`---\ntitle: ${title}\n---\n`}
+        ${$convertToMarkdownString(TRANSFORMERS, root)}
+        `.trim();
+
+      if (onChange) {
+        onChange(root.getTextContent(), title);
+      }
+
+      if (
+        openFile &&
+        openFile.path &&
+        !openFile.loading &&
+        openFile?.fileSystemId
+      ) {
+        setOpenFile((prev) => {
+          return {
+            ...prev,
+            content: markdown,
+            html: htmlString.replace(/class="[a-z- ]+?"/gim, ''),
+            saved: false,
+          } as OpenFileState;
+        });
+      }
+    });
+  };
+
   useLayoutEffect(() => {
     const onAnyChange = debounce(() => {
-      editor.getEditorState().read(() => {
-        const root = $getRoot();
-        const htmlString = $generateHtmlFromNodes(editor, null);
-        const markdown = $convertToMarkdownString(TRANSFORMERS, root);
-
-        if (onChange) {
-          onChange(root.getTextContent());
-        }
-
-        if (openFile && openFile.path && !openFile.loading) {
-          setOpenFile((prev) => {
-            return {
-              ...prev,
-              content: markdown,
-              html: htmlString.replace(/class="[a-z- ]+?"/gim, ''),
-              saved: false,
-            } as OpenFileState;
-          });
-        }
-      });
+      announceChange();
     }, 100);
 
     const observer = new MutationObserver(function (mutations) {
@@ -73,7 +88,11 @@ const EditorSyncStateOnAnyChangePlugin: FunctionComponent<Props> = ({
     return () => {
       removeRootListener();
     };
-  }, [editor, content]);
+  }, [editor, title, content]);
+
+  useLayoutEffect(() => {
+    announceChange();
+  }, [editor, title]);
 
   return null;
 };

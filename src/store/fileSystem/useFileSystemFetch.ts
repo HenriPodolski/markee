@@ -6,6 +6,7 @@ import { uuid } from '../../lib/uuid';
 import fsPromiseSingleton from '../../lib/fsPromiseSingleton';
 import config from '../../config';
 import { FileSystemTypeEnum } from './fileSystem.enums';
+import { getDataFromFrontmatter } from '../../lib/get-data-from-markdown';
 
 const fsPromise = fsPromiseSingleton.getInstance(config.fsNamespace);
 const recursiveWalkDir = async (
@@ -28,6 +29,8 @@ const recursiveWalkDir = async (
         const content: string = (await fsPromise.readFile(currentItem, {
           encoding: 'utf8',
         })) as string;
+
+        title = getDataFromFrontmatter(content, 'title');
       }
 
       treeList.push({

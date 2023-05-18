@@ -11,6 +11,7 @@ import { getChangesFromFileSystemItemById } from '../../store/fileSystem/fileSys
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { openFileState } from '../../store/openFile/openFile.atoms';
 import { useTranslation } from 'react-i18next';
+import { getDataFromFrontmatter } from '../../lib/get-data-from-markdown';
 
 const EditorMiniNav = () => {
   const { t } = useTranslation('editor');
@@ -28,11 +29,15 @@ const EditorMiniNav = () => {
       openFile?.content as string
     );
 
+    const title =
+      getDataFromFrontmatter(openFile?.content ?? '', 'title') ?? '';
+
     setFileSystem(
       getChangesFromFileSystemItemById({
         id: openFile?.fileSystemId as string,
         previousFileSystemTree: fileSystem,
         updateItem: {
+          title,
           modified: new Date(savedFile.mtimeMs),
         },
       })

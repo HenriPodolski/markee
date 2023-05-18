@@ -8,10 +8,12 @@ import { FileSystemTypeEnum } from '../fileSystem/fileSystem.enums';
 const fsPromise = fsPromiseSingleton.getInstance(config.fsNamespace);
 
 export const loadOpenFileContent = async (path: string): Promise<string> => {
-  const content = await fsPromise.readFile(path, {
+  let content = await fsPromise.readFile(path, {
     encoding: 'utf8',
   });
 
+  // remove yaml frontmatter
+  content = (content as string).replace(/---[\r\n].*?[\r\n]---/gms, '');
   return content as string;
 };
 

@@ -1,10 +1,8 @@
 import React, {
   ChangeEvent,
-  ChangeEventHandler,
   FunctionComponent,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 import styles from './Editor.module.scss';
@@ -73,7 +71,8 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
   const fileSystemItem = useRecoilValue(fileSystemItemOfOpenFileSelector);
 
   const loadedEditorState = useCallback(() => {
-    return $convertFromMarkdownString(openFile?.content ?? '');
+    const editorData = $convertFromMarkdownString(openFile?.content ?? '');
+    return editorData;
   }, [openFile?.content]);
 
   const modifiedDate = useCallback(() => {
@@ -105,9 +104,8 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
 
   // if store title empty, use first line
   // if changed by the user, use this
-
-  const handleEditorTextChange = (content: string) => {
-    if (fileSystemItem?.title) {
+  const handleEditorTextChange = (content: string, title?: string) => {
+    if (fileSystemItem?.title || title) {
       return;
     }
 
@@ -173,7 +171,9 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
                   ErrorBoundary={LexicalErrorBoundary}
                 />
                 <EditorSyncStateOnAnyChangePlugin
+                  key={`sync-state-plugin-${fileSystemItem?.id}`}
                   onChange={handleEditorTextChange}
+                  title={title ?? ''}
                 />
                 <HistoryPlugin />
                 <EditorAutoFocusPlugin />
