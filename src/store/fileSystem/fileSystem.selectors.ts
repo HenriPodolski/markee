@@ -37,12 +37,12 @@ export const fileSystemTreeSelector = selectorFamily({
             return -1;
           if (
             sortedBy === FileSystemSortedByEnum.time &&
-            a.modified > b.modified
+            new Date(a.modified).getTime() > new Date(b.modified).getTime()
           )
             return -1;
           if (
             sortedBy === FileSystemSortedByEnum.time &&
-            a.modified < b.modified
+            new Date(a.modified).getTime() < new Date(b.modified).getTime()
           )
             return 1;
           return 0;

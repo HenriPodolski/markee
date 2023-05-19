@@ -28,10 +28,23 @@ import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import editorRTETheme from './EditorRTETheme';
 import EditorToolbarPlugin from './EditorToolbarPlugin';
-import EditorSyncStateOnAnyChangePlugin from './EditorSyncStateOnAnyChangePlugin';
+import EditorSyncStateOnAnyChangePlugin, {
+  OnChangeParams,
+} from './EditorSyncStateOnAnyChangePlugin';
 import { useTranslation } from 'react-i18next';
 import { fileSystemItemOfOpenFileSelector } from '../../store/fileSystem/fileSystem.selectors';
 import DateOutput from '../shared/DateOutput';
+import { off, on } from '../../lib/events';
+import EventsEnum from '../../interfaces/Events.enum';
+import { useEditorSavePerformer } from '../../performers/useEditorSave.performer';
+import { RootNode } from 'lexical/nodes/LexicalRootNode';
+import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
+import { applyChangesToFileSystemItems } from '../../store/fileSystem/fileSystem.services';
+import { $getRoot, LexicalEditor } from 'lexical';
+import { OpenFileState } from '../../interfaces/OpenFile.interface';
+import { $generateHtmlFromNodes } from '@lexical/html';
+import { TRANSFORMERS } from '@lexical/markdown';
+import { $convertToMarkdownString } from '@lexical/markdown';
 
 const onError = (error: any) => {
   console.error(error);
@@ -65,13 +78,20 @@ export const editorConfig = {
 
 const Editor: FunctionComponent<Props> = ({ id, className }) => {
   const { t } = useTranslation('editor');
-  const [title, setTitle] = useState('');
-  const [openFile] = useRecoilState(openFileState);
+  const [openFile, setOpenFile] = useRecoilState(openFileState);
   const setApp = useSetRecoilState(appState);
+  const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
   const fileSystemItem = useRecoilValue(fileSystemItemOfOpenFileSelector);
+  useEditorSavePerformer();
 
   const loadedEditorState = useCallback(() => {
-    const editorData = $convertFromMarkdownString(openFile?.content ?? '');
+    // remove yaml frontmatter
+    const content = (openFile?.content as string).replace(
+      /---[\r\n].*?[\r\n]---/gms,
+      ''
+    );
+    const editorData = $convertFromMarkdownString(content ?? '');
+
     return editorData;
   }, [openFile?.content]);
 
@@ -84,7 +104,6 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
   }, [fileSystemItem?.modified]);
 
   useEffect(() => {
-    setTitle('');
     return () => {
       setApp((prev: AppState) => ({
         ...prev,
@@ -93,35 +112,93 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
     };
   }, []);
 
-  useEffect(() => {
-    // loads document -> use title from store
-    setTitle(fileSystemItem?.title ?? '');
-  }, [fileSystemItem?.title, fileSystemItem?.id]);
+  const setFileSystemItemTitle = (title: string) => {
+    if (fileSystemItem?.id && fileSystemItem?.title !== title) {
+      setFileSystem(
+        applyChangesToFileSystemItems({
+          itemsToUpdateIds: [fileSystemItem?.id],
+          previousFileSystemTree: fileSystem,
+          updateObject: {
+            title,
+          },
+        })
+      );
+      setOpenFile((prev) => {
+        const content = (prev?.content as string).replace(
+          /---[\r\n].*?[\r\n]---/gms,
+          ''
+        );
+        const markdownContent = `
+        ${`---\ntitle: ${title}\n---\n`}
+        ${content}
+        `.trim();
+
+        return {
+          ...prev,
+          content: markdownContent,
+          saved: false,
+        };
+      });
+    }
+  };
 
   const handleTitleChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    setTitle(evt.target.value);
+    const title = evt.target.value;
+    setFileSystemItemTitle(title);
   };
 
   // if store title empty, use first line
   // if changed by the user, use this
-  const handleEditorTextChange = (content: string, title?: string) => {
-    if (fileSystemItem?.title || title) {
+  const handleEditorTextChange = ({
+    editor,
+    root,
+    textContent,
+  }: OnChangeParams) => {
+    if (!editor) {
       return;
     }
 
-    const matches = content.match(/.*/);
-    if (matches?.[0]) {
-      let cleanTitle = matches[0].replaceAll(/[^a-zA-Z0-9,\-_ ]+/gm, '');
-      if (cleanTitle.length > 20) {
-        cleanTitle = cleanTitle.substring(0, 20);
-        const lastSpaceIndex = cleanTitle.lastIndexOf(' ');
-        cleanTitle = lastSpaceIndex
-          ? cleanTitle.substring(0, lastSpaceIndex)
-          : cleanTitle;
+    if (!fileSystemItem?.title) {
+      const matches = textContent?.match(/.*/);
+      if (matches?.[0]) {
+        let cleanTitle = matches[0].replaceAll(/[^a-zA-Z0-9,\-_ ]+/gm, '');
+        if (cleanTitle.length > 20) {
+          cleanTitle = cleanTitle.substring(0, 20);
+          const lastSpaceIndex = cleanTitle.lastIndexOf(' ');
+          cleanTitle = lastSpaceIndex
+            ? cleanTitle.substring(0, lastSpaceIndex)
+            : cleanTitle;
+        }
+        setFileSystemItemTitle(cleanTitle ?? fileSystemItem?.title ?? '');
       }
-      setTitle(cleanTitle ?? fileSystemItem?.title ?? '');
-    } else {
-      setTitle('');
+    }
+
+    const htmlContent = $generateHtmlFromNodes(
+      editor as LexicalEditor,
+      null
+    ).replace(/class="[a-z- ]+?"/gim, '');
+    const title = fileSystemItem?.title ?? '';
+    // convert to markdown, save meta data as YAML frontmatter
+    const markdownContent = `
+        ${`---\ntitle: ${title}\n---\n`}
+        ${$convertToMarkdownString(TRANSFORMERS, root)}
+        `.trim();
+
+    if (
+      openFile &&
+      openFile.path &&
+      !openFile.loading &&
+      openFile?.fileSystemId &&
+      (!openFile.content || openFile.content !== markdownContent)
+    ) {
+      setOpenFile((prev) => {
+        return {
+          ...prev,
+          content: markdownContent,
+          html: htmlContent,
+          saved: false,
+        } as OpenFileState;
+      });
     }
   };
 
@@ -141,12 +218,13 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
               className={cx(styles.EditorWrap, 'editor-container')}
               data-editor-ui={true}
             >
+              {/*TODO: title input and date, own component*/}
               <div className={styles.TitleForm}>
                 <input
                   placeholder={t('title-placeholder') as string}
                   className={styles.TitleInput}
                   onChange={handleTitleChange}
-                  value={title}
+                  value={fileSystemItem?.title ?? ''}
                   minLength={2}
                   maxLength={20}
                   type="text"
@@ -171,9 +249,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
                   ErrorBoundary={LexicalErrorBoundary}
                 />
                 <EditorSyncStateOnAnyChangePlugin
-                  key={`sync-state-plugin-${fileSystemItem?.id}`}
                   onChange={handleEditorTextChange}
-                  title={title ?? ''}
                 />
                 <HistoryPlugin />
                 <EditorAutoFocusPlugin />

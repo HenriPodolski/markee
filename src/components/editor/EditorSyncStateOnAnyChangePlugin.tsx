@@ -1,53 +1,33 @@
 import { FunctionComponent, useLayoutEffect, useState } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getRoot } from 'lexical';
+import { $getRoot, LexicalEditor } from 'lexical';
 import debounce from 'lodash.debounce';
-import { TRANSFORMERS } from '@lexical/markdown';
-import { $convertToMarkdownString } from '@lexical/markdown';
-import { OpenFileState } from '../../interfaces/OpenFile.interface';
-import { $generateHtmlFromNodes } from '@lexical/html';
-import { useRecoilState } from 'recoil';
-import { openFileState } from '../../store/openFile/openFile.atoms';
+import { RootNode } from 'lexical/nodes/LexicalRootNode';
+
+export type OnChangeParams = {
+  editor?: LexicalEditor;
+  root?: RootNode;
+  textContent?: string;
+};
 
 export type Props = {
-  onChange?: (content: string, title?: string) => void;
-  title?: string;
+  onChange?: ({ editor, root, textContent }: OnChangeParams) => void;
 };
 const EditorSyncStateOnAnyChangePlugin: FunctionComponent<Props> = ({
   onChange,
-  title,
 }) => {
   const [editor] = useLexicalComposerContext();
   const [content, setContent] = useState('');
-  const [openFile, setOpenFile] = useRecoilState(openFileState);
 
   const announceChange = () => {
     editor.getEditorState().read(() => {
       const root = $getRoot();
-      const htmlString = $generateHtmlFromNodes(editor, null);
-      // convert to markdown, save meta data as YAML frontmatter
-      const markdown = `
-        ${`---\ntitle: ${title}\n---\n`}
-        ${$convertToMarkdownString(TRANSFORMERS, root)}
-        `.trim();
 
       if (onChange) {
-        onChange(root.getTextContent(), title);
-      }
-
-      if (
-        openFile &&
-        openFile.path &&
-        !openFile.loading &&
-        openFile?.fileSystemId
-      ) {
-        setOpenFile((prev) => {
-          return {
-            ...prev,
-            content: markdown,
-            html: htmlString.replace(/class="[a-z- ]+?"/gim, ''),
-            saved: false,
-          } as OpenFileState;
+        onChange({
+          editor,
+          root,
+          textContent: root.getTextContent(),
         });
       }
     });
@@ -88,11 +68,7 @@ const EditorSyncStateOnAnyChangePlugin: FunctionComponent<Props> = ({
     return () => {
       removeRootListener();
     };
-  }, [editor, title, content]);
-
-  useLayoutEffect(() => {
-    announceChange();
-  }, [editor, title]);
+  }, [editor, content]);
 
   return null;
 };

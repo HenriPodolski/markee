@@ -12,8 +12,6 @@ export const loadOpenFileContent = async (path: string): Promise<string> => {
     encoding: 'utf8',
   });
 
-  // remove yaml frontmatter
-  content = (content as string).replace(/---[\r\n].*?[\r\n]---/gms, '');
   return content as string;
 };
 
