@@ -149,57 +149,60 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
 
   // if store title empty, use first line
   // if changed by the user, use this
-  const handleEditorTextChange = ({
-    editor,
-    root,
-    textContent,
-  }: OnChangeParams) => {
+  const handleEditorTextChange = ({ editor }: OnChangeParams) => {
     if (!editor) {
       return;
     }
 
-    if (!fileSystemItem?.title) {
-      const matches = textContent?.match(/.*/);
-      if (matches?.[0]) {
-        let cleanTitle = matches[0].replaceAll(/[^a-zA-Z0-9,\-_ ]+/gm, '');
-        if (cleanTitle.length > 20) {
-          cleanTitle = cleanTitle.substring(0, 20);
-          const lastSpaceIndex = cleanTitle.lastIndexOf(' ');
-          cleanTitle = lastSpaceIndex
-            ? cleanTitle.substring(0, lastSpaceIndex)
-            : cleanTitle;
+    editor.getEditorState().read(() => {
+      const root = $getRoot();
+      if (!fileSystemItem?.title) {
+        const textContent = root.getTextContent();
+        const matches = textContent?.match(/.*/);
+        if (matches?.[0]) {
+          let cleanTitle = matches[0].replaceAll(/[^a-zA-Z0-9,\-_ ]+/gm, '');
+          if (cleanTitle.length > 20) {
+            cleanTitle = cleanTitle.substring(0, 20);
+            const lastSpaceIndex = cleanTitle.lastIndexOf(' ');
+            cleanTitle = lastSpaceIndex
+              ? cleanTitle.substring(0, lastSpaceIndex)
+              : cleanTitle;
+          }
+          setFileSystemItemTitle(cleanTitle ?? fileSystemItem?.title ?? '');
         }
-        setFileSystemItemTitle(cleanTitle ?? fileSystemItem?.title ?? '');
       }
-    }
 
-    const htmlContent = $generateHtmlFromNodes(
-      editor as LexicalEditor,
-      null
-    ).replace(/class="[a-z- ]+?"/gim, '');
-    const title = fileSystemItem?.title ?? '';
-    // convert to markdown, save meta data as YAML frontmatter
-    const markdownContent = `
+      const htmlContent = $generateHtmlFromNodes(
+        editor as LexicalEditor,
+        null
+      ).replace(/class="[a-z- ]+?"/gim, '');
+      const title = fileSystemItem?.title ?? '';
+      const content =
+        $convertToMarkdownString(TRANSFORMERS, root) ?? openFile?.content ?? '';
+      // convert to markdown, save meta data as YAML frontmatter
+      const markdownContent = `
         ${`---\ntitle: ${title}\n---\n`}
-        ${$convertToMarkdownString(TRANSFORMERS, root)}
+        ${content}
         `.trim();
 
-    if (
-      openFile &&
-      openFile.path &&
-      !openFile.loading &&
-      openFile?.fileSystemId &&
-      (!openFile.content || openFile.content !== markdownContent)
-    ) {
-      setOpenFile((prev) => {
-        return {
-          ...prev,
-          content: markdownContent,
-          html: htmlContent,
-          saved: false,
-        } as OpenFileState;
-      });
-    }
+      if (
+        openFile &&
+        openFile.path &&
+        !openFile.loading &&
+        openFile?.fileSystemId &&
+        (!openFile.content || openFile.content !== markdownContent)
+      ) {
+        setOpenFile((prev) => {
+          console.log('markdownContent', markdownContent);
+          return {
+            ...prev,
+            content: markdownContent,
+            html: htmlContent,
+            saved: false,
+          } as OpenFileState;
+        });
+      }
+    });
   };
 
   return (

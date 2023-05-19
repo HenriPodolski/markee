@@ -4,18 +4,23 @@ import EventsEnum from '../interfaces/Events.enum';
 import { saveOpenFileContent } from '../store/openFile/openFile.services';
 import { getDataFromFrontmatter } from '../lib/get-data-from-markdown';
 import { getChangesFromFileSystemItemById } from '../store/fileSystem/fileSystem.services';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { openFileState } from '../store/openFile/openFile.atoms';
 import { fileSystemState } from '../store/fileSystem/fileSystem.atoms';
+import { fileSystemItemOfOpenFileSelector } from '../store/fileSystem/fileSystem.selectors';
 
 export const useEditorSavePerformer = () => {
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
+  const fileSystemItem = useRecoilValue(fileSystemItemOfOpenFileSelector);
+
   const save = async () => {
     if (!openFile?.path) {
       console.error('File has no path', openFile);
       return;
     }
+
+    console.log('openFile', openFile);
 
     const savedFile = await saveOpenFileContent(
       openFile?.path as string,
@@ -48,5 +53,5 @@ export const useEditorSavePerformer = () => {
     return () => {
       off(EventsEnum.EditorSave, handleEditorSaveEvent);
     };
-  }, [openFile]);
+  }, [openFile?.content, fileSystemItem?.title]);
 };

@@ -6,12 +6,10 @@ import { RootNode } from 'lexical/nodes/LexicalRootNode';
 
 export type OnChangeParams = {
   editor?: LexicalEditor;
-  root?: RootNode;
-  textContent?: string;
 };
 
 export type Props = {
-  onChange?: ({ editor, root, textContent }: OnChangeParams) => void;
+  onChange?: ({ editor }: OnChangeParams) => void;
 };
 const EditorSyncStateOnAnyChangePlugin: FunctionComponent<Props> = ({
   onChange,
@@ -20,17 +18,11 @@ const EditorSyncStateOnAnyChangePlugin: FunctionComponent<Props> = ({
   const [content, setContent] = useState('');
 
   const announceChange = () => {
-    editor.getEditorState().read(() => {
-      const root = $getRoot();
-
-      if (onChange) {
-        onChange({
-          editor,
-          root,
-          textContent: root.getTextContent(),
-        });
-      }
-    });
+    if (onChange) {
+      onChange({
+        editor,
+      });
+    }
   };
 
   useLayoutEffect(() => {
