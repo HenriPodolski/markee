@@ -156,7 +156,8 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
 
     editor.getEditorState().read(() => {
       const root = $getRoot();
-      if (!fileSystemItem?.title) {
+      let title = fileSystemItem?.title ?? '';
+      if (!title) {
         const textContent = root.getTextContent();
         const matches = textContent?.match(/.*/);
         if (matches?.[0]) {
@@ -168,7 +169,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
               ? cleanTitle.substring(0, lastSpaceIndex)
               : cleanTitle;
           }
-          setFileSystemItemTitle(cleanTitle ?? fileSystemItem?.title ?? '');
+          title = cleanTitle ?? fileSystemItem?.title ?? '';
         }
       }
 
@@ -176,7 +177,6 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
         editor as LexicalEditor,
         null
       ).replace(/class="[a-z- ]+?"/gim, '');
-      const title = fileSystemItem?.title ?? '';
       const content =
         $convertToMarkdownString(TRANSFORMERS, root) ?? openFile?.content ?? '';
       // convert to markdown, save meta data as YAML frontmatter
@@ -190,10 +190,10 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
         openFile.path &&
         !openFile.loading &&
         openFile?.fileSystemId &&
+        fileSystemItem?.id &&
         (!openFile.content || openFile.content !== markdownContent)
       ) {
         setOpenFile((prev) => {
-          console.log('markdownContent', markdownContent);
           return {
             ...prev,
             content: markdownContent,
