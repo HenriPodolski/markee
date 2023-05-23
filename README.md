@@ -6,7 +6,6 @@
 * Use title, date and short description besides the file name in filetree item as note description
 * Add CSS to RTE editor to be able to see formats
 * Add intro/tutorial/about section in HTML and if no files are present create the first file out of it if active file is deleted, switch active file to first file in current baseDir
-* Instead of file name display headline/title of note and the beginning/a summary
 * Go live on Github pages
 ### Backlog:
 * Add image upload and display from blob/local source
