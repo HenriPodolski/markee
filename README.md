@@ -1,19 +1,14 @@
 # Backlog
 
 ## MVP
-**Todo:**
-* Fix conversion of markdown to RTE (check spacings etc.)
-* Stop using autosave and implement a modal instead which warns the user if data will be lost (use transition from editor active to not active)
+### Todo:
+* Bugfix: Change anything in a note, do not save, go to another note, back to previous note = note content gone
+* Use title, date and short description besides the file name in filetree item as note description
+* Add CSS to RTE editor to be able to see formats
 * Add intro/tutorial/about section in HTML and if no files are present create the first file out of it if active file is deleted, switch active file to first file in current baseDir
-* In addition to the file name display headline/title/date of note and a summary, No Title, no description if empty
-* Add translation
-* Add icon
-* Switch to editor after note creation
-* Fix checkmark icon on form not displayed on iOS Safari
-* Editor toolbar should appear above navigation
+* Instead of file name display headline/title of note and the beginning/a summary
 * Go live on Github pages
-
-**Backlog:**
+### Backlog:
 * Add image upload and display from blob/local source
 * Add a deleted folder by default that is not being displayed by default and can be activated in the settings, after x days the notes will be deleted
 * Check validation of directory and file (if file or folder already exists and valid name)
@@ -22,11 +17,10 @@
 * Catch Strg + S key combination by showing a toast not telling that auto save is active
 * Implement sync to git repository
 * Implement settings file to save git credentials in .markee file in JSON format
-* Implement settings view to edit settings in .markee file undo/redo for file system and file operations (and sync with store)
+* Implement settings view to edit settings in .markee file undo/redo for file system and file operations (+ sync with store)
 
-**Features:**
+### Features:
 let people write markdown or rte sync between devices works offline
-
 ## Expansion phase 1
 - [ ] Markdown editing mode (source code)
 - [ ] Implement .markee config file to serialize and save last state
