@@ -34,10 +34,7 @@ import EditorSyncStateOnAnyChangePlugin, {
 import { useTranslation } from 'react-i18next';
 import { fileSystemItemOfOpenFileSelector } from '../../store/fileSystem/fileSystem.selectors';
 import DateOutput from '../shared/DateOutput';
-import { off, on } from '../../lib/events';
-import EventsEnum from '../../interfaces/Events.enum';
 import { useEditorSavePerformer } from '../../performers/useEditorSave.performer';
-import { RootNode } from 'lexical/nodes/LexicalRootNode';
 import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { applyChangesToFileSystemItems } from '../../store/fileSystem/fileSystem.services';
 import { $getRoot, LexicalEditor } from 'lexical';
@@ -129,9 +126,12 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
           ''
         );
         const markdownContent = `
-        ${`---\ntitle: ${title}\n---\n`}
+        ${`---\ntitle: ${title}\n`}
+        ${`summary: ${content.replace(/[\r\n]/, '').substring(0, 20)}\n---\n`}
         ${content}
         `.trim();
+
+        console.log(markdownContent);
 
         return {
           ...prev,
@@ -181,7 +181,10 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
         $convertToMarkdownString(TRANSFORMERS, root) ?? openFile?.content ?? '';
       // convert to markdown, save meta data as YAML frontmatter
       const markdownContent = `
-        ${`---\ntitle: ${title}\n---\n`}
+        ---\n
+        ${`title: ${title}\n`}
+        ${`summary: ${content.substring(0, 20)}\n`}
+        ---\n
         ${content}
         `.trim();
 

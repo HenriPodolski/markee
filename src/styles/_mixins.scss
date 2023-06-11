@@ -19,17 +19,20 @@
   }
 }
 
-@mixin file-list-item() {
+@mixin file-list-item($has-background: true) {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
   gap: var(--size-1);
   border: none;
   cursor: pointer;
-  margin-bottom: var(--size-2);
-  padding: var(--size-2) var(--size-3);
-  background-color: var(--color-white);
-  border-radius: var(--radius-lg);
+
+  @if $has-background {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--size-2);
+    padding: var(--size-2) var(--size-3);
+  }
 
   &Label {
     line-height: 1;

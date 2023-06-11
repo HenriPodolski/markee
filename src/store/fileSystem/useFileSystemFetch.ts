@@ -30,7 +30,10 @@ const recursiveWalkDir = async (
           encoding: 'utf8',
         })) as string;
 
+        console.log('content', content);
+
         title = getDataFromFrontmatter(content, 'title');
+        summary = getDataFromFrontmatter(content, 'summary');
       }
 
       treeList.push({

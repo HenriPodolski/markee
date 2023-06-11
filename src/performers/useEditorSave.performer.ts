@@ -20,8 +20,6 @@ export const useEditorSavePerformer = () => {
       return;
     }
 
-    console.log('openFile', openFile);
-
     const savedFile = await saveOpenFileContent(
       openFile?.path as string,
       openFile?.content as string
@@ -29,6 +27,8 @@ export const useEditorSavePerformer = () => {
 
     const title =
       getDataFromFrontmatter(openFile?.content ?? '', 'title') ?? '';
+    const summary =
+      getDataFromFrontmatter(openFile?.content ?? '', 'summary') ?? '';
 
     setFileSystem(
       getChangesFromFileSystemItemById({
@@ -36,6 +36,7 @@ export const useEditorSavePerformer = () => {
         previousFileSystemTree: fileSystem,
         updateItem: {
           title,
+          summary,
           modified: new Date(savedFile.mtimeMs),
         },
       })

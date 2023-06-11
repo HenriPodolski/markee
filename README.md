@@ -2,24 +2,25 @@
 
 ## MVP
 ### Todo:
-* Bugfix: Change anything in a note, do not save, go to another note, back to previous note = note content gone
 * Use title, date and short description besides the file name in filetree item as note description
 * Add CSS to RTE editor to be able to see formats
 * Add intro/tutorial/about section in HTML and if no files are present create the first file out of it if active file is deleted, switch active file to first file in current baseDir
 * Go live on Github pages
+
 ### Backlog:
+* Make it an offline first PWA
 * Add image upload and display from blob/local source
 * Add a deleted folder by default that is not being displayed by default and can be activated in the settings, after x days the notes will be deleted
 * Check validation of directory and file (if file or folder already exists and valid name)
 * Style RTE Confirm dialog for delete directory/file and/or undo (setTimeout 5000 before real file deletion action)
 * Switch select for editing RTE or markdown
-* Catch Strg + S key combination by showing a toast not telling that auto save is active
 * Implement sync to git repository
 * Implement settings file to save git credentials in .markee file in JSON format
 * Implement settings view to edit settings in .markee file undo/redo for file system and file operations (+ sync with store)
 
 ### Features:
-let people write markdown or rte sync between devices works offline
+* let people write markdown or rte sync between devices works offline
+
 ## Expansion phase 1
 - [ ] Markdown editing mode (source code)
 - [ ] Implement .markee config file to serialize and save last state

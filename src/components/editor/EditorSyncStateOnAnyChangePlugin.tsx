@@ -1,8 +1,7 @@
 import { FunctionComponent, useLayoutEffect, useState } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getRoot, LexicalEditor } from 'lexical';
+import { LexicalEditor } from 'lexical';
 import debounce from 'lodash.debounce';
-import { RootNode } from 'lexical/nodes/LexicalRootNode';
 
 export type OnChangeParams = {
   editor?: LexicalEditor;

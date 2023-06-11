@@ -9,12 +9,33 @@
 }
 
 .Button {
-  @include file-list-item;
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--size-2);
+  padding: var(--size-2) var(--size-3);
   min-height: 48px;
   min-width: 100%;
 
   svg {
     min-width: 0;
-    min-height: 22px;
+    height: 16px;
   }
+}
+
+.Title {
+  font-weight: bold;
+  font-size: var(--scale-0);
+  margin: var(--size-2) 0;
+}
+
+.Summary {
+  font-size: var(--scale-00);
+  margin-bottom: var(--size-1);
+}
+
+.FileName {
+  @include file-list-item($has-background: false);
+  gap: unset;
+  font-size: var(--scale-00);
+  margin-bottom: var(--size-2);
 }
