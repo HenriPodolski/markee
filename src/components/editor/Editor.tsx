@@ -130,7 +130,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
               /(?<marks>[`]|\*{1,3}|_{1,3}|~{2})(?<inmarks>.*?)\1|\[(?<link_text>.*)\]\(.*\)/g,
               '$<inmarks>$<link_text>'
             )
-            .substring(0, 20),
+            .substring(0, 40),
         });
         const markdownContent = `---\n${yamlContent}---\n${content}`;
 

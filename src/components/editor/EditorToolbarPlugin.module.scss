@@ -2,12 +2,12 @@
 
 .EditorToolbarPlugin {
   position: sticky;
-  bottom: 0;
+  top: 100%;
   display: flex;
   background: #fff;
   padding: 4px;
   vertical-align: middle;
-  overflow-x: hidden;
+  overflow-x: clip;
   overflow-y: auto;
   min-height: 60px;
   @include shadow-top;
