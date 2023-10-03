@@ -26,6 +26,8 @@
   font-weight: bold;
   font-size: var(--scale-0);
   margin: var(--size-2) 0;
+  @include file-list-item($has-background: false);
+  gap: unset;
 }
 
 .Summary {
@@ -34,8 +36,6 @@
 }
 
 .FileName {
-  @include file-list-item($has-background: false);
-  gap: unset;
-  font-size: var(--scale-00);
+  font-size: var(--scale-000);
   margin-bottom: var(--size-2);
 }

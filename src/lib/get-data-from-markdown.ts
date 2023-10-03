@@ -1,18 +1,11 @@
+import { Document, parseDocument } from 'yaml';
 export const getDataFromFrontmatter = (markdown: string, key: string) => {
-  const frontmatter = /---[\r\n](.*?)[\r\n]---/gms.exec(markdown);
+  const frontmatter = /(---[\r\n]+)(.*?)([\r\n]+---)/gms.exec(markdown);
   let fmData: any;
-  if (frontmatter && frontmatter[1]) {
-    const data = frontmatter[1].split(/[\r\n]/).reduce((prev, next) => {
-      const [key, val] = next.split(':');
+  if (frontmatter && frontmatter[2]) {
+    const data: Document.Parsed = parseDocument(frontmatter[2]);
 
-      if (key && val) {
-        prev[key.trim()] = val.trim();
-      }
-
-      return prev;
-    }, {} as { [key: string]: any });
-
-    fmData = data?.[key];
+    fmData = data.get(key);
   }
 
   return fmData;

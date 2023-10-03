@@ -42,6 +42,7 @@ import { OpenFileState } from '../../interfaces/OpenFile.interface';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { TRANSFORMERS } from '@lexical/markdown';
 import { $convertToMarkdownString } from '@lexical/markdown';
+import { stringify } from 'yaml';
 
 const onError = (error: any) => {
   console.error(error);
@@ -83,10 +84,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
 
   const loadedEditorState = useCallback(() => {
     // remove yaml frontmatter
-    const content = (openFile?.content as string).replace(
-      /---[\r\n].*?[\r\n]---/gms,
-      ''
-    );
+    const content = (openFile?.content as string).replace(/---(.*?)---/gms, '');
     const editorData = $convertFromMarkdownString(content ?? '');
 
     return editorData;
@@ -121,17 +119,12 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
         })
       );
       setOpenFile((prev) => {
-        const content = (prev?.content as string).replace(
-          /---[\r\n].*?[\r\n]---/gms,
-          ''
-        );
-        const markdownContent = `
-        ${`---\ntitle: ${title}\n`}
-        ${`summary: ${content.replace(/[\r\n]/, '').substring(0, 20)}\n---\n`}
-        ${content}
-        `.trim();
-
-        console.log(markdownContent);
+        const content = (prev?.content as string).replace(/---.*?---/gms, '');
+        const yamlContent = stringify({
+          title,
+          summary: content.trim().replace(/\r|\n/, '').substring(0, 20),
+        });
+        const markdownContent = `---\n${yamlContent}---\n${content}`;
 
         return {
           ...prev,

@@ -56,8 +56,6 @@ const FileTreeFile: React.FC<Props> = (props) => {
     }
   };
 
-  console.log(item);
-
   return (
     <div
       className={cx(styles.FileTreeFile, {
@@ -71,16 +69,17 @@ const FileTreeFile: React.FC<Props> = (props) => {
         type="button"
         onClick={handleFileClick}
       >
-        <h2
-          className={styles.Title}
-          dangerouslySetInnerHTML={{ __html: item?.title ?? '&nbsp;' }}
-        ></h2>
+        <h2 className={styles.Title}>
+          {openFile?.path === item.fullPath ? <NoteEditIcon /> : <NoteIcon />}{' '}
+          <span
+            dangerouslySetInnerHTML={{ __html: item?.title ?? '&nbsp;' }}
+          ></span>
+        </h2>
         <p
           className={styles.Summary}
           dangerouslySetInnerHTML={{ __html: item?.summary ?? '&nbsp;' }}
         ></p>
         <div className={styles.FileName}>
-          {openFile?.path === item.fullPath ? <NoteEditIcon /> : <NoteIcon />}{' '}
           <span className={styles.FileNameLabel}>{item.name}</span>
         </div>
       </button>
