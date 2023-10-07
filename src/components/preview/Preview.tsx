@@ -16,13 +16,15 @@ const Preview: FunctionComponent<Props> = ({ id, className }: Props) => {
   const openFile = useRecoilValue(openFileState);
 
   return (
-    <root.div id={id} className={cx(styles.Preview, className)}>
-      <div
-        className="PreviewInner"
-        dangerouslySetInnerHTML={{ __html: openFile?.html as string }}
-      />
-      <style>{rootStyles}</style>
-    </root.div>
+    <div className={cx(styles.Preview, className)}>
+      <root.div id={id} className={cx(styles.PreviewWrap)}>
+        <div
+          className="PreviewInner"
+          dangerouslySetInnerHTML={{ __html: openFile?.html as string }}
+        />
+        <style>{rootStyles}</style>
+      </root.div>
+    </div>
   );
 };
 

@@ -15,7 +15,17 @@
 .filetreeWrap {
   padding: var(--size-6);
 
+  @media screen and (min-width: $breakpoint-sm) {
+    padding: var(--size-6) var(--size-6) var(--size-6) 0;
+  }
+
   @media screen and (min-width: $breakpoint-l) {
-    padding-top: 0 var(--size-3) var(--size-3) var(--size-3);
+    padding-top: 0;
+  }
+
+  &ActionUI {
+    @media screen and (min-width: $breakpoint-sm) {
+      padding: var(--size-6);
+    }
   }
 }

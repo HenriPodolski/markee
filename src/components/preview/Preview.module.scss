@@ -1,5 +1,21 @@
+@import "../../styles/variables";
+
 .Preview {
   grid-area: c;
   display: flow-root;
   overflow: auto;
+  background-color: var(--color-grey-200);
+  padding-left: 0;
+
+  @media screen and (min-width: $breakpoint-sm) {
+    padding-left: var(--size-6);
+  }
+
+  @media screen and (min-width: $breakpoint-l) {
+    padding-left: var(--size-3);
+  }
+}
+
+.PreviewWrap {
+  background-color: var(--color-white);
 }

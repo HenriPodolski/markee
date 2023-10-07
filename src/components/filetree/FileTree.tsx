@@ -16,7 +16,11 @@ const FileTree: FunctionComponent<Props> = ({ id, className }: Props) => {
   return (
     <div id={id} data-file-select-ui className={cx(styles.FileTree, className)}>
       {app?.showFileDeletionUI && <FileTreeActionControl />}
-      <div className={styles.filetreeWrap}>
+      <div
+        className={cx(styles.filetreeWrap, {
+          [styles.filetreeWrapActionUI]: app?.showFileDeletionUI,
+        })}
+      >
         <FileTreeIterator />
       </div>
     </div>
