@@ -89,8 +89,8 @@ body {
 }
 
 body {
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-x: clip;
+  overflow-y: clip;
 }
 
 code {

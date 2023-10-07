@@ -13,9 +13,9 @@
 }
 
 .filetreeWrap {
-  padding: var(--size-6) var(--size-8);
+  padding: var(--size-6);
 
   @media screen and (min-width: $breakpoint-l) {
-    padding-top: var(--size-3);
+    padding-top: 0 var(--size-3) var(--size-3) var(--size-3);
   }
 }

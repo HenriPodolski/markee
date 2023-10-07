@@ -10,8 +10,6 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
-  border-left: 2px solid var(--color-grey-300);
-  border-right: 2px solid var(--color-grey-300);
 
   @media screen and (min-width: $breakpoint-sm) {
     height: auto;
@@ -86,15 +84,16 @@
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
+  justify-content: space-evenly;
 }
 
 .TitleForm {
   display: flex;
   flex-direction: column;
-  padding: var(--size-3) var(--size-3) 0 var(--size-3);
+  padding: var(--size-16) var(--size-3) 0 var(--size-3);
 
   @media screen and (min-width: $breakpoint-sm) {
-    padding: var(--size-8) var(--size-8) 0 var(--size-8);
+    padding: var(--size-16) var(--size-8) 0 var(--size-8);
   }
 }
 

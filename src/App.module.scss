@@ -45,7 +45,6 @@
   scroll-snap-type: x mandatory;
   scroll-behaviour: smooth;
   background-color: var(--color-grey-200);
-  border-top: 2px solid var(--color-grey-300);
 
   * {
     user-select: none;
@@ -69,8 +68,6 @@
 
   @media screen and (min-width: $breakpoint-l) {
     grid-template-columns: 1fr 1fr 1fr;
-    border-top: none;
-    border-bottom: 2px solid var(--color-grey-300);
   }
 
   &Hide {
