@@ -42,7 +42,7 @@ export const useEditorSavePerformer = () => {
       })
     );
 
-    setOpenFile((prev) => ({ ...prev, saved: true }));
+    setOpenFile({ ...openFile, saved: true });
   };
 
   useEffect(() => {
@@ -55,4 +55,12 @@ export const useEditorSavePerformer = () => {
       off(EventsEnum.EditorSave, handleEditorSaveEvent);
     };
   }, [openFile?.content, fileSystemItem?.title]);
+
+  return {
+    openFile,
+    setOpenFile,
+    fileSystem,
+    setFileSystem,
+    fileSystemItem,
+  };
 };

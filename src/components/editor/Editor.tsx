@@ -32,17 +32,14 @@ import EditorSyncStateOnAnyChangePlugin, {
   OnChangeParams,
 } from './EditorSyncStateOnAnyChangePlugin';
 import { useTranslation } from 'react-i18next';
-import { fileSystemItemOfOpenFileSelector } from '../../store/fileSystem/fileSystem.selectors';
 import DateOutput from '../shared/DateOutput';
 import { useEditorSavePerformer } from '../../performers/useEditorSave.performer';
-import { fileSystemState } from '../../store/fileSystem/fileSystem.atoms';
 import { applyChangesToFileSystemItems } from '../../store/fileSystem/fileSystem.services';
 import { $getRoot, LexicalEditor } from 'lexical';
 import { OpenFileState } from '../../interfaces/OpenFile.interface';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { TRANSFORMERS } from '@lexical/markdown';
 import { $convertToMarkdownString } from '@lexical/markdown';
-import { stringify } from 'yaml';
 
 const onError = (error: any) => {
   console.error(error);
@@ -76,11 +73,9 @@ export const editorConfig = {
 
 const Editor: FunctionComponent<Props> = ({ id, className }) => {
   const { t } = useTranslation('editor');
-  const [openFile, setOpenFile] = useRecoilState(openFileState);
   const setApp = useSetRecoilState(appState);
-  const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
-  const fileSystemItem = useRecoilValue(fileSystemItemOfOpenFileSelector);
-  useEditorSavePerformer();
+  const { openFile, setOpenFile, fileSystem, setFileSystem, fileSystemItem } =
+    useEditorSavePerformer();
 
   const loadedEditorState = useCallback(() => {
     // remove yaml frontmatter
@@ -120,19 +115,18 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
       );
       setOpenFile((prev) => {
         const content = (prev?.content as string).replace(/---.*?---/gms, '');
-        const yamlContent = stringify({
-          title,
-          summary: content
-            .trim()
-            .replace(/\r|\n/, '')
-            .replace(/(<([^>]+)>)/gi, '')
-            .replace(
-              /(?<marks>[`]|\*{1,3}|_{1,3}|~{2})(?<inmarks>.*?)\1|\[(?<link_text>.*)\]\(.*\)/g,
-              '$<inmarks>$<link_text>'
-            )
-            .substring(0, 40),
-        });
-        const markdownContent = `---\n${yamlContent}---\n${content}`;
+        const summary = content
+          .trim()
+          .replace(/\r|\n/, '')
+          .replace(/<([a-z]+)([^>]+)*(?:>(.*)<\/\1>|\s+\/>)/gim, '')
+          .replace(
+            /(?<marks>[`]|\*{1,3}|_{1,3}|~{2})(?<inmarks>.*?)\1|\[(?<link_text>.*)\]\(.*\)/g,
+            '$<inmarks>$<link_text>'
+          )
+          .substring(0, 80);
+        const markdownContent = `---\ntitle:>\n"${title}"\nsummary:>\n"${summary}"---\n${content}`;
+
+        console.log('prev', prev);
 
         return {
           ...prev,
@@ -145,6 +139,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
 
   const handleTitleChange = (evt: ChangeEvent<HTMLInputElement>) => {
     const title = evt.target.value;
+    console.log('handleTitleChange', title);
     setFileSystemItemTitle(title);
   };
 
@@ -158,6 +153,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
     editor.getEditorState().read(() => {
       const root = $getRoot();
       let title = fileSystemItem?.title ?? '';
+
       if (!title) {
         const textContent = root.getTextContent();
         const matches = textContent?.match(/.*/);

@@ -117,6 +117,14 @@ export const fileSystemItemOfOpenFileSelector = selector({
       return openFile?.fileSystemId && item.id === openFile?.fileSystemId;
     });
 
+    // Todo: Error occurs here, id seems to be new/another one
+    console.log(
+      'fileSystemItemOfOpenFileSelector',
+      fileSystemItems,
+      openFile?.fileSystemId,
+      foundItem
+    );
+
     return foundItem;
   },
 });
