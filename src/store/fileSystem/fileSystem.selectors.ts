@@ -21,9 +21,6 @@ export const fileSystemTreeSelector = selectorFamily({
             (currentBasePath !== '/' ? `${currentBasePath}/` : '/')
           );
         })
-        .map((item) => {
-          return item;
-        })
         .sort((a, b) => {
           if (
             sortedBy === FileSystemSortedByEnum.alphabetical &&
@@ -116,14 +113,6 @@ export const fileSystemItemOfOpenFileSelector = selector({
     const foundItem = fileSystemItems.find((item: FileSystemItem) => {
       return openFile?.fileSystemId && item.id === openFile?.fileSystemId;
     });
-
-    // Todo: Error occurs here, id seems to be new/another one
-    console.log(
-      'fileSystemItemOfOpenFileSelector',
-      fileSystemItems,
-      openFile?.fileSystemId,
-      foundItem
-    );
 
     return foundItem;
   },

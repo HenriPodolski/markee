@@ -51,7 +51,7 @@ const FileTreeFolderNameInput: FunctionComponent<Props> = () => {
         active: true,
         level: `${app?.createFolder}/${directoryName}`.split('/')
           .length as number,
-        modified: new Date(),
+        modified: new Date().toString(),
       };
 
       await createDirectory(newDirectory.fullPath);

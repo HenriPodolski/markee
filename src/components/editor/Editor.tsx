@@ -33,7 +33,7 @@ import EditorSyncStateOnAnyChangePlugin, {
 } from './EditorSyncStateOnAnyChangePlugin';
 import { useTranslation } from 'react-i18next';
 import DateOutput from '../shared/DateOutput';
-import { useEditorSavePerformer } from '../../performers/useEditorSave.performer';
+import { useEditorSave } from '../../hooks/useEditorSave';
 import { applyChangesToFileSystemItems } from '../../store/fileSystem/fileSystem.services';
 import { $getRoot, LexicalEditor } from 'lexical';
 import { OpenFileState } from '../../interfaces/OpenFile.interface';
@@ -75,7 +75,7 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
   const { t } = useTranslation('editor');
   const setApp = useSetRecoilState(appState);
   const { openFile, setOpenFile, fileSystem, setFileSystem, fileSystemItem } =
-    useEditorSavePerformer();
+    useEditorSave();
 
   const loadedEditorState = useCallback(() => {
     // remove yaml frontmatter
@@ -126,8 +126,6 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
           .substring(0, 80);
         const markdownContent = `---\ntitle:>\n"${title}"\nsummary:>\n"${summary}"---\n${content}`;
 
-        console.log('prev', prev);
-
         return {
           ...prev,
           content: markdownContent,
@@ -139,7 +137,6 @@ const Editor: FunctionComponent<Props> = ({ id, className }) => {
 
   const handleTitleChange = (evt: ChangeEvent<HTMLInputElement>) => {
     const title = evt.target.value;
-    console.log('handleTitleChange', title);
     setFileSystemItemTitle(title);
   };
 

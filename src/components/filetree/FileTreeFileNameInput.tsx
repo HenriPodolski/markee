@@ -52,7 +52,7 @@ const FileTreeFileNameInput: FunctionComponent<Props> = () => {
         active: true,
         level: `${app?.createFile}/${fileName}${extension}`.split('/')
           .length as number,
-        modified: new Date(),
+        modified: new Date().toString(),
       };
 
       await createFile(newFile.fullPath);

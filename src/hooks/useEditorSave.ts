@@ -9,7 +9,7 @@ import { openFileState } from '../store/openFile/openFile.atoms';
 import { fileSystemState } from '../store/fileSystem/fileSystem.atoms';
 import { fileSystemItemOfOpenFileSelector } from '../store/fileSystem/fileSystem.selectors';
 
-export const useEditorSavePerformer = () => {
+export const useEditorSave = () => {
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
   const fileSystemItem = useRecoilValue(fileSystemItemOfOpenFileSelector);
@@ -30,6 +30,8 @@ export const useEditorSavePerformer = () => {
     const summary =
       getDataFromFrontmatter(openFile?.content ?? '', 'summary') ?? '';
 
+    setOpenFile({ ...openFile, saved: true });
+
     setFileSystem(
       getChangesFromFileSystemItemById({
         id: openFile?.fileSystemId as string,
@@ -37,12 +39,10 @@ export const useEditorSavePerformer = () => {
         updateItem: {
           title,
           summary,
-          modified: new Date(savedFile.mtimeMs),
+          modified: new Date(savedFile.mtimeMs).toString(),
         },
       })
     );
-
-    setOpenFile({ ...openFile, saved: true });
   };
 
   useEffect(() => {

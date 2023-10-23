@@ -10,11 +10,10 @@ import FileTree from './components/filetree/FileTree';
 import styles from './App.module.scss';
 import Preview from './components/preview/Preview';
 import FileTreeNavbar from './components/navbar/FileTreeNavbar';
-import { useFileSystemFetch } from './store/fileSystem/useFileSystemFetch';
+import { useFileSystemFetch } from './hooks/useFileSystemFetch';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { fileSystemTreeSelector } from './store/fileSystem/fileSystem.selectors';
 import { setOpenFileJoinFileSystem } from './store/openFile/openFile.services';
-import { fileSystemState } from './store/fileSystem/fileSystem.atoms';
 import { openFileState } from './store/openFile/openFile.atoms';
 import { FileSystemItem } from './interfaces/FileSystemItem.interface';
 import { FileSystemTypeEnum } from './store/fileSystem/fileSystem.enums';
@@ -26,8 +25,7 @@ import debounce from 'lodash.debounce';
 import cx from 'classnames';
 
 const App = () => {
-  useFileSystemFetch();
-  const [fileSystem, setFileSystem] = useRecoilState(fileSystemState);
+  const [fileSystem, setFileSystem] = useFileSystemFetch();
   const [openFile, setOpenFile] = useRecoilState(openFileState);
   const tree = useRecoilValue(fileSystemTreeSelector('/'));
   const [app, setApp] = useRecoilState(appState);

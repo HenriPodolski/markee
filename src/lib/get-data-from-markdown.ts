@@ -6,9 +6,6 @@ export const getDataFromFrontmatter = (markdown: string, key: string) => {
     '---\r\n$1\r\n---'
   );
   let fmData: any;
-  console.groupCollapsed('frontmatter ' + key);
-  console.log(frontmatter);
-  console.groupEnd();
   if (frontmatter) {
     const data: Document.Parsed = parseDocument(frontmatter);
     fmData = data.get(key);
