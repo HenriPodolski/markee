@@ -2,114 +2,119 @@ import { h, cloneElement, render, hydrate } from 'preact';
 
 // code copied and changed to support constructable stylesheets from npm package preact-custom-element
 export default function register(Component, tagName, propNames, options) {
-	function PreactElement() {
-		const inst = /** @type {PreactCustomElement} */ (
-			Reflect.construct(HTMLElement, [], PreactElement)
-		);
-		inst._vdomComponent = Component;
-		inst._root =
-			options && options.shadow
-				? inst.attachShadow({ mode: options.mode || 'open' })
-				: inst;
+  function PreactElement() {
+    const inst = /** @type {PreactCustomElement} */ Reflect.construct(
+      HTMLElement,
+      [],
+      PreactElement
+    );
+    inst._vdomComponent = Component;
+    inst._root =
+      options && options.shadow
+        ? inst.attachShadow({ mode: options.mode || 'open' })
+        : inst;
 
-        // patch
-        const copiedStyleSheet = new CSSStyleSheet();
-        if (copiedStyleSheet.replace)
-            copiedStyleSheet.replace(
-                [...document.styleSheets].flatMap(
-                    sheet => [...sheet.cssRules].map(rule => rule.cssText)
-                ).join(" ")
-            );
-        else
-            for (const sheet of document.styleSheets)
-                for (const rule of sheet.cssRules)
-                    copiedStyleSheet.insertRule(rule.cssText, copiedStyleSheet.cssRules.length);
+    // patch
+    const copiedStyleSheet = new CSSStyleSheet();
+    if (copiedStyleSheet.replace)
+      copiedStyleSheet.replace(
+        [...document.styleSheets]
+          .flatMap((sheet) => [...sheet.cssRules].map((rule) => rule.cssText))
+          .join(' ')
+      );
+    else
+      for (const sheet of document.styleSheets)
+        for (const rule of sheet.cssRules)
+          copiedStyleSheet.insertRule(
+            rule.cssText,
+            copiedStyleSheet.cssRules.length
+          );
 
-        inst._root.adoptedStyleSheets = [copiedStyleSheet];
-        // patch end
+    inst._root.adoptedStyleSheets = [copiedStyleSheet];
+    // patch end
 
-		return inst;
-	}
-	PreactElement.prototype = Object.create(HTMLElement.prototype);
-	PreactElement.prototype.constructor = PreactElement;
-	PreactElement.prototype.connectedCallback = connectedCallback;
-	PreactElement.prototype.attributeChangedCallback = attributeChangedCallback;
-	PreactElement.prototype.disconnectedCallback = disconnectedCallback;
+    return inst;
+  }
+  PreactElement.prototype = Object.create(HTMLElement.prototype);
+  PreactElement.prototype.constructor = PreactElement;
+  PreactElement.prototype.connectedCallback = connectedCallback;
+  PreactElement.prototype.attributeChangedCallback = attributeChangedCallback;
+  PreactElement.prototype.disconnectedCallback = disconnectedCallback;
 
-	/**
-	 * @type {string[]}
-	 */
-	propNames =
-		propNames ||
-		Component.observedAttributes ||
-		Object.keys(Component.propTypes || {});
-	PreactElement.observedAttributes = propNames;
+  /**
+   * @type {string[]}
+   */
+  propNames =
+    propNames ||
+    Component.observedAttributes ||
+    Object.keys(Component.propTypes || {});
+  PreactElement.observedAttributes = propNames;
 
-	// Keep DOM properties and Preact props in sync
-	propNames.forEach((name) => {
-		Object.defineProperty(PreactElement.prototype, name, {
-			get() {
-				return this._vdom.props[name];
-			},
-			set(v) {
-				if (this._vdom) {
-					this.attributeChangedCallback(name, null, v);
-				} else {
-					if (!this._props) this._props = {};
-					this._props[name] = v;
-					this.connectedCallback();
-				}
+  // Keep DOM properties and Preact props in sync
+  propNames.forEach((name) => {
+    Object.defineProperty(PreactElement.prototype, name, {
+      get() {
+        return this._vdom.props[name];
+      },
+      set(v) {
+        if (this._vdom) {
+          this.attributeChangedCallback(name, null, v);
+        } else {
+          if (!this._props) this._props = {};
+          this._props[name] = v;
+          this.connectedCallback();
+        }
 
-				// Reflect property changes to attributes if the value is a primitive
-				const type = typeof v;
-				if (
-					v == null ||
-					type === 'string' ||
-					type === 'boolean' ||
-					type === 'number'
-				) {
-					this.setAttribute(name, v);
-				}
-			},
-		});
-	});
+        // Reflect property changes to attributes if the value is a primitive
+        const type = typeof v;
+        if (
+          v == null ||
+          type === 'string' ||
+          type === 'boolean' ||
+          type === 'number'
+        ) {
+          this.setAttribute(name, v);
+        }
+      },
+    });
+  });
 
-	return customElements.define(
-		tagName || Component.tagName || Component.displayName || Component.name,
-		PreactElement as unknown as CustomElementConstructor
-	);
+  return customElements.define(
+    tagName || Component.tagName || Component.displayName || Component.name,
+    PreactElement as unknown as CustomElementConstructor
+  );
 }
 
 function ContextProvider(props) {
-	this.getChildContext = () => props.context;
-	// eslint-disable-next-line no-unused-vars
-	const { context, children, ...rest } = props;
-	return cloneElement(children, rest);
+  this.getChildContext = () => props.context;
+  // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+  const { context, children, ...rest } = props;
+  return cloneElement(children, rest);
 }
 
 /**
  * @this {PreactCustomElement}
  */
 function connectedCallback() {
-	// Obtain a reference to the previous context by pinging the nearest
-	// higher up node that was rendered with Preact. If one Preact component
-	// higher up receives our ping, it will set the `detail` property of
-	// our custom event. This works because events are dispatched
-	// synchronously.
-	const event = new CustomEvent('_preact', {
-		detail: {},
-		bubbles: true,
-		cancelable: true,
-	});
-	this.dispatchEvent(event);
-	const context = (event.detail as { [key: string]: any }).context;
+  // Obtain a reference to the previous context by pinging the nearest
+  // higher up node that was rendered with Preact. If one Preact component
+  // higher up receives our ping, it will set the `detail` property of
+  // our custom event. This works because events are dispatched
+  // synchronously.
+  const event = new CustomEvent('_preact', {
+    detail: {},
+    bubbles: true,
+    cancelable: true,
+  });
+  this.dispatchEvent(event);
+  const context = (event.detail as { [key: string]: any }).context;
 
-	this._vdom = h(
-		ContextProvider,
-		{ ...this._props, context },
-		toVdom(this, this._vdomComponent)
-	);
-	(this.hasAttribute('hydrate') ? hydrate : render)(this._vdom, this._root);
+  this._vdom = h(
+    ContextProvider,
+    { ...this._props, context },
+    toVdom(this, this._vdomComponent)
+  );
+  (this.hasAttribute('hydrate') ? hydrate : render)(this._vdom, this._root);
 }
 
 /**
@@ -118,7 +123,7 @@ function connectedCallback() {
  * @returns camel case version of the string
  */
 function toCamelCase(str) {
-	return str.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : ''));
+  return str.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : ''));
 }
 
 /**
@@ -129,24 +134,24 @@ function toCamelCase(str) {
  * @param {unknown} newValue The new value
  */
 function attributeChangedCallback(name, oldValue, newValue) {
-	if (!this._vdom) return;
-	// Attributes use `null` as an empty value whereas `undefined` is more
-	// common in pure JS components, especially with default parameters.
-	// When calling `node.removeAttribute()` we'll receive `null` as the new
-	// value. See issue #50.
-	newValue = newValue == null ? undefined : newValue;
-	const props = {};
-	props[name] = newValue;
-	props[toCamelCase(name)] = newValue;
-	this._vdom = cloneElement(this._vdom, props);
-	render(this._vdom, this._root);
+  if (!this._vdom) return;
+  // Attributes use `null` as an empty value whereas `undefined` is more
+  // common in pure JS components, especially with default parameters.
+  // When calling `node.removeAttribute()` we'll receive `null` as the new
+  // value. See issue #50.
+  newValue = newValue == null ? undefined : newValue;
+  const props = {};
+  props[name] = newValue;
+  props[toCamelCase(name)] = newValue;
+  this._vdom = cloneElement(this._vdom, props);
+  render(this._vdom, this._root);
 }
 
 /**
  * @this {PreactCustomElement}
  */
 function disconnectedCallback() {
-	render((this._vdom = null), this._root);
+  render((this._vdom = null), this._root);
 }
 
 /**
@@ -157,50 +162,50 @@ function disconnectedCallback() {
  * after having fired the event.
  */
 function Slot(props, context) {
-	const ref = (r) => {
-		if (!r) {
-			this.ref.removeEventListener('_preact', this._listener);
-		} else {
-			this.ref = r;
-			if (!this._listener) {
-				this._listener = (event) => {
-					event.stopPropagation();
-					event.detail.context = context;
-				};
-				r.addEventListener('_preact', this._listener);
-			}
-		}
-	};
-	return h('slot', { ...props, ref });
+  const ref = (r) => {
+    if (!r) {
+      this.ref.removeEventListener('_preact', this._listener);
+    } else {
+      this.ref = r;
+      if (!this._listener) {
+        this._listener = (event) => {
+          event.stopPropagation();
+          event.detail.context = context;
+        };
+        r.addEventListener('_preact', this._listener);
+      }
+    }
+  };
+  return h('slot', { ...props, ref });
 }
 
 function toVdom(element, nodeName) {
-	if (element.nodeType === 3) return element.data;
-	if (element.nodeType !== 1) return null;
-	let children = [],
-		props = {},
-		i = 0,
-		a = element.attributes,
-		cn = element.childNodes;
-	for (i = a.length; i--; ) {
-		if (a[i].name !== 'slot') {
-			props[a[i].name] = a[i].value;
-			props[toCamelCase(a[i].name)] = a[i].value;
-		}
-	}
+  if (element.nodeType === 3) return element.data;
+  if (element.nodeType !== 1) return null;
+  let children = [],
+    props = {},
+    i = 0,
+    a = element.attributes,
+    cn = element.childNodes;
+  for (i = a.length; i--; ) {
+    if (a[i].name !== 'slot') {
+      props[a[i].name] = a[i].value;
+      props[toCamelCase(a[i].name)] = a[i].value;
+    }
+  }
 
-	for (i = cn.length; i--; ) {
-		const vnode = toVdom(cn[i], null);
-		// Move slots correctly
-		const name = cn[i].slot;
-		if (name) {
-			props[name] = h(Slot, { name }, vnode);
-		} else {
-			children[i] = vnode;
-		}
-	}
+  for (i = cn.length; i--; ) {
+    const vnode = toVdom(cn[i], null);
+    // Move slots correctly
+    const name = cn[i].slot;
+    if (name) {
+      props[name] = h(Slot, { name }, vnode);
+    } else {
+      children[i] = vnode;
+    }
+  }
 
-	// Only wrap the topmost node with a slot
-	const wrappedChildren = nodeName ? h(Slot, null, children) : children;
-	return h(nodeName || element.nodeName.toLowerCase(), props, wrappedChildren);
+  // Only wrap the topmost node with a slot
+  const wrappedChildren = nodeName ? h(Slot, null, children) : children;
+  return h(nodeName || element.nodeName.toLowerCase(), props, wrappedChildren);
 }
