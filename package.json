@@ -1,56 +1,16 @@
 {
-	"private": true,
-	"type": "module",
-	"scripts": {
-		"prepare": "husky",
-		"test": "eslint",
-		"dev": "vite",
-		"build": "vite build",
-		"preview": "vite preview"
-	},
-	"dependencies": {
-		"@radix-ui/react-slot": "^1.1.1",
-		"class-variance-authority": "^0.7.1",
-		"clsx": "^2.1.1",
-		"lucide-react": "^0.469.0",
-		"preact": "^10.25.3",
-		"stan-js": "^1.6.0",
-		"tailwind-merge": "^2.6.0",
-		"tailwindcss-animate": "^1.0.7"
-	},
-	"devDependencies": {
-		"@eslint/js": "^9.19.0",
-		"@preact/preset-vite": "^2.9.3",
-		"@tailwindcss/postcss": "^4.0.0",
-		"eslint": "^8.57.1",
-		"eslint-config-airbnb": "^19.0.4",
-		"eslint-config-preact": "^1.5.0",
-		"eslint-config-prettier": "^10.0.1",
-		"eslint-plugin-import": "^2.31.0",
-		"eslint-plugin-jsx-a11y": "^6.10.2",
-		"eslint-plugin-prettier": "^5.2.3",
-		"eslint-plugin-react": "^7.37.4",
-		"eslint-plugin-react-hooks": "^4.6.2",
-		"globals": "^15.14.0",
-		"husky": "^9.1.7",
-		"postcss": "^8.4.49",
-		"prettier": "^3.4.2",
-		"tailwindcss": "^4.0.0",
-		"typescript": "^5.7.3",
-		"typescript-eslint": "^8.22.0",
-		"vite": "^6.0.4"
-	},
-	"eslintConfig": {
-		"extends": [
-			"preact",
-			"airbnb",
-			"airbnb/hooks"
-		]
-	},
-	"lint-staged": {
-		"*.{js,css,ts,tsx,jsx}": [
-			"prettier --write",
-			"eslint --ignore-pattern src/lib/preact-custom-element.ts --fix"
-		]
-	}
+  "name": "markee",
+  "version": "1.0.0",
+  "description": "## MVP **Todo:** * Fix conversion of markdown to RTE (check spacings etc.) * Stop using autosave and implement a modal instead which warns the user if data will be lost (use transition from editor active to not active) * Add intro/tutorial/about section in HTML and if no files are present create the first file out of it if active file is deleted, switch active file to first file in current baseDir * In addition to the file name display headline/title/date of note and a summary, No Title, no description if empty * Add translation * Add icon * Switch to editor after note creation * Fix checkmark icon on form not displayed on iOS Safari * Editor toolbar should appear above navigation * Go live on Github pages",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "DEV_SERVER_PORT=4000 DEV_SERVER_ROOT=./app dev-server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dev-server": "^0.2.0"
+  }
 }
