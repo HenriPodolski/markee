@@ -1,7 +1,0 @@
-{
-  "delete-action-button-label": "Delete",
-  "cancel-delete-action-button-label": "Cancel",
-  "select-checkbox-a11y-label": "Select {{fileName}}",
-  "note-creation-placeholder": "note title",
-  "collection-creation-placeholder": "collection title"
-}

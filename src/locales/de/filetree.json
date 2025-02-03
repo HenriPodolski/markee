@@ -1,7 +1,0 @@
-{
-  "delete-action-button-label": "Löschen",
-  "cancel-delete-action-button-label": "Abbrechen",
-  "select-checkbox-a11y-label": "{{fileName}} auswählen",
-  "note-creation-placeholder": "Titel der Notiz",
-  "collection-creation-placeholder": "Titel der Sammlung"
-}
