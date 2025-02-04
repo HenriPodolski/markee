@@ -73,13 +73,9 @@ export default function App() {
                         </Breadcrumb>
                     </div>
                 </header>
-                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                    <div className="container-wrapper">
-                        <div className="container py-6">
-                            <Editor editorSerializedState={editorState}
-                             onSerializedChange={(value) => setEditorState(value)} />
-                        </div>
-                    </div>
+                <div className="grid flex-1 grid-cols-1 grid-rows-1 items-start gap-4 p-4 pt-0">
+                    <Editor editorSerializedState={editorState}
+                     onSerializedChange={(value) => setEditorState(value)} />
                 </div>
             </SidebarInset>
         </SidebarProvider>
