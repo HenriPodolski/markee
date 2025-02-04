@@ -13,8 +13,43 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { SerializedEditorState } from 'lexical';
+import {useState} from "preact/compat";
+import {Editor} from "./components/blocks/editor/editor.tsx";
+
+export const initialValue = {
+    root: {
+        children: [
+            {
+                children: [
+                    {
+                        detail: 0,
+                        format: 0,
+                        mode: 'normal',
+                        style: '',
+                        text: 'Hello World 🚀',
+                        type: 'text',
+                        version: 1,
+                    },
+                ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                type: 'paragraph',
+                version: 1,
+            },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'root',
+        version: 1,
+    },
+} as unknown as SerializedEditorState
 
 export default function App() {
+    const [editorState, setEditorState] =
+        useState<SerializedEditorState>(initialValue)
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -39,12 +74,12 @@ export default function App() {
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                    <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                        <div className="aspect-video rounded-xl bg-muted/50" />
-                        <div className="aspect-video rounded-xl bg-muted/50" />
-                        <div className="aspect-video rounded-xl bg-muted/50" />
+                    <div className="container-wrapper">
+                        <div className="container py-6">
+                            <Editor editorSerializedState={editorState}
+                             onSerializedChange={(value) => setEditorState(value)} />
+                        </div>
                     </div>
-                    <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
                 </div>
             </SidebarInset>
         </SidebarProvider>
