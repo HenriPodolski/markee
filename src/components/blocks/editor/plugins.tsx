@@ -106,7 +106,7 @@ export function Plugins({ }) {
     }
 
     return (
-        <div className="relative">
+        <div className="relative min-h-full flex flex-1 flex-col">
             <ToolbarPlugin>
                 {({ blockType }: {blockType: any}) => (
                     <div className="vertical-align-middle sticky top-0 z-10 flex gap-2 overflow-auto border-b p-1">
@@ -160,7 +160,7 @@ export function Plugins({ }) {
                     </div>
                 )}
             </ToolbarPlugin>
-            <div className="relative">
+            <div className="relative flex-1 self-stretch">
                 <AutoFocusPlugin />
                 <RichTextPlugin
                     contentEditable={
