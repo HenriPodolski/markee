@@ -13,6 +13,7 @@ export default defineConfig({
     },
     define: {
         'process.env': {
+            ...process.env,
             IS_PREACT: 'true',
             NODE_ENV: process.env.NODE_ENV || 'development',
         }
