@@ -16,6 +16,7 @@ import {
 import { SerializedEditorState } from 'lexical';
 import {useState} from "preact/compat";
 import {Editor} from "./components/blocks/editor/editor.tsx";
+import {MarkeeLogo} from "./components/markee-logo.tsx";
 
 export const initialValue = {
     root: {
@@ -54,7 +55,7 @@ export default function App() {
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+                <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1" />
                         <Separator orientation="vertical" className="mr-2 h-4" />
@@ -71,6 +72,16 @@ export default function App() {
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
+                    </div>
+
+                    <div itemScope
+                         itemType="http://schema.org/SoftwareApplication"
+                         className="min-h-min justify-self-end [&>svg]:min-h-[1.25rem] [&>svg]:pb-1 px-4">
+                        <MarkeeLogo />
+                        <p className="text-sm">/mɑːrˈkiː/ notes</p>
+                        <h2 className="visually-hidden">
+                            Markee notes
+                        </h2>
                     </div>
                 </header>
                 <div className="grid flex-1 grid-cols-1 grid-rows-1 items-start gap-4 p-4 pt-0">
