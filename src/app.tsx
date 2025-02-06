@@ -14,10 +14,9 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { SerializedEditorState } from 'lexical';
-import {useState} from "preact/compat";
+import {useState} from "react";
 import {Editor} from "./components/blocks/editor/editor.tsx";
 import {MarkeeLogo} from "./components/markee-logo.tsx";
-import { Devtools } from 'stan-js-devtools';
 
 if (typeof process === "undefined") {
     (window as any).process = {
@@ -58,7 +57,8 @@ export const initialValue = {
 
 export default function App() {
     const [editorState, setEditorState] =
-        useState<SerializedEditorState>(initialValue)
+        useState<SerializedEditorState>(initialValue);
+
     return (
         <>
             <SidebarProvider>
@@ -102,7 +102,6 @@ export default function App() {
             {process?.env?.NODE_ENV !== 'production' && (
                 <>
                     <div className="relative z-50">
-                        <Devtools />
                         <pre>{JSON.stringify(process.env, null, 4)}</pre>
                     </div>
                 </>

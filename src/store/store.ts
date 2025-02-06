@@ -1,31 +1,24 @@
-import { createStore } from 'stan-js';
-import { storage } from 'stan-js/storage';
+import {useMemo} from "react";
+import {createUseFsStore, initialFsList} from "./fs-store.ts";
+import fsPromiseSingleton from "../lib/fs-promise-singleton.ts";
+const fsPromise = fsPromiseSingleton.getInstance('markee');
 
-export type Workspace = {
-    folder: string;
-};
+const { mkdir } = fsPromise;
 
-export type CollectionType = 'richtext' | 'rss' | 'link';
 
-export type Collection = {
-    folder: CollectionType;
+export const useFsStore = createUseFsStore<string[]>([...initialFsList]);
+
+export const useWorkspaces = () => {
+    const [fs, setFs] = useFsStore();
+
+    const workspaces = useMemo(() =>  {
+        return fs.filter(item => item.split('/').length === 2).map(item => item.split('/')[1]);
+    }, [fs]);
+
+    const createWorkspace = async (workspaceName: string) => {
+        await mkdir(workspaceName);
+        setFs([...fs, workspaceName]);
+    }
+
+    return { createWorkspace, workspaces };
 }
-
-export type Notebook = {
-    folder: string;
-}
-
-export type NoteOutputType = 'markdown' | 'html';
-
-export type Note = {
-    outputTypes: Array<NoteOutputType>;
-    file: string;
-}
-
-export const { actions, getState, reset, effect, useStore, useStoreEffect } = createStore({
-    workspaces: [] as Array<Workspace>,
-    collections: [] as Array<Collection>,
-    notebooks: [] as Array<Notebook>,
-    notes: [] as Array<Note>,
-    selected: storage<string>('', { storageKey: 'markee:selected' })
-})
