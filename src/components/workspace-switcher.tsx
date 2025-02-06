@@ -28,6 +28,7 @@ export function WorkspaceSwitcher({
 
   const handleWorkspaceAdd = (evt: MouseEvent) => {
     evt.preventDefault();
+    console.log('handleWorkspaceAdd');
   }
 
   return (
