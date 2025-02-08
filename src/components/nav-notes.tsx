@@ -17,51 +17,44 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { useMarkee } from "../store/store.ts";
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-    }[]
-  }[]
-}) {
+export function NavNotes() {
+  const { workspaceCollections, toggleExpandCollection, workspaceNotes } = useMarkee();
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Collections</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {Object.entries(workspaceCollections).map(([collectionFolder, collection]) => (
           <Collapsible
-            key={item.title}
+            key={collectionFolder}
             asChild
-            defaultOpen={item.isActive}
+            open={collection.expanded}
+            onOpenChange={() => toggleExpandCollection(collectionFolder, collection)}
             className="group/collapsible"
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
+                <SidebarMenuButton tooltip={collection.name}>
+                  {collection.icon && <collection.icon />}
+                  <span>{collection.name}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
+                  {Object.entries(workspaceNotes)
+                    .filter(([noteFile]) => noteFile.startsWith(collectionFolder))
+                    .map((([noteFile, note]) => (
+                    <SidebarMenuSubItem key={noteFile}>
                       <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
+                        <a href="#">
+                          <span>{note.name}</span>
                         </a>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
-                  ))}
+                  )))}
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>

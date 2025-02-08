@@ -101,8 +101,8 @@ export default function App() {
             </SidebarProvider>
             {process?.env?.NODE_ENV !== 'production' && (
                 <>
-                    <div className="relative z-50">
-                        <pre>{JSON.stringify(process.env, null, 4)}</pre>
+                    <div className="relative z-10 bg-white">
+                        {/*<pre>{JSON.stringify(process.env, null, 4)}</pre>*/}
                     </div>
                 </>
             )}

@@ -11,8 +11,8 @@ import {
   SquareTerminal,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
+import { NavNotes } from "@/components/nav-notes"
+import { NavMeta } from "@/components/nav-meta"
 import { NavUser } from "@/components/nav-user"
 import { WorkspaceSwitcher } from "@/components/workspace-switcher"
 import {
@@ -23,7 +23,6 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { ComponentProps } from "preact/compat";
-import { useWorkspaces } from "../store/store.ts";
 
 // This is sample data.
 const data = {
@@ -156,16 +155,14 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
-  const { workspaces } = useWorkspaces();
-
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar className="bg-white" collapsible="icon" {...props}>
       <SidebarHeader>
-        <WorkspaceSwitcher workspaces={workspaces} />
+        <WorkspaceSwitcher />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavNotes items={data.navMain} />
+        <NavMeta projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

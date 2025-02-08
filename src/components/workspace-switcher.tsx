@@ -17,16 +17,14 @@ import {
 import {useState} from "react";
 import {WorkspaceCreationDialog} from "./workspace-creation-dialog.tsx";
 import {Dialog} from "./ui/dialog.tsx";
+import { useMarkee } from "../store/store.ts";
+import { ConfigStoreWorkspace } from "../store/config-store-initial.ts";
 
-export function WorkspaceSwitcher({
-  workspaces,
-}: {
-  workspaces: {
-    name: string
-  }[]
-}) {
+export type Props = {};
+
+export function WorkspaceSwitcher({}: Props) {
+  const { workspaces, activeWorkspace, setActiveWorkspace } = useMarkee();
   const { isMobile } = useSidebar();
-  const [activeWorkspace, setActiveWorkspace] = useState(workspaces[0]);
   const [workspaceCreationDialogOpen, setWorkspaceCreationDialogOpen] = useState(false);
 
   return (
@@ -42,7 +40,7 @@ export function WorkspaceSwitcher({
               >
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {activeWorkspace}
+                    {activeWorkspace.name}
                   </span>
                 </div>
                 <ChevronsUpDown className="ml-auto" />
@@ -57,13 +55,13 @@ export function WorkspaceSwitcher({
               <DropdownMenuLabel className="text-xs text-muted-foreground">
                 Workspaces
               </DropdownMenuLabel>
-              {workspaces.map((workspace, index) => (
+              {Object.entries(workspaces).map(([workspaceFolder, workspace]: [string, unknown], index) => (
                 <DropdownMenuItem
-                  key={workspace}
-                  onClick={() => setActiveWorkspace(workspace)}
+                  key={workspaceFolder}
+                  onClick={() => setActiveWorkspace(workspaceFolder, workspace as ConfigStoreWorkspace)}
                   className="gap-2 p-2"
                 >
-                  {workspace}
+                  {(workspace as ConfigStoreWorkspace).name}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>
               ))}

@@ -17,7 +17,7 @@ import {
     FormItem,
     FormLabel, FormMessage
 } from "./ui/form.tsx";
-import {useWorkspaces} from "../store/store.ts";
+import {useMarkee} from "../store/store.ts";
 import {SetStateAction} from "react";
 
 const formSchema = z.object({
@@ -29,7 +29,7 @@ const formSchema = z.object({
 })
 
 export function WorkspaceCreationDialog({ setWorkspaceCreationDialogOpen }: { setWorkspaceCreationDialogOpen: SetStateAction<boolean> }) {
-    const { createWorkspace } = useWorkspaces();
+    const { createWorkspace } = useMarkee();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -38,7 +38,7 @@ export function WorkspaceCreationDialog({ setWorkspaceCreationDialogOpen }: { se
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        await createWorkspace(`/${values.title}`);
+        await createWorkspace(values.title);
         setWorkspaceCreationDialogOpen(false);
     }
 
