@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import {useState} from "react";
+import { useEffect, useState } from "react";
 import {WorkspaceCreationDialog} from "./workspace-creation-dialog.tsx";
 import {Dialog} from "./ui/dialog.tsx";
 import { useMarkee } from "../store/store.ts";
@@ -26,13 +26,35 @@ export function WorkspaceSwitcher({}: Props) {
   const { workspaces, activeWorkspace, setActiveWorkspace } = useMarkee();
   const { isMobile } = useSidebar();
   const [workspaceCreationDialogOpen, setWorkspaceCreationDialogOpen] = useState(false);
+  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeypress = (evt: KeyboardEvent) => {
+      evt.preventDefault();
+      if (evt.ctrlKey && !isNaN(parseInt(evt.key, 10)) && Object.entries(workspaces)?.[parseInt(evt.key, 10) - 1]) {
+        const [workspaceFolder, workspace] = Object.entries(workspaces)?.[parseInt(evt.key, 10) - 1];
+        setActiveWorkspace(workspaceFolder, workspace as ConfigStoreWorkspace);
+        setIsDropDownOpen(false);
+      }
+    }
+
+    if (isDropDownOpen) {
+      document.addEventListener("keydown", handleKeypress);
+    } else {
+      document.removeEventListener("keydown", handleKeypress);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeypress);
+    }
+  }, [isDropDownOpen, workspaces]);
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <Dialog open={workspaceCreationDialogOpen}
                 onOpenChange={(open: boolean) => setWorkspaceCreationDialogOpen(open) }>
-          <DropdownMenu>
+          <DropdownMenu open={isDropDownOpen} onOpenChange={(open: boolean) => setIsDropDownOpen(open)}>
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
@@ -62,17 +84,15 @@ export function WorkspaceSwitcher({}: Props) {
                   className="gap-2 p-2"
                 >
                   {(workspace as ConfigStoreWorkspace).name}
-                  <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                  <DropdownMenuShortcut>CTRL+{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 p-2">
-                <button onClick={() => setWorkspaceCreationDialogOpen(true)} type="button" className="appearance-none contents">
-                  <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                    <Plus className="size-4" />
-                  </div>
-                  <div className="font-medium text-muted-foreground">Add workspace</div>
-                </button>
+              <DropdownMenuItem onClick={() => setWorkspaceCreationDialogOpen(true)} className="gap-2 p-2">
+                <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                  <Plus className="size-4" />
+                </div>
+                <div className="font-medium text-muted-foreground">Add workspace</div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

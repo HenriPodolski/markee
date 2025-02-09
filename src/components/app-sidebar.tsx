@@ -161,7 +161,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         <WorkspaceSwitcher />
       </SidebarHeader>
       <SidebarContent>
-        <NavNotes items={data.navMain} />
+        <NavNotes />
         <NavMeta projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
