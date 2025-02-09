@@ -84,7 +84,7 @@ export function WorkspaceSwitcher({}: Props) {
                   className="gap-2 p-2"
                 >
                   {(workspace as ConfigStoreWorkspace).name}
-                  <DropdownMenuShortcut>CTRL+{index + 1}</DropdownMenuShortcut>
+                  {index + 1 < 10 && (<DropdownMenuShortcut>CTRL+{index + 1}</DropdownMenuShortcut>)}
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />

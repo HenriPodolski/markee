@@ -1,7 +1,14 @@
-"use client"
-
-import { ChevronRight } from "lucide-react"
-
+import {
+  ChevronRight,
+  FileCog,
+  FilePenLine,
+  Folder,
+  FolderCog,
+  Forward,
+  MoreHorizontal,
+  Plus,
+  Trash2
+} from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -11,16 +18,26 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { useMarkee } from "../store/store.ts";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu.tsx";
 
 export function NavNotes() {
   const { workspaceCollections, toggleExpandCollection, workspaceNotes } = useMarkee();
+  const { isMobile } = useSidebar()
 
   return (
     <SidebarGroup>
@@ -35,13 +52,39 @@ export function NavNotes() {
             className="group/collapsible"
           >
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
+              <CollapsibleTrigger className="group-has-data-[sidebar=menu-action]/menu-item:pr-2" asChild>
                 <SidebarMenuButton tooltip={collection.name}>
                   {collection.icon && <collection.icon />}
-                  <span>{collection.name}</span>
+                  <div className="flex w-fit pr-7 relative">
+                    <span>{collection.name}</span>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <SidebarMenuAction showOnHover>
+                          <MoreHorizontal />
+                          <span className="sr-only">More</span>
+                        </SidebarMenuAction>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="w-48 rounded-lg"
+                        side={isMobile ? "bottom" : "right"}
+                        align={isMobile ? "end" : "start"}
+                      >
+                        <DropdownMenuItem>
+                          <FolderCog className="text-muted-foreground" />
+                          <span>Edit properties</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <Trash2 className="text-muted-foreground" />
+                          <span>Delete collection</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
+
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {Object.entries(workspaceNotes)
@@ -49,17 +92,62 @@ export function NavNotes() {
                     .map((([noteFile, note]) => (
                     <SidebarMenuSubItem key={noteFile}>
                       <SidebarMenuSubButton asChild>
-                        <a href="#">
-                          <span>{note.name}</span>
+                        <a href="#" className="contents">
+                          <div className="flex w-[calc(100%-25px)] relative">
+                            <span>{note.name}</span>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <SidebarMenuAction showOnHover>
+                                  <MoreHorizontal />
+                                  <span className="sr-only">More</span>
+                                </SidebarMenuAction>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                className="w-48 rounded-lg"
+                                side={isMobile ? "bottom" : "right"}
+                                align={isMobile ? "end" : "start"}
+                              >
+                                <DropdownMenuItem>
+                                  <FilePenLine className="text-muted-foreground" />
+                                  <span>Edit note</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  <FileCog className="text-muted-foreground" />
+                                  <span>Edit properties</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                  <Trash2 className="text-muted-foreground" />
+                                  <span>Delete note</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </a>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   )))}
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton onClick={() => console.log('add note')} className="gap-2 p-2 select-none">
+                      <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                        <Plus className="size-4" />
+                      </div>
+                      <div className="font-medium text-muted-foreground">Add note</div>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
         ))}
+        <SidebarMenuItem>
+          <SidebarMenuButton onClick={() => console.log('add collection')} className="gap-2 p-2 mt-2">
+            <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+              <Plus className="size-4" />
+            </div>
+            <div className="font-medium text-muted-foreground">Add collection</div>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
   )
