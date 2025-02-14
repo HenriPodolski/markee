@@ -15,7 +15,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useEffect, useState } from "react";
-import {WorkspaceCreationDialog} from "./workspace-creation-dialog.tsx";
+import {WorkspaceUpsertDialog} from "./workspace-upsert-dialog.tsx";
 import {Dialog} from "./ui/dialog.tsx";
 import { useMarkee } from "../store/store.ts";
 import { ConfigStoreWorkspace } from "../store/config-store-initial.ts";
@@ -96,7 +96,7 @@ export function WorkspaceSwitcher({}: Props) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <WorkspaceCreationDialog setWorkspaceCreationDialogOpen={setWorkspaceCreationDialogOpen} />
+          <WorkspaceUpsertDialog setWorkspaceCreationDialogOpen={setWorkspaceCreationDialogOpen} />
         </Dialog>
       </SidebarMenuItem>
     </SidebarMenu>

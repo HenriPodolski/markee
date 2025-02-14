@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import {initialFsList} from "./fs-store-initial.ts";
 import fsPromiseSingleton from "../lib/fs-promise-singleton.ts";
 import { createUseStore } from "../lib/create-store.ts";
 import {
+    collectionTemplate,
     ConfigStore,
     ConfigStoreCollection,
     ConfigStoreWorkspace,
@@ -11,12 +12,26 @@ import {
 } from "./config-store-initial.ts";
 
 const fsPromise = fsPromiseSingleton.getInstance('markee');
-const { mkdir, writeFile } = fsPromise;
+const { mkdir, writeFile, stat } = fsPromise;
 
 const initialFsListState = [...(await initialFsList())];
 const initialConfigState = await initialConfig(initialFsListState);
+let featureFlagState = {};
+
+try {
+    featureFlagState = JSON.parse(process?.env?.FEATURE_FLAGS as string);
+} catch {/* do noting, fail silently */}
 
 const useConfigStore = createUseStore<ConfigStore>({...initialConfigState});
+const useFeatureFlagStore = createUseStore<typeof featureFlagState>({...featureFlagState});
+
+export const useFeatureFlags = () => {
+    const [featureFlags] = useFeatureFlagStore();
+
+    return {
+        featureFlags,
+    }
+}
 
 export const useMarkee = () => {
     const [config, setConfig] = useConfigStore();
@@ -75,6 +90,20 @@ export const useMarkee = () => {
         setConfig({ ...config, collections: { ...config.collections, [itemFolder]: itemValue } });
     };
 
+    const createCollection = async (workspaceName: string, collectionName: string) => {
+        const workspaceFolder = `/${workspaceName}`;
+
+        if ((await stat(workspaceFolder)).isDirectory()) {
+            const collectionFolder = `${workspaceFolder}/${collectionName}`;
+            await mkdir(collectionFolder);
+            await writeFile(`${collectionFolder}/.gitkeep`, '', { encoding: "utf8", mode: 0o666 });
+            const collectionsState = structuredClone(config.collections);
+            collectionsState[collectionFolder] = { ...structuredClone(collectionTemplate), name: collectionName };
+            setConfig({ ...config, collections: collectionsState });
+        }
+
+    }
+
     const workspaceNotes: ConfigStore['notes'] = useMemo(() => {
         return structuredClone(Object.fromEntries(Object.entries(config.notes).filter(([noteFile]: [string, unknown]) => {
             return noteFile.startsWith(`/${activeWorkspace.name}`);
@@ -82,5 +111,14 @@ export const useMarkee = () => {
     }, [activeWorkspace, config.collections]);
 
 
-    return { createWorkspace, removeWorkspace, workspaces, activeWorkspace, setActiveWorkspace, workspaceCollections, toggleExpandCollection, workspaceNotes };
+    return {
+        createWorkspace,
+        removeWorkspace,
+        workspaces,
+        activeWorkspace,
+        setActiveWorkspace,
+        workspaceCollections,
+        toggleExpandCollection,
+        createCollection,
+        workspaceNotes };
 };

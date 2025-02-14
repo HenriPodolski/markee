@@ -12,7 +12,6 @@ import {
 } from "lucide-react"
 
 import { NavNotes } from "@/components/nav-notes"
-import { NavMeta } from "@/components/nav-meta"
 import { NavUser } from "@/components/nav-user"
 import { WorkspaceSwitcher } from "@/components/workspace-switcher"
 import {
@@ -23,6 +22,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { ComponentProps } from "preact/compat";
+import { NavDocs } from "./nav-docs.tsx";
+import { useFeatureFlags } from "../store/store.ts";
 
 // This is sample data.
 const data = {
@@ -155,6 +156,7 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+  const { featureFlags } = useFeatureFlags();
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -162,10 +164,10 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavNotes />
-        <NavMeta projects={data.projects} />
+        {featureFlags.docs && <NavDocs projects={data.projects} />}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {featureFlags.tools && <NavUser user={data.user} />}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

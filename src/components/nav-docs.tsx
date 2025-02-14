@@ -23,7 +23,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-export function NavMeta({
+export function NavDocs({
   projects,
 }: {
   projects: {
@@ -36,7 +36,7 @@ export function NavMeta({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Docs & Tools</SidebarGroupLabel>
+      <SidebarGroupLabel>Ressources</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>

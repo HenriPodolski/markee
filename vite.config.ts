@@ -8,6 +8,9 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
+            'react': 'preact/compat',
+            'react-dom/client': 'preact/compat/client',
+            'react-dom': 'preact/compat',
             "@": resolve(__dirname, "./src"),
         },
     },
@@ -17,6 +20,15 @@ export default defineConfig({
             IS_PREACT: 'true',
             NODE_ENV: process.env.NODE_ENV || 'development',
             APP_VERSION: JSON.stringify(process.env.npm_package_version),
+            FEATURE_FLAGS: process.env.NODE_ENV === 'development' ?
+              JSON.stringify({
+                  tools: true,
+                  docs: true,
+              }) :
+              JSON.stringify({
+                  tools: false,
+                  docs: false
+              })
         }
     },
     esbuild: {

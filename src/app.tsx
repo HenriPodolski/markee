@@ -16,6 +16,7 @@ import { SerializedEditorState } from 'lexical';
 import {useState} from "react";
 import {Editor} from "./components/blocks/editor/editor.tsx";
 import {MarkeeLogo} from "./components/markee-logo.tsx";
+import { useMarkee } from "./store/store.ts";
 
 if (typeof process === "undefined") {
     (window as any).process = {
@@ -57,6 +58,7 @@ export const initialValue = {
 export default function App() {
     const [editorState, setEditorState] =
         useState<SerializedEditorState>(initialValue);
+    const { activeWorkspace } = useMarkee();
 
     return (
         <>
@@ -71,7 +73,7 @@ export default function App() {
                                 <BreadcrumbList>
                                     <BreadcrumbItem className="hidden md:block">
                                         <BreadcrumbPage>
-                                            Building Your Application
+                                            {activeWorkspace.name}
                                         </BreadcrumbPage>
                                     </BreadcrumbItem>
                                     <BreadcrumbSeparator className="hidden md:block" />

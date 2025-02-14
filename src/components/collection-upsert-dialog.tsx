@@ -22,14 +22,16 @@ import {SetStateAction} from "react";
 
 const formSchema = z.object({
     title: z.string().min(3, {
-        message: "Workspace title must be at least 3 characters.",
+        message: "Collection title must be at least 3 characters.",
     }).max(40, {
-        message: "Workspace title must not be longer then 40 characters.",
+        message: "Collection title must not be longer then 40 characters.",
+    }).regex(/^(?:(?![\\:\/*?"<>|]).)*$/, {
+        message: "Collection title must not contain letters / \\ : * ? \" < > |",
     }),
 })
 
-export function WorkspaceCreationDialog({ setWorkspaceCreationDialogOpen }: { setWorkspaceCreationDialogOpen: SetStateAction<boolean> }) {
-    const { createWorkspace } = useMarkee();
+export function CollectionUpsertDialog({ setCollectionCreationDialogOpen }: { setCollectionCreationDialogOpen: SetStateAction<boolean> }) {
+    const { activeWorkspace, createCollection } = useMarkee();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -38,16 +40,17 @@ export function WorkspaceCreationDialog({ setWorkspaceCreationDialogOpen }: { se
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        await createWorkspace(values.title);
-        setWorkspaceCreationDialogOpen(false);
+        await createCollection(activeWorkspace.name, values.title);
+        setCollectionCreationDialogOpen(false);
+        form.reset();
     }
 
     return (
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>Add workspace</DialogTitle>
+                <DialogTitle>Add collection</DialogTitle>
                 <DialogDescription>
-                    Create a new workspace to organize your notes better
+                    Create a new note collection
                 </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -59,14 +62,14 @@ export function WorkspaceCreationDialog({ setWorkspaceCreationDialogOpen }: { se
                             <FormItem className="grid grid-cols-4 items-center gap-4">
                                 <FormLabel>Title</FormLabel>
                                 <FormControl>
-                                    <Input className="col-span-3" placeholder="Type in a title for your workspace" {...field} />
+                                    <Input className="col-span-3" placeholder="Type in a title for your collection" {...field} />
                                 </FormControl>
                                 <FormMessage className="col-span-3" />
                             </FormItem>
                         )}
                     />
                     <DialogFooter>
-                        <Button type="submit">Save workspace</Button>
+                        <Button type="submit">Save collection</Button>
                     </DialogFooter>
                 </form>
             </Form>
