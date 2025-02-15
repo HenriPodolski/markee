@@ -1,13 +1,13 @@
-import { useMemo } from "react";
+import {useCallback, useMemo} from "react";
 import {initialFsList} from "./fs-store-initial.ts";
 import fsPromiseSingleton from "../lib/fs-promise-singleton.ts";
 import { createUseStore } from "../lib/create-store.ts";
 import {
     collectionTemplate,
     ConfigStore,
-    ConfigStoreCollection,
+    ConfigStoreCollection, ConfigStoreNote, ConfigStoreNoteTypes,
     ConfigStoreWorkspace,
-    initialConfig,
+    initialConfig, noteTemplate,
     workspaceTemplate
 } from "./config-store-initial.ts";
 
@@ -101,15 +101,25 @@ export const useMarkee = () => {
             collectionsState[collectionFolder] = { ...structuredClone(collectionTemplate), name: collectionName };
             setConfig({ ...config, collections: collectionsState });
         }
-
     }
 
-    const workspaceNotes: ConfigStore['notes'] = useMemo(() => {
+    const collectionNotesCallback = useCallback<ConfigStore['notes']>((collection: ConfigStoreCollection): ConfigStore['notes'] => {
         return structuredClone(Object.fromEntries(Object.entries(config.notes).filter(([noteFile]: [string, unknown]) => {
-            return noteFile.startsWith(`/${activeWorkspace.name}`);
-        })));
-    }, [activeWorkspace, config.collections]);
+            return noteFile.startsWith(`/${activeWorkspace.name}/${collection.name}`);
+        }))) as ConfigStore['notes'];
+    }, [activeWorkspace, config.collection, config.notes]);
 
+    const createNote = async (workspaceName: string, collectionName: string, noteName: string, noteType: ConfigStoreNoteTypes) => {
+        const collectionFolder = `/${workspaceName}/${collectionName}`;
+
+        if ((await stat(collectionFolder)).isDirectory()) {
+            const noteFilePath = `${collectionFolder}/${noteName}.${noteType}`;
+            await writeFile(noteFilePath, '', { encoding: "utf8", mode: 0o666 });
+            const notesState = structuredClone(config.notes);
+            notesState[noteFilePath] = { ...structuredClone(noteTemplate), name: noteName, type: noteType };
+            setConfig({ ...config, notes: notesState });
+        }
+    }
 
     return {
         createWorkspace,
@@ -120,5 +130,7 @@ export const useMarkee = () => {
         workspaceCollections,
         toggleExpandCollection,
         createCollection,
-        workspaceNotes };
+        collectionNotesCallback,
+        createNote
+    };
 };

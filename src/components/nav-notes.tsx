@@ -32,18 +32,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
-import { MouseEvent, useState } from "react";
+import {MouseEvent, useState} from "react";
 import { CollectionUpsertDialog } from "./collection-upsert-dialog.tsx";
 import { Dialog } from "./ui/dialog.tsx";
+import {NoteUpsertDialog} from "./note-upsert-dialog.tsx";
+import {ConfigStoreCollection, ConfigStoreNote} from "../store/config-store-initial.ts";
 
 export function NavNotes() {
-  const { workspaceCollections, toggleExpandCollection, workspaceNotes } = useMarkee();
-  const [collectionCreationDialogOpen, setCollectionCreationDialogOpen] = useState(false);
+  const { workspaceCollections, toggleExpandCollection, collectionNotesCallback } = useMarkee();
+  const [ collectionCreationDialogOpen, setCollectionCreationDialogOpen ] = useState(false);
+  const [ collectionForNoteCreation, setCollectionForNoteCreation ] = useState<ConfigStoreCollection | null>(null);
   const { isMobile } = useSidebar();
 
   const handleAddCollectionClick = (evt: MouseEvent) => {
     evt.preventDefault();
     setCollectionCreationDialogOpen(true);
+  }
+
+  const handleAddNoteClick = (evt: MouseEvent, collection: ConfigStoreCollection) => {
+    evt.preventDefault();
+    setCollectionForNoteCreation(collection);
   }
 
   return (
@@ -95,8 +103,7 @@ export function NavNotes() {
 
                 <CollapsibleContent>
                   <SidebarMenuSub>
-                    {Object.entries(workspaceNotes)
-                      .filter(([noteFile]) => noteFile.startsWith(collectionFolder))
+                    {(Object.entries(collectionNotesCallback(collection)) as [string, ConfigStoreNote][])
                       .map((([noteFile, note]) => (
                       <SidebarMenuSubItem key={noteFile}>
                         <SidebarMenuSubButton asChild>
@@ -136,7 +143,7 @@ export function NavNotes() {
                       </SidebarMenuSubItem>
                     )))}
                     <SidebarMenuSubItem>
-                      <SidebarMenuSubButton onClick={() => console.log('add note')} className="gap-2 p-2 select-none">
+                      <SidebarMenuSubButton onClick={(evt: MouseEvent) => handleAddNoteClick(evt, collection)} className="gap-2 p-2 select-none">
                         <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                           <Plus className="size-4" />
                         </div>
@@ -163,6 +170,15 @@ export function NavNotes() {
               onOpenChange={(open: boolean) => setCollectionCreationDialogOpen(open)}>
         <CollectionUpsertDialog setCollectionCreationDialogOpen={setCollectionCreationDialogOpen} />
       </Dialog>
+
+      {collectionForNoteCreation && (
+          <Dialog open={Boolean(collectionForNoteCreation)}
+              onOpenChange={(open: boolean) => {
+                if (!open) setCollectionForNoteCreation(null)
+              }}>
+          <NoteUpsertDialog collection={collectionForNoteCreation} setCollection={setCollectionForNoteCreation} />
+        </Dialog>
+      )}
     </>
   )
 }

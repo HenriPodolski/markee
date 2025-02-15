@@ -20,18 +20,20 @@ import {
 import {useMarkee} from "../store/store.ts";
 import {SetStateAction} from "react";
 
-const formSchema = z.object({
-    title: z.string().min(3, {
-        message: "Collection title must be at least 3 characters.",
-    }).max(40, {
-        message: "Collection title must not be longer then 40 characters.",
-    }).regex(/^(?:(?![\\:\/*?"<>|]).)*$/, {
-        message: "Collection title must not contain letters / \\ : * ? \" < > |",
-    }),
-})
-
 export function CollectionUpsertDialog({ setCollectionCreationDialogOpen }: { setCollectionCreationDialogOpen: SetStateAction<boolean> }) {
-    const { activeWorkspace, createCollection } = useMarkee();
+    const { activeWorkspace, createCollection, workspaceCollections } = useMarkee();
+    const formSchema = z.object({
+        title: z.string().min(3, {
+            message: "Collection title must be at least 3 characters.",
+        }).max(40, {
+            message: "Collection title must not be longer then 40 characters.",
+        }).regex(/^(?:(?![\\:\/*?"<>|]).)*$/, {
+            message: "Collection title must not contain letters / \\ : * ? \" < > |",
+        }).refine((val) => !Object.values(workspaceCollections)
+                .find(collection => collection.name === val),
+            (val) => ({ message: `Collection with title ${val} already exists in workspace ${activeWorkspace.name}` }),
+        ),
+    });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {

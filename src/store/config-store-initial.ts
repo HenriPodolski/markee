@@ -19,9 +19,12 @@ export type ConfigStoreCollection = {
   type: ConfigStoreCollectionType
 };
 
+export type ConfigStoreNoteType = 'md' | 'html'
+
 export type ConfigStoreNote = {
   name: string;
   open: boolean;
+  type?: ConfigStoreNoteType
 };
 
 export type ConfigStore = {
@@ -108,10 +111,12 @@ const initialConfig = async (initialFsListState: string[]): Promise<ConfigStore>
     }
 
     noteFiles.forEach((noteFile: string) => {
-      const noteName = noteFile.split('/')[3].split('.')[0];
+      const filenameSplit = noteFile.split('/')[3].split('.');
+      const filenameExtension = filenameSplit.pop();
+      const noteName = filenameSplit.join('.');
       if (!initialState.notes[noteFile]) {
         initialState.notes[noteFile] = structuredClone({
-          ...noteTemplate, name: noteName
+          ...noteTemplate, name: noteName, type: filenameExtension
         });
         hasChanged = true;
       }
@@ -126,5 +131,6 @@ const initialConfig = async (initialFsListState: string[]): Promise<ConfigStore>
 
   return initialState;
 }
+const hydrateConfigFromVirtualFs = initialConfig;
 
-export { initialConfig };
+export { initialConfig, hydrateConfigFromVirtualFs };

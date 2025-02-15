@@ -20,18 +20,20 @@ import {
 import {useMarkee} from "../store/store.ts";
 import {SetStateAction} from "react";
 
-const formSchema = z.object({
-    title: z.string().min(3, {
-        message: "Workspace title must be at least 3 characters.",
-    }).max(40, {
-        message: "Workspace title must not be longer then 40 characters.",
-    }).regex(/^(?:(?![\\:\/*?"<>|]).)*$/, {
-        message: "Collection title must not contain letters / \\ : * ? \" < > |",
-    }),
-})
-
 export function WorkspaceUpsertDialog({ setWorkspaceCreationDialogOpen }: { setWorkspaceCreationDialogOpen: SetStateAction<boolean> }) {
-    const { createWorkspace } = useMarkee();
+    const { createWorkspace, workspaces } = useMarkee();
+    const formSchema = z.object({
+        title: z.string().min(3, {
+            message: "Workspace title must be at least 3 characters.",
+        }).max(40, {
+            message: "Workspace title must not be longer then 40 characters.",
+        }).regex(/^(?:(?![\\:\/*?"<>|]).)*$/, {
+            message: "Workspace title must not contain letters / \\ : * ? \" < > |",
+        }).refine((val) => !Object.values(workspaces)
+            .find(workspace => workspace.name === val),
+            (val) => ({ message: `Workspace with title ${val} already exists` }),
+        ),
+    });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
