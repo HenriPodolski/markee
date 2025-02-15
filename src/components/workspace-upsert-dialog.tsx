@@ -31,7 +31,7 @@ export function WorkspaceUpsertDialog({ setWorkspaceCreationDialogOpen }: { setW
             message: "Workspace title must not contain letters / \\ : * ? \" < > |",
         }).refine((val) => !Object.values(workspaces)
             .find(workspace => workspace.name === val),
-            (val) => ({ message: `Workspace with title ${val} already exists` }),
+            (val) => ({ message: `Workspace title must be unique and ${val} already exists` }),
         ),
     });
     const form = useForm<z.infer<typeof formSchema>>({

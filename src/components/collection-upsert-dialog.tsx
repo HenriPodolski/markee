@@ -31,7 +31,7 @@ export function CollectionUpsertDialog({ setCollectionCreationDialogOpen }: { se
             message: "Collection title must not contain letters / \\ : * ? \" < > |",
         }).refine((val) => !Object.values(workspaceCollections)
                 .find(collection => collection.name === val),
-            (val) => ({ message: `Collection with title ${val} already exists in workspace ${activeWorkspace.name}` }),
+            (val) => ({ message: `Collection title must be unique and "${val}" already exists in workspace ${activeWorkspace.name}` }),
         ),
     });
     const form = useForm<z.infer<typeof formSchema>>({

@@ -39,7 +39,7 @@ export function NoteUpsertDialog({ setCollection, collection }: { setCollection:
             message: "Note title must not contain letters / \\ : * ? \" < > |",
         }).refine((val) => !(Object.values(collectionNotesCallback(collection)) as ConfigStoreNote[])
                 .find((note) => note.name === val),
-            (val) => ({ message: `Note with title ${val} already exists in collection ${collection.name}` }),
+            (val) => ({ message: `Note title must be unique and "${val}" already exists in collection ${collection.name}` }),
         ),
         type: z.string()
     });
