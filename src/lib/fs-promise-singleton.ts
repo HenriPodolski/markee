@@ -1,4 +1,4 @@
-import LightningFS from '@isomorphic-git/lightning-fs';
+import LightningFS from "@isomorphic-git/lightning-fs";
 
 const instances: { [key: string]: LightningFS } = {};
 const fsPromiseSingleton = (() => {

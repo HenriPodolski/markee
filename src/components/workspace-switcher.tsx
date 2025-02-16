@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Plus } from "lucide-react"
+import { ChevronsUpDown, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,16 +7,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
-import {WorkspaceUpsertDialog} from "./workspace-upsert-dialog.tsx";
-import {Dialog} from "./ui/dialog.tsx";
+import { WorkspaceUpsertDialog } from "./workspace-upsert-dialog.tsx";
+import { Dialog } from "./ui/dialog.tsx";
 import { useMarkee } from "../store/store.ts";
 import { ConfigStoreWorkspace } from "../store/config-store-initial.ts";
 
@@ -25,18 +25,25 @@ export type Props = {};
 export function WorkspaceSwitcher({}: Props) {
   const { workspaces, activeWorkspace, setActiveWorkspace } = useMarkee();
   const { isMobile } = useSidebar();
-  const [workspaceCreationDialogOpen, setWorkspaceCreationDialogOpen] = useState(false);
+  const [workspaceCreationDialogOpen, setWorkspaceCreationDialogOpen] =
+    useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
 
   useEffect(() => {
     const handleKeypress = (evt: KeyboardEvent) => {
       evt.preventDefault();
-      if (evt.ctrlKey && !isNaN(parseInt(evt.key, 10)) && Object.entries(workspaces)?.[parseInt(evt.key, 10) - 1]) {
-        const [workspaceFolder, workspace] = Object.entries(workspaces)?.[parseInt(evt.key, 10) - 1];
+      if (
+        evt.ctrlKey &&
+        !isNaN(parseInt(evt.key, 10)) &&
+        Object.entries(workspaces)?.[parseInt(evt.key, 10) - 1]
+      ) {
+        const [workspaceFolder, workspace] =
+          // eslint-disable-next-line no-unsafe-optional-chaining
+          Object.entries(workspaces)?.[parseInt(evt.key, 10) - 1];
         setActiveWorkspace(workspaceFolder, workspace as ConfigStoreWorkspace);
         setIsDropDownOpen(false);
       }
-    }
+    };
 
     if (isDropDownOpen) {
       document.addEventListener("keydown", handleKeypress);
@@ -46,15 +53,20 @@ export function WorkspaceSwitcher({}: Props) {
 
     return () => {
       document.removeEventListener("keydown", handleKeypress);
-    }
+    };
   }, [isDropDownOpen, workspaces]);
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <Dialog open={workspaceCreationDialogOpen}
-                onOpenChange={(open: boolean) => setWorkspaceCreationDialogOpen(open) }>
-          <DropdownMenu open={isDropDownOpen} onOpenChange={(open: boolean) => setIsDropDownOpen(open)}>
+        <Dialog
+          open={workspaceCreationDialogOpen}
+          onOpenChange={(open: boolean) => setWorkspaceCreationDialogOpen(open)}
+        >
+          <DropdownMenu
+            open={isDropDownOpen}
+            onOpenChange={(open: boolean) => setIsDropDownOpen(open)}
+          >
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
@@ -77,28 +89,46 @@ export function WorkspaceSwitcher({}: Props) {
               <DropdownMenuLabel className="text-xs text-muted-foreground">
                 Workspaces
               </DropdownMenuLabel>
-              {Object.entries(workspaces).map(([workspaceFolder, workspace]: [string, unknown], index) => (
-                <DropdownMenuItem
-                  key={workspaceFolder}
-                  onClick={() => setActiveWorkspace(workspaceFolder, workspace as ConfigStoreWorkspace)}
-                  className="gap-2 p-2"
-                >
-                  {(workspace as ConfigStoreWorkspace).name}
-                  {index + 1 < 10 && (<DropdownMenuShortcut>CTRL+{index + 1}</DropdownMenuShortcut>)}
-                </DropdownMenuItem>
-              ))}
+              {Object.entries(workspaces).map(
+                ([workspaceFolder, workspace]: [string, unknown], index) => (
+                  <DropdownMenuItem
+                    key={workspaceFolder}
+                    onClick={() =>
+                      setActiveWorkspace(
+                        workspaceFolder,
+                        workspace as ConfigStoreWorkspace,
+                      )
+                    }
+                    className="gap-2 p-2"
+                  >
+                    {(workspace as ConfigStoreWorkspace).name}
+                    {index + 1 < 10 && (
+                      <DropdownMenuShortcut>
+                        CTRL+{index + 1}
+                      </DropdownMenuShortcut>
+                    )}
+                  </DropdownMenuItem>
+                ),
+              )}
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setWorkspaceCreationDialogOpen(true)} className="gap-2 p-2">
+              <DropdownMenuItem
+                onClick={() => setWorkspaceCreationDialogOpen(true)}
+                className="gap-2 p-2"
+              >
                 <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                   <Plus className="size-4" />
                 </div>
-                <div className="font-medium text-muted-foreground">Add workspace</div>
+                <div className="font-medium text-muted-foreground">
+                  Add workspace
+                </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <WorkspaceUpsertDialog setWorkspaceCreationDialogOpen={setWorkspaceCreationDialogOpen} />
+          <WorkspaceUpsertDialog
+            setWorkspaceCreationDialogOpen={setWorkspaceCreationDialogOpen}
+          />
         </Dialog>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

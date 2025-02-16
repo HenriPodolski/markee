@@ -29,5 +29,9 @@ function createStore<T>({ initialState }: { initialState: T }) {
 
 export function createUseStore<T>(initialState: T) {
   const store = createStore({ initialState });
-  return () => [useSyncExternalStore(store.subscribe, store.getSnapshot), store.setState] as const;
+  return () =>
+    [
+      useSyncExternalStore(store.subscribe, store.getSnapshot),
+      store.setState,
+    ] as const;
 }

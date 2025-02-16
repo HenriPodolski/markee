@@ -1,50 +1,54 @@
 import fsPromiseSingleton from "../lib/fs-promise-singleton.ts";
 
-const fsPromise = fsPromiseSingleton.getInstance('markee');
+const fsPromise = fsPromiseSingleton.getInstance("markee");
 const initialFsList = async () => {
-  const recursiveWalkDir = async (
-      dir: string,
-      list: string[]
-  ) => {
-      const currentDir = dir ? dir : '/';
-      const dirPath = await fsPromise.readdir(currentDir);
+  const recursiveWalkDir = async (dir: string, list: string[]) => {
+    const currentDir = dir ? dir : "/";
+    const dirPath = await fsPromise.readdir(currentDir);
 
-      list = await Promise.all(await dirPath.reduce(async (listPromise, dirPathItem: string) => {
-              let dirList = await listPromise;
-              const currentItem = `${currentDir}${dirPathItem}`;
-              const statResponse = await fsPromise.stat(currentItem);
+    list = await Promise.all(
+      await dirPath.reduce(
+        async (listPromise, dirPathItem: string) => {
+          let dirList = await listPromise;
+          const currentItem = `${currentDir}${dirPathItem}`;
+          const statResponse = await fsPromise.stat(currentItem);
 
-              if (statResponse.isFile() && dirPathItem.startsWith('.')) {
-                return dirList;
-              }
+          if (statResponse.isFile() && dirPathItem.startsWith(".")) {
+            return dirList;
+          }
 
-              dirList = [
-                  ...dirList,
-                  currentItem
-              ];
+          dirList = [...dirList, currentItem];
 
-              if (statResponse.isDirectory()) {
-                  dirList = dirList.concat(await recursiveWalkDir(`${currentItem}/`, dirList));
-              }
+          if (statResponse.isDirectory()) {
+            dirList = dirList.concat(
+              await recursiveWalkDir(`${currentItem}/`, dirList),
+            );
+          }
 
-              return dirList;
-          }, Promise.resolve([] as string[])));
+          return dirList;
+        },
+        Promise.resolve([] as string[]),
+      ),
+    );
 
-      return list;
+    return list;
   };
 
-  let fsList = await recursiveWalkDir('/', [] as string[]);
+  let fsList = await recursiveWalkDir("/", [] as string[]);
 
   if (!fsList.length) {
-      // if no file exist create /Notebook/Notes/Introduction.md
-      const { mkdir, writeFile } = fsPromise;
-      await mkdir('/Notebook');
-      await mkdir('/Notebook/Notes');
-      await writeFile('/Notebook/Notes/Introduction.md', 'Hallo Welt', { encoding: 'utf8',  mode: 0o666 });
-      fsList = await recursiveWalkDir('/', [] as string[]);
+    // if no file exist create /Notebook/Notes/Introduction.md
+    const { mkdir, writeFile } = fsPromise;
+    await mkdir("/Notebook");
+    await mkdir("/Notebook/Notes");
+    await writeFile("/Notebook/Notes/Introduction.md", "Hallo Welt", {
+      encoding: "utf8",
+      mode: 0o666,
+    });
+    fsList = await recursiveWalkDir("/", [] as string[]);
   }
 
   return fsList;
-}
+};
 
 export { initialFsList };

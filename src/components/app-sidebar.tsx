@@ -9,18 +9,18 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
-} from "lucide-react"
+} from "lucide-react";
 
-import { NavNotes } from "@/components/nav-notes"
-import { NavUser } from "@/components/nav-user"
-import { WorkspaceSwitcher } from "@/components/workspace-switcher"
+import { NavNotes } from "@/components/nav-notes";
+import { NavUser } from "@/components/nav-user";
+import { WorkspaceSwitcher } from "@/components/workspace-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import { ComponentProps } from "preact/compat";
 import { NavDocs } from "./nav-docs.tsx";
 import { useFeatureFlags } from "../store/store.ts";
@@ -153,7 +153,7 @@ const data = {
       icon: Map,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const { featureFlags } = useFeatureFlags();
@@ -171,5 +171,5 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
