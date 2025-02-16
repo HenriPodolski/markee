@@ -17,6 +17,7 @@ import {useState} from "react";
 import {Editor} from "./components/blocks/editor/editor.tsx";
 import {MarkeeLogo} from "./components/markee-logo.tsx";
 import { useMarkee } from "./store/store.ts";
+import { useEffect } from "preact/hooks";
 
 if (typeof process === "undefined") {
     (window as any).process = {
@@ -58,7 +59,11 @@ export const initialValue = {
 export default function App() {
     const [editorState, setEditorState] =
         useState<SerializedEditorState>(initialValue);
-    const { activeWorkspace } = useMarkee();
+    const { activeWorkspace, activeNote } = useMarkee();
+
+    useEffect(() => {
+        console.log('activeNote', activeNote);
+    }, [activeNote]);
 
     return (
         <>
@@ -96,7 +101,7 @@ export default function App() {
                     </header>
                     <div className="grid flex-1 grid-cols-1 grid-rows-1 items-start gap-4 p-4 pt-0">
                         <Editor editorSerializedState={editorState}
-                         onSerializedChange={(value) => setEditorState(value)} />
+                            onSerializedChange={(value) => setEditorState(value)} />
                     </div>
                 </SidebarInset>
             </SidebarProvider>

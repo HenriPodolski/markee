@@ -93,7 +93,7 @@ import { MARKDOWN_TRANSFORMERS } from "@/editor/registry/new-york/editor/transfo
 import { ContentEditable } from "@/editor/registry/new-york/editor/editor-ui/content-editable";
 
 const placeholder = "Press / for commands...";
-const maxLength = 500;
+const maxLength = 150000;
 
 export function Plugins({}) {
   const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -212,7 +212,7 @@ export function Plugins({}) {
         <CodeActionMenuPlugin anchorElem={floatingAnchorElem} />
 
         <MarkdownShortcutPlugin transformers={MARKDOWN_TRANSFORMERS} />
-        <TypingPerfPlugin />
+        {process.env.development === "development" && <TypingPerfPlugin />}
         <TabFocusPlugin />
         <AutocompletePlugin />
         <AutoLinkPlugin />

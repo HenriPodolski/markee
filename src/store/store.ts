@@ -6,6 +6,8 @@ import {
   collectionTemplate,
   ConfigStore,
   ConfigStoreCollection,
+  ConfigStoreNote,
+  ConfigStoreNoteType,
   ConfigStoreWorkspace,
   initialConfig,
   noteTemplate,
@@ -170,7 +172,7 @@ export const useMarkee = () => {
     workspaceName: string,
     collectionName: string,
     noteName: string,
-    noteType: ConfigStoreNoteTypes,
+    noteType: ConfigStoreNoteType,
   ) => {
     const collectionFolder = `/${workspaceName}/${collectionName}`;
 
@@ -187,6 +189,27 @@ export const useMarkee = () => {
     }
   };
 
+  const setActiveNote = (noteFile: string) => {
+    const notesState = Object.fromEntries(
+      Object.entries(config.notes).map(([key, val]) => {
+        (val as ConfigStoreNote).open = key === noteFile;
+        return [key, val];
+      }),
+    );
+
+    setConfig({ ...config, notes: notesState });
+  };
+
+  const activeNote = useMemo((): ConfigStore["notes"] | undefined => {
+    const note = Object.fromEntries(
+      Object.entries(config.notes).filter(
+        ([_key, item]) => (item as ConfigStoreNote).open,
+      ),
+    ) as ConfigStore["notes"];
+
+    return note;
+  }, [config.notes]);
+
   return {
     createWorkspace,
     removeWorkspace,
@@ -198,5 +221,7 @@ export const useMarkee = () => {
     createCollection,
     collectionNotesCallback,
     createNote,
+    setActiveNote,
+    activeNote,
   };
 };

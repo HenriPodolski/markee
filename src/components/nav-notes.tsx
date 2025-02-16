@@ -46,6 +46,7 @@ export function NavNotes() {
     workspaceCollections,
     toggleExpandCollection,
     collectionNotesCallback,
+    setActiveNote,
   } = useMarkee();
   const [collectionCreationDialogOpen, setCollectionCreationDialogOpen] =
     useState(false);
@@ -66,9 +67,9 @@ export function NavNotes() {
     setCollectionForNoteCreation(collection);
   };
 
-  const handleOpenNoteClick = (evt: MouseEvent, note: ConfigStoreNote) => {
+  const handleOpenNoteClick = (evt: MouseEvent, noteFile: string) => {
     evt.preventDefault();
-    console.log("Open note", note);
+    setActiveNote(noteFile);
   };
 
   return (
@@ -136,7 +137,7 @@ export function NavNotes() {
                           <SidebarMenuSubButton asChild>
                             <button
                               onClick={(evt: MouseEvent) =>
-                                handleOpenNoteClick(evt, note)
+                                handleOpenNoteClick(evt, noteFile)
                               }
                               type="button"
                               className="contents appearance-none block w-full cursor-pointer"

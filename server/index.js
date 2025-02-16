@@ -19,11 +19,11 @@ fastify.register(FastifyStatic, {
 
 const start = async () => {
     try {
-        await fastify.listen({ port: 3200 })
+        await fastify.listen({ port: 3200 });
     } catch (err) {
-        fastify.log.error(err)
-        process.exit(1)
+        fastify.log.error(err);
+        process.exit(1);
     }
 }
 
-  start();
+start();
