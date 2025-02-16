@@ -66,6 +66,11 @@ export function NavNotes() {
     setCollectionForNoteCreation(collection);
   };
 
+  const handleOpenNoteClick = (evt: MouseEvent, note: ConfigStoreNote) => {
+    evt.preventDefault();
+    console.log("Open note", note);
+  };
+
   return (
     <>
       <SidebarGroup>
@@ -129,7 +134,13 @@ export function NavNotes() {
                       ).map(([noteFile, note]) => (
                         <SidebarMenuSubItem key={noteFile}>
                           <SidebarMenuSubButton asChild>
-                            <a href="#" className="contents">
+                            <button
+                              onClick={(evt: MouseEvent) =>
+                                handleOpenNoteClick(evt, note)
+                              }
+                              type="button"
+                              className="contents appearance-none block w-full cursor-pointer"
+                            >
                               <div className="flex w-[calc(100%-25px)] relative">
                                 <span>{note.name}</span>
                                 <DropdownMenu>
@@ -160,7 +171,7 @@ export function NavNotes() {
                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               </div>
-                            </a>
+                            </button>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
