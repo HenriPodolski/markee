@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { initialFsList } from './fs-store-initial.ts';
+import { editorEmptyTemplate, initialFsList } from './fs-store-initial.ts';
 import fsPromiseSingleton from '../lib/fs-promise-singleton.ts';
 import { createUseStore } from '../lib/create-store.ts';
 import {
@@ -7,12 +7,12 @@ import {
     ConfigStore,
     ConfigStoreCollection,
     ConfigStoreNote,
-    ConfigStoreNoteType,
     ConfigStoreWorkspace,
     initialConfig,
     noteTemplate,
     workspaceTemplate,
 } from './config-store-initial.ts';
+import { SerializedEditorState } from 'lexical';
 
 const fsPromise = fsPromiseSingleton.getInstance('markee');
 const { mkdir, writeFile, readFile, stat } = fsPromise;
@@ -179,11 +179,15 @@ export const useMarkee = () => {
         const collectionFolder = `/${workspaceName}/${collectionName}`;
 
         if ((await stat(collectionFolder)).isDirectory()) {
-            const noteFilePath = `${collectionFolder}/${noteName}.html`;
-            await writeFile(noteFilePath, '', {
-                encoding: 'utf8',
-                mode: 0o666,
-            });
+            const noteFilePath = `${collectionFolder}/${noteName}.json`;
+            await writeFile(
+                noteFilePath,
+                JSON.stringify(editorEmptyTemplate, null, 2),
+                {
+                    encoding: 'utf8',
+                    mode: 0o666,
+                }
+            );
             const notesState = structuredClone(config.notes);
             notesState[noteFilePath] = {
                 ...structuredClone(noteTemplate),
@@ -230,15 +234,40 @@ export const useMarkee = () => {
         return note;
     }, [activeWorkspace, config.collections, config.notes]);
 
-    const noteFileContent = async (noteFilePath: string): Promise<string> => {
-        let content = '';
+    useMemo(() => {
+        setActiveNote();
+    }, [activeWorkspace]);
+
+    const readNoteFileContent = async (
+        noteFilePath: string
+    ): Promise<SerializedEditorState> => {
+        let content = editorEmptyTemplate;
         if ((await stat(noteFilePath)).isFile()) {
-            content = (await readFile(noteFilePath, {
+            const fileContent = (await readFile(noteFilePath, {
                 encoding: 'utf8',
             })) as string;
+
+            try {
+                content = JSON.parse(fileContent);
+            } catch (e) {
+                // TODO track with analytics (error)
+                console.error(e);
+            }
         }
 
         return content;
+    };
+
+    const writeNoteFileContent = async (
+        noteFilePath: string,
+        noteFileContent: string
+    ) => {
+        if ((await stat(noteFilePath)).isFile()) {
+            await writeFile(noteFilePath, noteFileContent, {
+                encoding: 'utf8',
+                mode: 0o666,
+            });
+        }
     };
 
     return {
@@ -254,6 +283,7 @@ export const useMarkee = () => {
         createNote,
         setActiveNote,
         activeNote,
-        noteFileContent,
+        readNoteFileContent,
+        writeNoteFileContent,
     };
 };

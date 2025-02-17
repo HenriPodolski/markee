@@ -24,6 +24,7 @@ import {
 import { ComponentProps } from 'preact/compat';
 import { NavDocs } from './nav-docs.tsx';
 import { useFeatureFlags } from '../store/store.ts';
+import { NavExports } from './nav-exports.tsx';
 
 // This is sample data.
 const data = {
@@ -164,6 +165,9 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 <NavNotes />
+                {featureFlags.exports && (
+                    <NavExports projects={data.projects} />
+                )}
                 {featureFlags.docs && <NavDocs projects={data.projects} />}
             </SidebarContent>
             <SidebarFooter>

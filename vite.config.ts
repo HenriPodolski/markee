@@ -22,10 +22,12 @@ export default defineConfig({
                 process.env.NODE_ENV === 'development'
                     ? JSON.stringify({
                           tools: true,
+                          exports: true,
                           docs: true,
                       })
                     : JSON.stringify({
                           tools: false,
+                          exports: false,
                           docs: false,
                       }),
         },

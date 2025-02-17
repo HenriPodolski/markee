@@ -1,4 +1,65 @@
 import fsPromiseSingleton from '../lib/fs-promise-singleton.ts';
+import { SerializedEditorState } from 'lexical';
+
+export const editorEmptyTemplate = {
+    root: {
+        children: [
+            {
+                children: [
+                    {
+                        detail: 0,
+                        format: 0,
+                        mode: 'normal',
+                        style: '',
+                        text: '',
+                        type: 'text',
+                        version: 1,
+                    },
+                ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                type: 'paragraph',
+                version: 1,
+            },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'root',
+        version: 1,
+    },
+} as unknown as SerializedEditorState;
+
+const welcomeFileConfig = {
+    root: {
+        children: [
+            {
+                children: [
+                    {
+                        detail: 0,
+                        format: 0,
+                        mode: 'normal',
+                        style: '',
+                        text: 'Hallo Welt 🚀',
+                        type: 'text',
+                        version: 1,
+                    },
+                ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                type: 'paragraph',
+                version: 1,
+            },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'root',
+        version: 1,
+    },
+} as unknown as SerializedEditorState;
 
 const fsPromise = fsPromiseSingleton.getInstance('markee');
 const initialFsList = async () => {
@@ -37,14 +98,18 @@ const initialFsList = async () => {
     let fsList = await recursiveWalkDir('/', [] as string[]);
 
     if (!fsList.length) {
-        // if no file exist create /Notebook/Notes/Introduction.html
+        // if no file exist create /Notebook/Notes/Introduction.json
         const { mkdir, writeFile } = fsPromise;
         await mkdir('/Notebook');
         await mkdir('/Notebook/Notes');
-        await writeFile('/Notebook/Notes/Introduction.html', 'Hello World', {
-            encoding: 'utf8',
-            mode: 0o666,
-        });
+        await writeFile(
+            '/Notebook/Notes/Introduction.json',
+            JSON.stringify(welcomeFileConfig, null, 2),
+            {
+                encoding: 'utf8',
+                mode: 0o666,
+            }
+        );
         fsList = await recursiveWalkDir('/', [] as string[]);
     }
 

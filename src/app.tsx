@@ -16,9 +16,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Editor } from './components/blocks/editor/editor.tsx';
 import { MarkeeLogo } from './components/markee-logo.tsx';
 import { useMarkee } from './store/store.ts';
-import { EditorState, $getRoot, $getEditor, LexicalEditor } from 'lexical';
-import { $convertToMarkdownString, TRANSFORMERS } from '@lexical/markdown';
-import { $generateHtmlFromNodes } from '@lexical/html';
+import {
+    $getEditor,
+    $getRoot,
+    CLEAR_HISTORY_COMMAND,
+    LexicalEditor,
+    SerializedEditorState,
+} from 'lexical';
+import useDebounce from './hooks/useDebounce.ts';
+import { editorEmptyTemplate } from './store/fs-store-initial.ts';
 
 if (typeof process === 'undefined') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,36 +35,76 @@ if (typeof process === 'undefined') {
 }
 
 export default function App() {
-    const [noteContent, setNoteContent] = useState<string | null>(null);
-    const { activeWorkspace, activeNote, noteFileContent } = useMarkee();
+    const {
+        activeWorkspace,
+        activeNote,
+        readNoteFileContent,
+        writeNoteFileContent,
+    } = useMarkee();
     const editorRef = useRef<LexicalEditor>(null);
+    const [editorState, setEditorState] =
+        useState<SerializedEditorState>(editorEmptyTemplate);
+
+    const handleSerializedEditorChange = (
+        serializedEditor: SerializedEditorState
+    ) => {
+        setEditorState(serializedEditor);
+    };
+
+    const updateEditorState = (noteFileContentState: SerializedEditorState) => {
+        if (editorRef.current && noteFileContentState) {
+            let editorState = editorRef.current.parseEditorState(
+                JSON.stringify(noteFileContentState)
+            );
+
+            if (editorState.isEmpty()) {
+                editorState = editorRef.current.parseEditorState(
+                    JSON.stringify(editorEmptyTemplate)
+                );
+            }
+
+            editorRef.current.setEditorState(editorState);
+            editorRef.current.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
+        }
+    };
+
+    const [, cancel] = useDebounce(
+        () => {
+            const saveNoteFileLexicalContent = async (
+                noteFilePath: string,
+                noteFileContent: string
+            ) => {
+                await writeNoteFileContent(noteFilePath, noteFileContent);
+            };
+            const noteFilePath = Object.keys(activeNote)?.[0];
+
+            if (noteFilePath) {
+                saveNoteFileLexicalContent(
+                    noteFilePath,
+                    JSON.stringify(editorState, null, 2)
+                );
+            }
+        },
+        1000,
+        [activeNote, editorState]
+    );
 
     useMemo(() => {
+        cancel();
         const getNoteFileLexicalContent = async (noteFilePath: string) => {
-            const noteFileContentState = await noteFileContent(noteFilePath);
-            setNoteContent(noteFileContentState);
+            const noteFileContentState =
+                await readNoteFileContent(noteFilePath);
+
+            updateEditorState(noteFileContentState);
         };
         const noteFilePath = Object.keys(activeNote)?.[0];
 
         if (noteFilePath) {
             getNoteFileLexicalContent(noteFilePath);
         } else {
-            setNoteContent(null);
+            updateEditorState(editorEmptyTemplate);
         }
-    }, [activeNote]);
-
-    useEffect(() => {
-        console.log('noteContent', noteContent);
-    }, [noteContent]);
-
-    const handleEditorChange = (editorState: EditorState) => {
-        editorState.read(() => {
-            if (editorRef.current) {
-                const htmlString = $generateHtmlFromNodes(editorRef.current);
-                console.log(htmlString);
-            }
-        });
-    };
+    }, [cancel, activeNote]);
 
     return (
         <>
@@ -100,11 +146,13 @@ export default function App() {
                         </div>
                     </header>
                     <div className="grid flex-1 grid-cols-1 grid-rows-1 items-start gap-4 p-4 pt-0">
-                        {typeof noteContent === 'string' && (
+                        {Object.keys(activeNote)?.[0] && (
                             <Editor
                                 editorRef={editorRef}
-                                noteContent={noteContent}
-                                onChange={handleEditorChange}
+                                editorSerializedState={editorState}
+                                onSerializedChange={
+                                    handleSerializedEditorChange
+                                }
                             />
                         )}
                     </div>

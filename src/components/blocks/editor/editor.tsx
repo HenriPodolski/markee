@@ -8,7 +8,6 @@ import { editorTheme } from '@/editor/themes/editor-theme';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { nodes } from './nodes';
 import { Plugins } from './plugins';
-import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown';
 import { MutableRefObject } from 'react';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
 
@@ -22,12 +21,14 @@ const editorConfig: InitialConfigType = {
 };
 
 export function Editor({
-    noteContent,
-    editorRef,
+    editorState,
+    editorSerializedState,
     onChange,
     onSerializedChange,
+    editorRef,
 }: {
-    noteContent: string;
+    editorState?: EditorState;
+    editorSerializedState?: SerializedEditorState;
     editorRef: MutableRefObject<LexicalEditor | null>;
     onChange?: (editorState: EditorState) => void;
     onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
@@ -37,9 +38,10 @@ export function Editor({
             <LexicalComposer
                 initialConfig={{
                     ...editorConfig,
-                    editorState: () => {
-                        $convertFromMarkdownString(noteContent, TRANSFORMERS);
-                    },
+                    ...(editorState ? { editorState } : {}),
+                    ...(editorSerializedState
+                        ? { editorState: JSON.stringify(editorSerializedState) }
+                        : {}),
                 }}
             >
                 <EditorRefPlugin editorRef={editorRef} />
