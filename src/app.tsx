@@ -12,55 +12,26 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { SerializedEditorState } from 'lexical';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Editor } from './components/blocks/editor/editor.tsx';
 import { MarkeeLogo } from './components/markee-logo.tsx';
 import { useMarkee } from './store/store.ts';
-import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown';
+import { EditorState, $getRoot, $getEditor, LexicalEditor } from 'lexical';
+import { $convertToMarkdownString, TRANSFORMERS } from '@lexical/markdown';
+import { $generateHtmlFromNodes } from '@lexical/html';
 
 if (typeof process === 'undefined') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).process = {
         NODE_ENV: 'production',
         IS_PREACT: 'true',
     };
 }
 
-export const initialValue = {
-    root: {
-        children: [
-            {
-                children: [
-                    {
-                        detail: 0,
-                        format: 0,
-                        mode: 'normal',
-                        style: '',
-                        text: 'Hello World 🚀',
-                        type: 'text',
-                        version: 1,
-                    },
-                ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                type: 'paragraph',
-                version: 1,
-            },
-        ],
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-        type: 'root',
-        version: 1,
-    },
-} as unknown as SerializedEditorState;
-
 export default function App() {
-    const [editorState, setEditorState] =
-        useState<SerializedEditorState>(initialValue);
-    const [noteContent, setNoteContent] = useState(null);
+    const [noteContent, setNoteContent] = useState<string | null>(null);
     const { activeWorkspace, activeNote, noteFileContent } = useMarkee();
+    const editorRef = useRef<LexicalEditor>(null);
 
     useMemo(() => {
         const getNoteFileLexicalContent = async (noteFilePath: string) => {
@@ -71,8 +42,23 @@ export default function App() {
 
         if (noteFilePath) {
             getNoteFileLexicalContent(noteFilePath);
+        } else {
+            setNoteContent(null);
         }
     }, [activeNote]);
+
+    useEffect(() => {
+        console.log('noteContent', noteContent);
+    }, [noteContent]);
+
+    const handleEditorChange = (editorState: EditorState) => {
+        editorState.read(() => {
+            if (editorRef.current) {
+                const htmlString = $generateHtmlFromNodes(editorRef.current);
+                console.log(htmlString);
+            }
+        });
+    };
 
     return (
         <>
@@ -114,7 +100,13 @@ export default function App() {
                         </div>
                     </header>
                     <div className="grid flex-1 grid-cols-1 grid-rows-1 items-start gap-4 p-4 pt-0">
-                        {noteContent && <Editor noteContent={noteContent} />}
+                        {typeof noteContent === 'string' && (
+                            <Editor
+                                editorRef={editorRef}
+                                noteContent={noteContent}
+                                onChange={handleEditorChange}
+                            />
+                        )}
                     </div>
                 </SidebarInset>
             </SidebarProvider>

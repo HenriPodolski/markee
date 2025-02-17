@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@isomorphic-git/lightning-fs": "^4.6.0",
     "@lexical/file": "^0.23.1",
+    "@lexical/headless": "^0.24.0",
     "@lexical/react": "^0.23.1",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-collapsible": "^1.1.2",

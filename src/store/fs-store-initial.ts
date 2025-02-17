@@ -37,11 +37,11 @@ const initialFsList = async () => {
     let fsList = await recursiveWalkDir('/', [] as string[]);
 
     if (!fsList.length) {
-        // if no file exist create /Notebook/Notes/Introduction.md
+        // if no file exist create /Notebook/Notes/Introduction.html
         const { mkdir, writeFile } = fsPromise;
         await mkdir('/Notebook');
         await mkdir('/Notebook/Notes');
-        await writeFile('/Notebook/Notes/Introduction.md', 'Hallo Welt', {
+        await writeFile('/Notebook/Notes/Introduction.html', 'Hello World', {
             encoding: 'utf8',
             mode: 0o666,
         });

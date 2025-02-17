@@ -10,7 +10,7 @@ export type ConfigStoreWorkspace = {
     selected: boolean;
 };
 
-export type ConfigStoreCollectionType = 'notes' | 'rss';
+export type ConfigStoreCollectionType = 'notes' | 'rss' | 'release';
 
 export type ConfigStoreCollection = {
     name: string;

@@ -168,7 +168,7 @@ export const useMarkee = () => {
                 )
             ) as ConfigStore['notes'];
         },
-        [activeWorkspace, config.collection, config.notes]
+        [activeWorkspace, config.collections, config.notes]
     );
 
     const createNote = async (
@@ -179,7 +179,7 @@ export const useMarkee = () => {
         const collectionFolder = `/${workspaceName}/${collectionName}`;
 
         if ((await stat(collectionFolder)).isDirectory()) {
-            const noteFilePath = `${collectionFolder}/${noteName}.md`;
+            const noteFilePath = `${collectionFolder}/${noteName}.html`;
             await writeFile(noteFilePath, '', {
                 encoding: 'utf8',
                 mode: 0o666,
@@ -193,10 +193,12 @@ export const useMarkee = () => {
         }
     };
 
-    const setActiveNote = (noteFile: string) => {
+    const setActiveNote = (noteFile?: string | null) => {
         const notesState = Object.fromEntries(
             Object.entries(config.notes).map(([key, val]) => {
-                (val as ConfigStoreNote).open = key === noteFile;
+                (val as ConfigStoreNote).open = Boolean(
+                    noteFile && key === noteFile
+                );
                 return [key, val];
             })
         );
@@ -206,13 +208,27 @@ export const useMarkee = () => {
 
     const activeNote = useMemo((): ConfigStore['notes'] | undefined => {
         const note = Object.fromEntries(
-            Object.entries(config.notes).filter(
-                ([_key, item]) => (item as ConfigStoreNote).open
-            )
+            Object.entries(config.notes).filter(([key, item]) => {
+                const folders = key.split('/');
+                const isInActiveWorkspace = key.startsWith(
+                    `/${activeWorkspace.name}`
+                );
+                const doesCollectionExists = Boolean(
+                    Object.keys(config.collections).includes(
+                        `/${folders[1]}/${folders[2]}`
+                    )
+                );
+                const isExistingAndOpenNote = (item as ConfigStoreNote)?.open;
+                return (
+                    isInActiveWorkspace &&
+                    doesCollectionExists &&
+                    isExistingAndOpenNote
+                );
+            })
         ) as ConfigStore['notes'];
 
         return note;
-    }, [config.notes]);
+    }, [activeWorkspace, config.collections, config.notes]);
 
     const noteFileContent = async (noteFilePath: string): Promise<string> => {
         let content = '';
