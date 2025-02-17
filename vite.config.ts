@@ -1,17 +1,15 @@
-import { defineConfig } from 'vite'
-import preact from '@preact/preset-vite'
-import { resolve } from "path"
+import { defineConfig } from 'vite';
+import preact from '@preact/preset-vite';
+import { resolve } from 'path';
 
 export default defineConfig({
-    plugins: [
-      preact()
-    ],
+    plugins: [preact()],
     resolve: {
         alias: {
-            'react': 'preact/compat',
+            react: 'preact/compat',
             'react-dom/client': 'preact/compat/client',
             'react-dom': 'preact/compat',
-            "@": resolve(__dirname, "./src"),
+            '@': resolve(__dirname, './src'),
         },
     },
     define: {
@@ -20,20 +18,21 @@ export default defineConfig({
             IS_PREACT: 'true',
             NODE_ENV: process.env.NODE_ENV || 'development',
             APP_VERSION: JSON.stringify(process.env.npm_package_version),
-            FEATURE_FLAGS: process.env.NODE_ENV === 'development' ?
-              JSON.stringify({
-                  tools: true,
-                  docs: true,
-              }) :
-              JSON.stringify({
-                  tools: false,
-                  docs: false
-              })
-        }
+            FEATURE_FLAGS:
+                process.env.NODE_ENV === 'development'
+                    ? JSON.stringify({
+                          tools: true,
+                          docs: true,
+                      })
+                    : JSON.stringify({
+                          tools: false,
+                          docs: false,
+                      }),
+        },
     },
     esbuild: {
         supported: {
-            'top-level-await': true //browsers can handle top-level-await features
+            'top-level-await': true, //browsers can handle top-level-await features
         },
-    }
-})
+    },
+});
