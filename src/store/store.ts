@@ -234,10 +234,6 @@ export const useMarkee = () => {
         return note;
     }, [activeWorkspace, config.collections, config.notes]);
 
-    useMemo(() => {
-        setActiveNote();
-    }, [activeWorkspace]);
-
     const readNoteFileContent = async (
         noteFilePath: string
     ): Promise<SerializedEditorState> => {
