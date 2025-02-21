@@ -3,7 +3,6 @@ import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbList,
-    BreadcrumbPage,
     BreadcrumbSeparator,
     BreadcrumbLink,
 } from '@/components/ui/breadcrumb';
@@ -27,7 +26,15 @@ import { editorEmptyTemplate } from './store/fs-store-initial.ts';
 import {
     ConfigStoreCollection,
     ConfigStoreNote,
+    ConfigStoreWorkspace,
 } from './store/config-store-initial.ts';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu.tsx';
+import { FolderCog, Settings2, Trash2 } from 'lucide-react';
 
 if (typeof process === 'undefined') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -124,16 +131,40 @@ export default function App() {
                             />
                             <Breadcrumb>
                                 <BreadcrumbList>
-                                    <BreadcrumbItem className="hidden md:block">
+                                    <BreadcrumbItem>
                                         <BreadcrumbLink href={'/'}>
                                             markee
                                         </BreadcrumbLink>
                                     </BreadcrumbItem>
-                                    <BreadcrumbSeparator className="hidden md:block" />
-                                    <BreadcrumbItem className="hidden md:block">
-                                        <BreadcrumbPage>
-                                            {activeWorkspace.name}
-                                        </BreadcrumbPage>
+                                    <BreadcrumbSeparator />
+                                    <BreadcrumbItem>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger className="flex items-center gap-1">
+                                                {
+                                                    (
+                                                        Object.values(
+                                                            activeWorkspace
+                                                        )?.[0] as ConfigStoreWorkspace
+                                                    )?.name
+                                                }
+                                                <Settings2 size={16} />
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="start">
+                                                <DropdownMenuItem>
+                                                    <FolderCog className="text-muted-foreground" />
+                                                    <span>
+                                                        Edit workspace
+                                                        properties
+                                                    </span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <Trash2 className="text-muted-foreground" />
+                                                    <span>
+                                                        Delete workspace
+                                                    </span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </BreadcrumbItem>
                                     {(
                                         Object.values(
@@ -141,17 +172,36 @@ export default function App() {
                                         )?.[0] as ConfigStoreCollection
                                     )?.name && (
                                         <>
-                                            <BreadcrumbSeparator className="hidden md:block" />
-                                            <BreadcrumbItem className="hidden md:block">
-                                                <BreadcrumbPage>
-                                                    {
-                                                        (
-                                                            Object.values(
-                                                                activeCollection
-                                                            )?.[0] as ConfigStoreCollection
-                                                        )?.name
-                                                    }
-                                                </BreadcrumbPage>
+                                            <BreadcrumbSeparator />
+                                            <BreadcrumbItem>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger className="flex items-center gap-1">
+                                                        {
+                                                            (
+                                                                Object.values(
+                                                                    activeCollection
+                                                                )?.[0] as ConfigStoreCollection
+                                                            )?.name
+                                                        }
+                                                        <Settings2 size={16} />
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="start">
+                                                        <DropdownMenuItem>
+                                                            <FolderCog className="text-muted-foreground" />
+                                                            <span>
+                                                                Edit collection
+                                                                properties
+                                                            </span>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem>
+                                                            <Trash2 className="text-muted-foreground" />
+                                                            <span>
+                                                                Delete
+                                                                collection
+                                                            </span>
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </BreadcrumbItem>
                                         </>
                                     )}
@@ -163,15 +213,33 @@ export default function App() {
                                         <>
                                             <BreadcrumbSeparator />
                                             <BreadcrumbItem>
-                                                <BreadcrumbPage>
-                                                    {
-                                                        (
-                                                            Object.values(
-                                                                activeNote
-                                                            )?.[0] as ConfigStoreNote
-                                                        )?.name
-                                                    }
-                                                </BreadcrumbPage>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger className="flex items-center gap-1">
+                                                        {
+                                                            (
+                                                                Object.values(
+                                                                    activeNote
+                                                                )?.[0] as ConfigStoreNote
+                                                            )?.name
+                                                        }
+                                                        <Settings2 size={16} />
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="start">
+                                                        <DropdownMenuItem>
+                                                            <FolderCog className="text-muted-foreground" />
+                                                            <span>
+                                                                Edit note
+                                                                properties
+                                                            </span>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem>
+                                                            <Trash2 className="text-muted-foreground" />
+                                                            <span>
+                                                                Delete note
+                                                            </span>
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </BreadcrumbItem>
                                         </>
                                     )}
@@ -185,7 +253,9 @@ export default function App() {
                             className="min-h-min justify-self-end [&>svg]:min-h-[1.25rem] [&>svg]:pb-1 px-4"
                         >
                             <MarkeeLogo />
-                            <p className="text-sm">/mɑːrˈkiː/ notes</p>
+                            <p className="text-sm text-nowrap">
+                                /mɑːrˈkiː/ notes
+                            </p>
                             <h2 className="visually-hidden">Markee notes</h2>
                         </div>
                     </header>

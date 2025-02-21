@@ -15,7 +15,7 @@ import {
 import { SerializedEditorState } from 'lexical';
 
 const fsPromise = fsPromiseSingleton.getInstance('markee');
-const { mkdir, writeFile, readFile, stat } = fsPromise;
+const { mkdir, writeFile, readFile, stat, rename } = fsPromise;
 
 const initialFsListState = [...(await initialFsList())];
 const initialConfigState = await initialConfig(initialFsListState);
@@ -43,6 +43,14 @@ export const useFeatureFlags = () => {
 export const useMarkee = () => {
     const [config, setConfig] = useConfigStore();
 
+    const removeWorkspace = async (workspaceName: string) => {
+        console.log('Todo implement removeWorkspace', workspaceName);
+        // check if this is the last remaining workspace, if yes this cannot be deleted
+        // check if empty
+        // if not notify user and ask for confirmation (type in collection name for recursive deletion)
+        // if yes ask for confirmation and delete the folder and .gitkeep file
+    };
+
     const createWorkspace = async (workspaceName: string) => {
         const workspaceFolder = `/${workspaceName}`;
         await mkdir(workspaceFolder);
@@ -56,14 +64,6 @@ export const useMarkee = () => {
             name: workspaceName,
         };
         setConfig({ ...config, workspaces: workspacesState });
-    };
-
-    const removeWorkspace = async (workspaceName: string) => {
-        console.log('Todo implement removeWorkspace', workspaceName);
-        // check if this is the last remaining workspace, if yes this cannot be deleted
-        // check if empty
-        // if not notify user and ask for confirmation (type in collection name for recursive deletion)
-        // if yes ask for confirmation and delete the folder and .gitkeep file
     };
 
     const workspaces: ConfigStore['workspaces'] =
@@ -90,29 +90,53 @@ export const useMarkee = () => {
         });
     };
 
-    const activeWorkspace = useMemo((): ConfigStoreWorkspace => {
-        let workspace = (
-            Object.values(config.workspaces) as ConfigStoreWorkspace[]
-        ).find((item: ConfigStoreWorkspace) => item.selected);
+    const moveWorkspace = async (
+        workspace: ConfigStore['workspaces'],
+        destWorkspaceName: string
+    ) => {
+        const oldWorkspaceFolder = Object.keys(workspace)?.[0];
+        const destWorkspaceFolder = `/${destWorkspaceName}`;
+        await rename(oldWorkspaceFolder, destWorkspaceFolder);
+        const workspacesState = structuredClone(config.workspaces);
+        delete workspacesState[oldWorkspaceFolder];
+        workspacesState[destWorkspaceFolder] = {
+            ...Object.values(workspace)?.[0],
+            name: destWorkspaceName,
+        };
+        setConfig({ ...config, workspaces: workspacesState });
+    };
 
-        if (!workspace) {
-            const itemValue: ConfigStoreWorkspace = Object.values(
-                config.workspaces
-            )[0] as ConfigStoreWorkspace;
-            (itemValue as ConfigStoreWorkspace).selected = true;
-            workspace = itemValue;
+    const activeWorkspace = useMemo((): ConfigStore['workspaces'] => {
+        let workspace = Object.fromEntries(
+            Object.entries(config.workspaces).filter(
+                ([, item]) => (item as ConfigStoreWorkspace).selected
+            )
+        ) as ConfigStore['workspaces'];
+
+        if (!workspace || !Object.values(workspace)?.length) {
+            workspace = Object.fromEntries(
+                Object.entries(config.workspaces)
+                    .filter(([], index) => index === 0)
+                    .map(([key, workspace]) => {
+                        (workspace as ConfigStoreWorkspace).selected = true;
+                        return [key, workspace];
+                    })
+            ) as ConfigStore['workspaces'];
         }
 
-        return workspace!;
+        return workspace;
     }, [config.workspaces]);
 
     const workspaceCollections: ConfigStore['collections'] = useMemo(() => {
+        const activeWorkspaceName = (
+            Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+        )?.name;
         return structuredClone(
             Object.fromEntries(
                 Object.entries(config.collections).filter(
                     ([collectionFolder]: [string, unknown]) => {
                         return collectionFolder.startsWith(
-                            `/${activeWorkspace.name}`
+                            `/${activeWorkspaceName}`
                         );
                     }
                 )
@@ -156,12 +180,15 @@ export const useMarkee = () => {
 
     const collectionNotesCallback = useCallback<ConfigStore['notes']>(
         (collection: ConfigStoreCollection): ConfigStore['notes'] => {
+            const activeWorkspaceName = (
+                Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+            )?.name;
             return structuredClone(
                 Object.fromEntries(
                     Object.entries(config.notes).filter(
                         ([noteFile]: [string, unknown]) => {
                             return noteFile.startsWith(
-                                `/${activeWorkspace.name}/${collection.name}`
+                                `/${activeWorkspaceName}/${collection.name}`
                             );
                         }
                     )
@@ -211,11 +238,14 @@ export const useMarkee = () => {
     };
 
     const activeNote = useMemo((): ConfigStore['notes'] | undefined => {
+        const activeWorkspaceName = (
+            Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+        )?.name;
         const note = Object.fromEntries(
             Object.entries(config.notes).filter(([key, item]) => {
                 const folders = key.split('/');
                 const isInActiveWorkspace = key.startsWith(
-                    `/${activeWorkspace.name}`
+                    `/${activeWorkspaceName}`
                 );
                 const doesCollectionExists = Boolean(
                     Object.keys(config.collections).includes(
@@ -283,6 +313,7 @@ export const useMarkee = () => {
 
     return {
         createWorkspace,
+        moveWorkspace,
         removeWorkspace,
         workspaces,
         activeWorkspace,

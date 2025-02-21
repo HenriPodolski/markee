@@ -20,13 +20,16 @@ import {
 } from './ui/form.tsx';
 import { useMarkee } from '../store/store.ts';
 import { SetStateAction } from 'react';
+import { ConfigStore } from '../store/config-store-initial.ts';
 
 export function WorkspaceUpsertDialog({
     setWorkspaceCreationDialogOpen,
+    updateWorkspace,
 }: {
     setWorkspaceCreationDialogOpen: SetStateAction<boolean>;
+    updateWorkspace?: ConfigStore['workspaces'];
 }) {
-    const { createWorkspace, workspaces } = useMarkee();
+    const { createWorkspace, moveWorkspace, workspaces } = useMarkee();
     const formSchema = z.object({
         title: z
             .string()
@@ -54,12 +57,19 @@ export function WorkspaceUpsertDialog({
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: '',
+            title: updateWorkspace
+                ? Object.values(updateWorkspace)?.[0]?.name
+                : '',
         },
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        await createWorkspace(values.title);
+        if (updateWorkspace) {
+            await moveWorkspace(updateWorkspace, values.title);
+        } else {
+            await createWorkspace(values.title);
+        }
+
         setWorkspaceCreationDialogOpen(false);
         form.reset();
     }

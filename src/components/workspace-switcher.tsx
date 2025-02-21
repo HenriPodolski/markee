@@ -81,7 +81,13 @@ export function WorkspaceSwitcher({}: Props) {
                             >
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">
-                                        {activeWorkspace.name}
+                                        {
+                                            (
+                                                Object.values(
+                                                    activeWorkspace
+                                                )?.[0] as ConfigStoreWorkspace
+                                            )?.name
+                                        }
                                     </span>
                                 </div>
                                 <ChevronsUpDown className="ml-auto" />

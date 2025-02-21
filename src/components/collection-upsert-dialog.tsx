@@ -20,6 +20,7 @@ import {
 } from './ui/form.tsx';
 import { useMarkee } from '../store/store.ts';
 import { SetStateAction } from 'react';
+import { ConfigStoreWorkspace } from '../store/config-store-initial.ts';
 
 export function CollectionUpsertDialog({
     setCollectionCreationDialogOpen,
@@ -48,7 +49,13 @@ export function CollectionUpsertDialog({
                         (collection) => collection.name === val
                     ),
                 (val) => ({
-                    message: `Collection title must be unique and "${val}" already exists in workspace ${activeWorkspace.name}`,
+                    message: `Collection title must be unique and "${val}" already exists in workspace ${
+                        (
+                            Object.values(
+                                activeWorkspace
+                            )?.[0] as ConfigStoreWorkspace
+                        )?.name
+                    }`,
                 })
             ),
     });
@@ -60,7 +67,10 @@ export function CollectionUpsertDialog({
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        await createCollection(activeWorkspace.name, values.title);
+        const activeWorkspaceName = (
+            Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+        )?.name;
+        await createCollection(activeWorkspaceName, values.title);
         setCollectionCreationDialogOpen(false);
         form.reset();
     }

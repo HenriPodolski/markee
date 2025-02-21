@@ -23,6 +23,7 @@ import { SetStateAction } from 'react';
 import {
     ConfigStoreCollection,
     ConfigStoreNote,
+    ConfigStoreWorkspace,
 } from '../store/config-store-initial.ts';
 
 export function NoteUpsertDialog({
@@ -67,7 +68,10 @@ export function NoteUpsertDialog({
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        await createNote(activeWorkspace.name, collection.name, values.title);
+        const activeWorkspaceName = (
+            Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+        )?.name;
+        await createNote(activeWorkspaceName, collection.name, values.title);
         setCollection(null);
         form.reset();
     }
