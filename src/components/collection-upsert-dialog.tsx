@@ -23,9 +23,9 @@ import { SetStateAction } from 'react';
 import { ConfigStoreWorkspace } from '../store/config-store-initial.ts';
 
 export function CollectionUpsertDialog({
-    setCollectionCreationDialogOpen,
+    setDialogOpen,
 }: {
-    setCollectionCreationDialogOpen: SetStateAction<boolean>;
+    setDialogOpen: SetStateAction<boolean>;
 }) {
     const { activeWorkspace, createCollection, workspaceCollections } =
         useMarkee();
@@ -71,7 +71,7 @@ export function CollectionUpsertDialog({
             Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
         )?.name;
         await createCollection(activeWorkspaceName, values.title);
-        setCollectionCreationDialogOpen(false);
+        setDialogOpen(false);
         form.reset();
     }
 

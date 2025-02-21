@@ -5,7 +5,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from './ui/dialog';
+} from '@/components/ui/dialog';
 import { Input } from '@/editor/registry/new-york/ui//input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -17,16 +17,16 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from './ui/form.tsx';
+} from '@/components/ui/form.tsx';
 import { useMarkee } from '../store/store.ts';
 import { SetStateAction } from 'react';
 import { ConfigStore } from '../store/config-store-initial.ts';
 
 export function WorkspaceUpsertDialog({
-    setWorkspaceCreationDialogOpen,
+    setDialogOpen,
     updateWorkspace,
 }: {
-    setWorkspaceCreationDialogOpen: SetStateAction<boolean>;
+    setDialogOpen: SetStateAction<boolean>;
     updateWorkspace?: ConfigStore['workspaces'];
 }) {
     const { createWorkspace, moveWorkspace, workspaces } = useMarkee();
@@ -57,10 +57,13 @@ export function WorkspaceUpsertDialog({
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: updateWorkspace
-                ? Object.values(updateWorkspace)?.[0]?.name
-                : '',
+            title: '',
         },
+        ...(updateWorkspace && {
+            values: {
+                title: Object.values(updateWorkspace)?.[0]?.name,
+            },
+        }),
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -70,16 +73,20 @@ export function WorkspaceUpsertDialog({
             await createWorkspace(values.title);
         }
 
-        setWorkspaceCreationDialogOpen(false);
+        setDialogOpen(false);
         form.reset();
     }
 
     return (
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>Add workspace</DialogTitle>
+                <DialogTitle>
+                    {updateWorkspace ? 'Edit workspace' : 'Add workspace'}
+                </DialogTitle>
                 <DialogDescription>
-                    Create a new workspace to organize your notes better
+                    {updateWorkspace
+                        ? `Edit properties of workspace ${Object.values(updateWorkspace)?.[0]?.name}`
+                        : 'Create a new workspace to organize your notes better'}
                 </DialogDescription>
             </DialogHeader>
             <Form {...form}>

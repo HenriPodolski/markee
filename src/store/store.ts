@@ -15,7 +15,7 @@ import {
 import { SerializedEditorState } from 'lexical';
 
 const fsPromise = fsPromiseSingleton.getInstance('markee');
-const { mkdir, writeFile, readFile, stat, rename } = fsPromise;
+const { mkdir, writeFile, readFile, stat, rename, unlink, rmdir } = fsPromise;
 
 const initialFsListState = [...(await initialFsList())];
 const initialConfigState = await initialConfig(initialFsListState);
@@ -44,11 +44,69 @@ export const useMarkee = () => {
     const [config, setConfig] = useConfigStore();
 
     const removeWorkspace = async (workspaceName: string) => {
-        console.log('Todo implement removeWorkspace', workspaceName);
+        const workspaceFolder = `/${workspaceName}`;
+        const workspacesState = structuredClone(config.workspaces);
+
         // check if this is the last remaining workspace, if yes this cannot be deleted
-        // check if empty
-        // if not notify user and ask for confirmation (type in collection name for recursive deletion)
-        // if yes ask for confirmation and delete the folder and .gitkeep file
+        if (Object.keys(workspacesState).length > 1) {
+            // check if empty
+            let notesState = structuredClone(config.notes);
+            let collectionsState = structuredClone(config.collections);
+            const notesToUnlink: string[] = [];
+            const collectionsToRemove: string[] = [];
+            notesState = Object.fromEntries(
+                Object.entries(notesState).filter(([key]) => {
+                    if (key.startsWith(workspaceFolder)) {
+                        notesToUnlink.push(key);
+                    }
+
+                    return !notesToUnlink.includes(key);
+                })
+            );
+
+            for (const noteFilePath of notesToUnlink) {
+                if ((await stat(noteFilePath)).isFile()) {
+                    await unlink(noteFilePath);
+                }
+            }
+
+            collectionsState = Object.fromEntries(
+                Object.entries(collectionsState).filter(([key]) => {
+                    if (key.startsWith(workspaceFolder)) {
+                        collectionsToRemove.push(key);
+                    }
+
+                    return !collectionsToRemove.includes(key);
+                })
+            );
+
+            for (const collectionPath of collectionsToRemove) {
+                if ((await stat(`${collectionPath}/.gitkeep`)).isFile()) {
+                    await unlink(`${collectionPath}/.gitkeep`);
+                }
+
+                if ((await stat(collectionPath)).isDirectory()) {
+                    await rmdir(collectionPath);
+                }
+            }
+
+            if ((await stat(`${workspaceFolder}/.gitkeep`)).isFile()) {
+                await unlink(`${workspaceFolder}/.gitkeep`);
+            }
+
+            if ((await stat(workspaceFolder)).isDirectory()) {
+                await rmdir(workspaceFolder);
+            }
+
+            delete workspacesState[workspaceFolder];
+
+            setConfig({
+                ...config,
+                workspaces: workspacesState,
+                collections: collectionsState,
+                notes: notesState,
+            });
+        }
     };
 
     const createWorkspace = async (workspaceName: string) => {
@@ -97,13 +155,44 @@ export const useMarkee = () => {
         const oldWorkspaceFolder = Object.keys(workspace)?.[0];
         const destWorkspaceFolder = `/${destWorkspaceName}`;
         await rename(oldWorkspaceFolder, destWorkspaceFolder);
+        // get all files that start with workspace
+        let notesState = structuredClone(config.notes);
+        notesState = Object.fromEntries(
+            Object.entries(notesState).map(([key, value]) => {
+                if (key.startsWith(oldWorkspaceFolder)) {
+                    key = key.replace(oldWorkspaceFolder, destWorkspaceFolder);
+                }
+
+                return [key, value];
+            })
+        );
+
+        // get all collections that start with workspace
+        let collectionsState = structuredClone(config.collections);
+        collectionsState = Object.fromEntries(
+            Object.entries(collectionsState).map(([key, value]) => {
+                if (key.startsWith(oldWorkspaceFolder)) {
+                    key = key.replace(oldWorkspaceFolder, destWorkspaceFolder);
+                }
+
+                return [key, value];
+            })
+        );
+
+        // finally update workspaces
         const workspacesState = structuredClone(config.workspaces);
         delete workspacesState[oldWorkspaceFolder];
+
         workspacesState[destWorkspaceFolder] = {
             ...Object.values(workspace)?.[0],
             name: destWorkspaceName,
         };
-        setConfig({ ...config, workspaces: workspacesState });
+        setConfig({
+            ...config,
+            workspaces: workspacesState,
+            collections: collectionsState,
+            notes: notesState,
+        });
     };
 
     const activeWorkspace = useMemo((): ConfigStore['workspaces'] => {

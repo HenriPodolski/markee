@@ -1,11 +1,4 @@
 import { AppSidebar } from '@/components/app-sidebar';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbSeparator,
-    BreadcrumbLink,
-} from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
     SidebarInset,
@@ -23,18 +16,7 @@ import {
 } from 'lexical';
 import useDebounce from './hooks/useDebounce.ts';
 import { editorEmptyTemplate } from './store/fs-store-initial.ts';
-import {
-    ConfigStoreCollection,
-    ConfigStoreNote,
-    ConfigStoreWorkspace,
-} from './store/config-store-initial.ts';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu.tsx';
-import { FolderCog, Settings2, Trash2 } from 'lucide-react';
+import { AppBreadcrumb } from './components/app-breadcrumb.tsx';
 
 if (typeof process === 'undefined') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,13 +27,8 @@ if (typeof process === 'undefined') {
 }
 
 export default function App() {
-    const {
-        activeWorkspace,
-        activeCollection,
-        activeNote,
-        readNoteFileContent,
-        writeNoteFileContent,
-    } = useMarkee();
+    const { activeNote, readNoteFileContent, writeNoteFileContent } =
+        useMarkee();
     const editorRef = useRef<LexicalEditor>(null);
     const [editorState, setEditorState] =
         useState<SerializedEditorState>(editorEmptyTemplate);
@@ -129,122 +106,7 @@ export default function App() {
                                 orientation="vertical"
                                 className="mr-2 h-4"
                             />
-                            <Breadcrumb>
-                                <BreadcrumbList>
-                                    <BreadcrumbItem>
-                                        <BreadcrumbLink href={'/'}>
-                                            markee
-                                        </BreadcrumbLink>
-                                    </BreadcrumbItem>
-                                    <BreadcrumbSeparator />
-                                    <BreadcrumbItem>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger className="flex items-center gap-1">
-                                                {
-                                                    (
-                                                        Object.values(
-                                                            activeWorkspace
-                                                        )?.[0] as ConfigStoreWorkspace
-                                                    )?.name
-                                                }
-                                                <Settings2 size={16} />
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="start">
-                                                <DropdownMenuItem>
-                                                    <FolderCog className="text-muted-foreground" />
-                                                    <span>
-                                                        Edit workspace
-                                                        properties
-                                                    </span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    <Trash2 className="text-muted-foreground" />
-                                                    <span>
-                                                        Delete workspace
-                                                    </span>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </BreadcrumbItem>
-                                    {(
-                                        Object.values(
-                                            activeCollection
-                                        )?.[0] as ConfigStoreCollection
-                                    )?.name && (
-                                        <>
-                                            <BreadcrumbSeparator />
-                                            <BreadcrumbItem>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger className="flex items-center gap-1">
-                                                        {
-                                                            (
-                                                                Object.values(
-                                                                    activeCollection
-                                                                )?.[0] as ConfigStoreCollection
-                                                            )?.name
-                                                        }
-                                                        <Settings2 size={16} />
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="start">
-                                                        <DropdownMenuItem>
-                                                            <FolderCog className="text-muted-foreground" />
-                                                            <span>
-                                                                Edit collection
-                                                                properties
-                                                            </span>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem>
-                                                            <Trash2 className="text-muted-foreground" />
-                                                            <span>
-                                                                Delete
-                                                                collection
-                                                            </span>
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </BreadcrumbItem>
-                                        </>
-                                    )}
-                                    {(
-                                        Object.values(
-                                            activeNote
-                                        )?.[0] as ConfigStoreNote
-                                    )?.name && (
-                                        <>
-                                            <BreadcrumbSeparator />
-                                            <BreadcrumbItem>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger className="flex items-center gap-1">
-                                                        {
-                                                            (
-                                                                Object.values(
-                                                                    activeNote
-                                                                )?.[0] as ConfigStoreNote
-                                                            )?.name
-                                                        }
-                                                        <Settings2 size={16} />
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="start">
-                                                        <DropdownMenuItem>
-                                                            <FolderCog className="text-muted-foreground" />
-                                                            <span>
-                                                                Edit note
-                                                                properties
-                                                            </span>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem>
-                                                            <Trash2 className="text-muted-foreground" />
-                                                            <span>
-                                                                Delete note
-                                                            </span>
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </BreadcrumbItem>
-                                        </>
-                                    )}
-                                </BreadcrumbList>
-                            </Breadcrumb>
+                            <AppBreadcrumb />
                         </div>
 
                         <div

@@ -286,9 +286,7 @@ export function NavNotes() {
                 }
             >
                 <CollectionUpsertDialog
-                    setCollectionCreationDialogOpen={
-                        setCollectionCreationDialogOpen
-                    }
+                    setDialogOpen={setCollectionCreationDialogOpen}
                 />
             </Dialog>
 
