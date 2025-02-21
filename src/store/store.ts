@@ -234,6 +234,21 @@ export const useMarkee = () => {
         return note;
     }, [activeWorkspace, config.collections, config.notes]);
 
+    const activeCollection = useMemo(():
+        | ConfigStore['collections']
+        | undefined => {
+        const noteFilePath = Object.keys(activeNote)?.[0];
+        const pathSplit = noteFilePath?.split('/');
+        pathSplit?.pop();
+        const collectionFolderPath = pathSplit?.join('/');
+
+        return Object.fromEntries(
+            Object.entries(config.collections).filter(
+                ([key]) => collectionFolderPath && key === collectionFolderPath
+            )
+        ) as ConfigStore['collections'] | undefined;
+    }, [activeNote]);
+
     const readNoteFileContent = async (
         noteFilePath: string
     ): Promise<SerializedEditorState> => {
@@ -276,6 +291,7 @@ export const useMarkee = () => {
         toggleExpandCollection,
         createCollection,
         collectionNotesCallback,
+        activeCollection,
         createNote,
         setActiveNote,
         activeNote,

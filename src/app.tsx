@@ -5,6 +5,7 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
+    BreadcrumbLink,
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -12,19 +13,21 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Editor } from './components/blocks/editor/editor.tsx';
 import { MarkeeLogo } from './components/markee-logo.tsx';
 import { useMarkee } from './store/store.ts';
 import {
-    $getEditor,
-    $getRoot,
     CLEAR_HISTORY_COMMAND,
     LexicalEditor,
     SerializedEditorState,
 } from 'lexical';
 import useDebounce from './hooks/useDebounce.ts';
 import { editorEmptyTemplate } from './store/fs-store-initial.ts';
+import {
+    ConfigStoreCollection,
+    ConfigStoreNote,
+} from './store/config-store-initial.ts';
 
 if (typeof process === 'undefined') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,6 +40,7 @@ if (typeof process === 'undefined') {
 export default function App() {
     const {
         activeWorkspace,
+        activeCollection,
         activeNote,
         readNoteFileContent,
         writeNoteFileContent,
@@ -121,16 +125,56 @@ export default function App() {
                             <Breadcrumb>
                                 <BreadcrumbList>
                                     <BreadcrumbItem className="hidden md:block">
+                                        <BreadcrumbLink href={'/'}>
+                                            markee
+                                        </BreadcrumbLink>
+                                    </BreadcrumbItem>
+                                    <BreadcrumbSeparator className="hidden md:block" />
+                                    <BreadcrumbItem className="hidden md:block">
                                         <BreadcrumbPage>
                                             {activeWorkspace.name}
                                         </BreadcrumbPage>
                                     </BreadcrumbItem>
-                                    <BreadcrumbSeparator className="hidden md:block" />
-                                    <BreadcrumbItem>
-                                        <BreadcrumbPage>
-                                            Data Fetching
-                                        </BreadcrumbPage>
-                                    </BreadcrumbItem>
+                                    {(
+                                        Object.values(
+                                            activeCollection
+                                        )?.[0] as ConfigStoreCollection
+                                    )?.name && (
+                                        <>
+                                            <BreadcrumbSeparator className="hidden md:block" />
+                                            <BreadcrumbItem className="hidden md:block">
+                                                <BreadcrumbPage>
+                                                    {
+                                                        (
+                                                            Object.values(
+                                                                activeCollection
+                                                            )?.[0] as ConfigStoreCollection
+                                                        )?.name
+                                                    }
+                                                </BreadcrumbPage>
+                                            </BreadcrumbItem>
+                                        </>
+                                    )}
+                                    {(
+                                        Object.values(
+                                            activeNote
+                                        )?.[0] as ConfigStoreNote
+                                    )?.name && (
+                                        <>
+                                            <BreadcrumbSeparator />
+                                            <BreadcrumbItem>
+                                                <BreadcrumbPage>
+                                                    {
+                                                        (
+                                                            Object.values(
+                                                                activeNote
+                                                            )?.[0] as ConfigStoreNote
+                                                        )?.name
+                                                    }
+                                                </BreadcrumbPage>
+                                            </BreadcrumbItem>
+                                        </>
+                                    )}
                                 </BreadcrumbList>
                             </Breadcrumb>
                         </div>
