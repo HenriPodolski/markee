@@ -21,6 +21,7 @@ import { Dialog } from '@/components/ui/dialog.tsx';
 import { useMarkee } from '../store/store.ts';
 import { WorkspaceUpsertDialog } from './workspace-upsert-dialog.tsx';
 import { useState } from 'react';
+import { WorkspaceRemoveDialog } from './workspace-remove-dialog.tsx';
 
 export function AppBreadcrumb() {
     const {
@@ -31,6 +32,8 @@ export function AppBreadcrumb() {
         removeWorkspace,
     } = useMarkee();
     const [workspaceDialogOpen, setWorkspaceDialogOpen] = useState(false);
+    const [workspaceRemoveDialogOpen, setWorkspaceRemoveDialogOpen] =
+        useState(false);
     return (
         <>
             <Breadcrumb>
@@ -61,13 +64,7 @@ export function AppBreadcrumb() {
                                 {Object.entries(workspaces).length > 1 && (
                                     <DropdownMenuItem
                                         onClick={() =>
-                                            removeWorkspace(
-                                                (
-                                                    Object.values(
-                                                        activeWorkspace
-                                                    )?.[0] as ConfigStoreWorkspace
-                                                )?.name
-                                            )
+                                            setWorkspaceRemoveDialogOpen(true)
                                         }
                                     >
                                         <Trash2 className="text-muted-foreground" />
@@ -155,6 +152,26 @@ export function AppBreadcrumb() {
                     <WorkspaceUpsertDialog
                         setDialogOpen={setWorkspaceDialogOpen}
                         updateWorkspace={activeWorkspace}
+                    />
+                </Dialog>
+            )}
+            {(Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace)
+                ?.name && (
+                <Dialog
+                    open={workspaceRemoveDialogOpen}
+                    onOpenChange={(open: boolean) =>
+                        setWorkspaceRemoveDialogOpen(open)
+                    }
+                >
+                    <WorkspaceRemoveDialog
+                        setDialogOpen={setWorkspaceRemoveDialogOpen}
+                        workspaceName={
+                            (
+                                Object.values(
+                                    activeWorkspace
+                                )?.[0] as ConfigStoreWorkspace
+                            )?.name
+                        }
                     />
                 </Dialog>
             )}
