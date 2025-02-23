@@ -287,6 +287,50 @@ export const useMarkee = () => {
         [activeWorkspace, config.collections, config.notes]
     );
 
+    const removeCollection = async (
+        workspaceName: string,
+        collectionName: string
+    ) => {
+        const collectionFolder = `/${workspaceName}/${collectionName}`;
+
+        if ((await stat(collectionFolder)).isDirectory()) {
+            const collectionsState = structuredClone(config.collections);
+            let notesState = structuredClone(config.notes);
+            const notesToUnlink: string[] = [];
+            notesState = Object.fromEntries(
+                Object.entries(notesState).filter(([key]) => {
+                    if (key.startsWith(collectionFolder)) {
+                        notesToUnlink.push(key);
+                    }
+
+                    return !notesToUnlink.includes(key);
+                })
+            );
+
+            for (const noteFilePath of notesToUnlink) {
+                if ((await stat(noteFilePath)).isFile()) {
+                    await unlink(noteFilePath);
+                }
+            }
+
+            if ((await stat(`${collectionFolder}/.gitkeep`)).isFile()) {
+                await unlink(`${collectionFolder}/.gitkeep`);
+            }
+
+            if ((await stat(collectionFolder)).isDirectory()) {
+                await rmdir(collectionFolder);
+            }
+
+            delete collectionsState[collectionFolder];
+
+            setConfig({
+                ...config,
+                collections: collectionsState,
+                notes: notesState,
+            });
+        }
+    };
+
     const createNote = async (
         workspaceName: string,
         collectionName: string,
@@ -410,6 +454,7 @@ export const useMarkee = () => {
         workspaceCollections,
         toggleExpandCollection,
         createCollection,
+        removeCollection,
         collectionNotesCallback,
         activeCollection,
         createNote,

@@ -22,18 +22,17 @@ import { useMarkee } from '../store/store.ts';
 import { WorkspaceUpsertDialog } from './workspace-upsert-dialog.tsx';
 import { useState } from 'react';
 import { WorkspaceRemoveDialog } from './workspace-remove-dialog.tsx';
+import { CollectionRemoveDialog } from './collection-remove-dialog.tsx';
 
 export function AppBreadcrumb() {
-    const {
-        activeWorkspace,
-        activeCollection,
-        activeNote,
-        workspaces,
-        removeWorkspace,
-    } = useMarkee();
+    const { activeWorkspace, activeCollection, activeNote, workspaces } =
+        useMarkee();
     const [workspaceDialogOpen, setWorkspaceDialogOpen] = useState(false);
     const [workspaceRemoveDialogOpen, setWorkspaceRemoveDialogOpen] =
         useState(false);
+    const [collectionRemoveDialogOpen, setCollectionRemoveDialogOpen] =
+        useState(false);
+
     return (
         <>
             <Breadcrumb>
@@ -100,7 +99,13 @@ export function AppBreadcrumb() {
                                                 Edit collection properties
                                             </span>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() => {
+                                                setCollectionRemoveDialogOpen(
+                                                    true
+                                                );
+                                            }}
+                                        >
                                             <Trash2 className="text-muted-foreground" />
                                             <span>Delete collection</span>
                                         </DropdownMenuItem>
@@ -175,6 +180,35 @@ export function AppBreadcrumb() {
                     />
                 </Dialog>
             )}
+            {(Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace)
+                ?.name &&
+                (Object.values(activeCollection)?.[0] as ConfigStoreCollection)
+                    ?.name && (
+                    <Dialog
+                        open={collectionRemoveDialogOpen}
+                        onOpenChange={(open: boolean) =>
+                            setCollectionRemoveDialogOpen(open)
+                        }
+                    >
+                        <CollectionRemoveDialog
+                            setDialogOpen={setCollectionRemoveDialogOpen}
+                            workspaceName={
+                                (
+                                    Object.values(
+                                        activeWorkspace
+                                    )?.[0] as ConfigStoreWorkspace
+                                )?.name
+                            }
+                            collectionName={
+                                (
+                                    Object.values(
+                                        activeCollection
+                                    )?.[0] as ConfigStoreCollection
+                                )?.name
+                            }
+                        />
+                    </Dialog>
+                )}
         </>
     );
 }

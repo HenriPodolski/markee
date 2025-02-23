@@ -21,19 +21,21 @@ import {
 import { useMarkee } from '../store/store.ts';
 import { ClipboardEvent, SetStateAction } from 'react';
 
-export function WorkspaceRemoveDialog({
+export function CollectionRemoveDialog({
     setDialogOpen,
     workspaceName,
+    collectionName,
 }: {
     setDialogOpen: SetStateAction<boolean>;
     workspaceName: string;
+    collectionName: string;
 }) {
-    const { removeWorkspace } = useMarkee();
+    const { removeCollection } = useMarkee();
     const formSchema = z.object({
         confirmEntry: z.string().refine(
-            (val) => val === workspaceName,
+            (val) => val === collectionName,
             (val) => ({
-                message: `Workspace removal confirmation must be ${workspaceName} and ${val} does not match`,
+                message: `Collection removal confirmation must be ${collectionName} and ${val} does not match`,
             })
         ),
     });
@@ -45,8 +47,8 @@ export function WorkspaceRemoveDialog({
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        if (values.confirmEntry === workspaceName) {
-            await removeWorkspace(workspaceName);
+        if (values.confirmEntry === collectionName) {
+            await removeCollection(workspaceName, collectionName);
             setDialogOpen(false);
             form.reset();
         }
@@ -55,11 +57,11 @@ export function WorkspaceRemoveDialog({
     return (
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>Remove workspace</DialogTitle>
+                <DialogTitle>Remove collection</DialogTitle>
                 <DialogDescription>
-                    {`Do you really want to remove the workspace "${workspaceName}
-                    "? This removes the workspace and all its collections and notes. 
-                    Please confirm the removal by entering ${workspaceName} in the field below!`}
+                    {`Do you really want to remove the collection "${collectionName}
+                    "? This removes the collection and all contained notes. 
+                    Please confirm the removal by entering ${collectionName} in the field below!`}
                 </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -80,7 +82,7 @@ export function WorkspaceRemoveDialog({
                                         }
                                         autoComplete="off"
                                         className="col-span-3"
-                                        placeholder="Type in the name of the workspace"
+                                        placeholder="Type in the name of the collection"
                                         {...field}
                                     />
                                 </FormControl>
@@ -90,7 +92,7 @@ export function WorkspaceRemoveDialog({
                     />
                     <DialogFooter>
                         <Button variant="destructive" type="submit">
-                            Remove workspace
+                            Remove collection
                         </Button>
                     </DialogFooter>
                 </form>
