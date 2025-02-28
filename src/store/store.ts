@@ -481,14 +481,6 @@ export const useMarkee = () => {
     };
 
     useMemo(() => {
-        setActiveCollection(
-            Object.values(activeCollection)?.[0] as ConfigStoreCollection,
-            Object.keys(activeCollection)?.[0]
-        );
-        setActiveNote(null);
-    }, [activeWorkspace]);
-
-    useMemo(() => {
         const activeNoteFile = activeNote && Object.keys(activeNote)?.[0];
         if (activeNoteFile?.length) {
             const activeNoteFileSplit = activeNoteFile.split('/');

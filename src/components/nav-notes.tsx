@@ -84,12 +84,15 @@ export function NavNotes() {
                                 key={collectionFolder}
                                 asChild
                                 open={collection.expanded}
-                                onOpenChange={() =>
+                                onOpenChange={() => {
+                                    if (collection.expanded) {
+                                        setActiveNote(null);
+                                    }
                                     toggleExpandCollection(
                                         collectionFolder,
                                         collection
-                                    )
-                                }
+                                    );
+                                }}
                                 className="group/collapsible"
                             >
                                 <SidebarMenuItem
