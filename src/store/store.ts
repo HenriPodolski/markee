@@ -267,6 +267,44 @@ export const useMarkee = () => {
         }
     };
 
+    const setActiveCollection = (
+        itemValue: ConfigStoreCollection,
+        itemFolder: string
+    ) => {
+        (itemValue as ConfigStoreCollection).selected = true;
+        setConfig({
+            ...config,
+            collections: {
+                ...Object.fromEntries(
+                    Object.entries(config.collections).map(([key, val]) => {
+                        (val as ConfigStoreCollection).selected = false;
+                        return [key, val];
+                    })
+                ),
+                [itemFolder]: itemValue,
+            },
+        });
+    };
+
+    const activeCollection = useMemo(() => {
+        const activeWorkspaceName = (
+            Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+        )?.name;
+        const collection = Object.fromEntries(
+            Object.entries(config.collections).filter(([key, item]) => {
+                const isInActiveWorkspace = key.startsWith(
+                    `/${activeWorkspaceName}`
+                );
+                return (
+                    isInActiveWorkspace &&
+                    (item as ConfigStoreCollection).selected
+                );
+            })
+        ) as ConfigStore['collections'];
+
+        return collection;
+    }, [activeWorkspace, config.collections]);
+
     const collectionNotesCallback = useCallback<ConfigStore['notes']>(
         (collection: ConfigStoreCollection): ConfigStore['notes'] => {
             const activeWorkspaceName = (
@@ -374,12 +412,20 @@ export const useMarkee = () => {
         const activeWorkspaceName = (
             Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
         )?.name;
+        const activeCollectionName = (
+            Object.values(activeCollection)?.[0] as ConfigStoreCollection
+        )?.name;
         const note = Object.fromEntries(
             Object.entries(config.notes).filter(([key, item]) => {
                 const folders = key.split('/');
                 const isInActiveWorkspace = key.startsWith(
                     `/${activeWorkspaceName}`
                 );
+                const isInActiveCollection =
+                    isInActiveWorkspace &&
+                    key.startsWith(
+                        `/${activeWorkspaceName}/${activeCollectionName}`
+                    );
                 const doesCollectionExists = Boolean(
                     Object.keys(config.collections).includes(
                         `/${folders[1]}/${folders[2]}`
@@ -388,6 +434,7 @@ export const useMarkee = () => {
                 const isExistingAndOpenNote = (item as ConfigStoreNote)?.open;
                 return (
                     isInActiveWorkspace &&
+                    isInActiveCollection &&
                     doesCollectionExists &&
                     isExistingAndOpenNote
                 );
@@ -395,22 +442,22 @@ export const useMarkee = () => {
         ) as ConfigStore['notes'];
 
         return note;
-    }, [activeWorkspace, config.collections, config.notes]);
+    }, [activeWorkspace, activeCollection, config.collections, config.notes]);
 
-    const activeCollection = useMemo(():
-        | ConfigStore['collections']
-        | undefined => {
-        const noteFilePath = Object.keys(activeNote)?.[0];
-        const pathSplit = noteFilePath?.split('/');
-        pathSplit?.pop();
-        const collectionFolderPath = pathSplit?.join('/');
-
-        return Object.fromEntries(
-            Object.entries(config.collections).filter(
-                ([key]) => collectionFolderPath && key === collectionFolderPath
-            )
-        ) as ConfigStore['collections'] | undefined;
-    }, [activeNote]);
+    // const activeCollection = useMemo(():
+    //     | ConfigStore['collections']
+    //     | undefined => {
+    //     const noteFilePath = Object.keys(activeNote)?.[0];
+    //     const pathSplit = noteFilePath?.split('/');
+    //     pathSplit?.pop();
+    //     const collectionFolderPath = pathSplit?.join('/');
+    //
+    //     return Object.fromEntries(
+    //         Object.entries(config.collections).filter(
+    //             ([key]) => collectionFolderPath && key === collectionFolderPath
+    //         )
+    //     ) as ConfigStore['collections'] | undefined;
+    // }, [activeNote]);
 
     const readNoteFileContent = async (
         noteFilePath: string
@@ -457,6 +504,7 @@ export const useMarkee = () => {
         removeCollection,
         collectionNotesCallback,
         activeCollection,
+        setActiveCollection,
         createNote,
         setActiveNote,
         activeNote,

@@ -15,6 +15,7 @@ export type ConfigStoreCollectionType = 'notes' | 'rss' | 'release';
 export type ConfigStoreCollection = {
     name: string;
     icon: LucideIcon;
+    selected: boolean;
     expanded: boolean;
     type: ConfigStoreCollectionType;
 };
@@ -40,6 +41,7 @@ export const workspaceTemplate: ConfigStoreWorkspace = {
 export const collectionTemplate: ConfigStoreCollection = {
     name: '',
     icon: '',
+    selected: false,
     expanded: false,
     type: 'notes',
 } as const;
@@ -53,7 +55,6 @@ const initialConfig = async (
     initialFsListState: string[]
 ): Promise<ConfigStore> => {
     let initialState = null;
-    let hasChanged = false;
 
     try {
         // check if file exists
@@ -70,7 +71,6 @@ const initialConfig = async (
             collections: {},
             notes: {},
         };
-        hasChanged = true;
     }
 
     if (initialFsListState.length) {
@@ -88,7 +88,6 @@ const initialConfig = async (
                     ...workspaceTemplate,
                     name: workspaceName,
                 });
-                hasChanged = true;
             }
         });
 
@@ -107,7 +106,6 @@ const initialConfig = async (
                     ...collectionTemplate,
                     name: collectionName,
                 });
-                hasChanged = true;
             }
         });
 
@@ -129,18 +127,8 @@ const initialConfig = async (
                     ...noteTemplate,
                     name: noteName,
                 });
-                hasChanged = true;
             }
         });
-    }
-
-    if (hasChanged) {
-        try {
-            await writeFile('/.markee', JSON.stringify(initialState, null, 2), {
-                encoding: 'utf8',
-                mode: 0o666,
-            });
-        } catch {}
     }
 
     return initialState;

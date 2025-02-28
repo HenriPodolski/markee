@@ -47,6 +47,7 @@ export function NavNotes() {
         toggleExpandCollection,
         collectionNotesCallback,
         setActiveNote,
+        setActiveCollection,
     } = useMarkee();
     const [collectionCreationDialogOpen, setCollectionCreationDialogOpen] =
         useState(false);
@@ -98,6 +99,12 @@ export function NavNotes() {
                                     >
                                         <SidebarMenuButton
                                             tooltip={collection.name}
+                                            onClick={() =>
+                                                setActiveCollection(
+                                                    collection,
+                                                    collectionFolder
+                                                )
+                                            }
                                         >
                                             {collection.icon && (
                                                 <collection.icon />
