@@ -92,19 +92,20 @@ export function NavNotes() {
                                 }
                                 className="group/collapsible"
                             >
-                                <SidebarMenuItem>
+                                <SidebarMenuItem
+                                    onClick={() =>
+                                        setActiveCollection(
+                                            collection,
+                                            collectionFolder
+                                        )
+                                    }
+                                >
                                     <CollapsibleTrigger
                                         className="group-has-data-[sidebar=menu-action]/menu-item:pr-2"
                                         asChild
                                     >
                                         <SidebarMenuButton
                                             tooltip={collection.name}
-                                            onClick={() =>
-                                                setActiveCollection(
-                                                    collection,
-                                                    collectionFolder
-                                                )
-                                            }
                                         >
                                             {collection.icon && (
                                                 <collection.icon />

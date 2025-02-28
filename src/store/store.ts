@@ -268,10 +268,13 @@ export const useMarkee = () => {
     };
 
     const setActiveCollection = (
-        itemValue: ConfigStoreCollection,
-        itemFolder: string
+        itemValue?: ConfigStoreCollection,
+        itemFolder?: string
     ) => {
-        (itemValue as ConfigStoreCollection).selected = true;
+        if (itemValue) {
+            (itemValue as ConfigStoreCollection).selected = true;
+        }
+
         setConfig({
             ...config,
             collections: {
@@ -281,7 +284,7 @@ export const useMarkee = () => {
                         return [key, val];
                     })
                 ),
-                [itemFolder]: itemValue,
+                ...(itemValue && itemFolder && { [itemFolder]: itemValue }),
             },
         });
     };
@@ -401,6 +404,7 @@ export const useMarkee = () => {
                 (val as ConfigStoreNote).open = Boolean(
                     noteFile && key === noteFile
                 );
+
                 return [key, val];
             })
         );
@@ -444,21 +448,6 @@ export const useMarkee = () => {
         return note;
     }, [activeWorkspace, activeCollection, config.collections, config.notes]);
 
-    // const activeCollection = useMemo(():
-    //     | ConfigStore['collections']
-    //     | undefined => {
-    //     const noteFilePath = Object.keys(activeNote)?.[0];
-    //     const pathSplit = noteFilePath?.split('/');
-    //     pathSplit?.pop();
-    //     const collectionFolderPath = pathSplit?.join('/');
-    //
-    //     return Object.fromEntries(
-    //         Object.entries(config.collections).filter(
-    //             ([key]) => collectionFolderPath && key === collectionFolderPath
-    //         )
-    //     ) as ConfigStore['collections'] | undefined;
-    // }, [activeNote]);
-
     const readNoteFileContent = async (
         noteFilePath: string
     ): Promise<SerializedEditorState> => {
@@ -490,6 +479,36 @@ export const useMarkee = () => {
             });
         }
     };
+
+    useMemo(() => {
+        setActiveCollection(
+            Object.values(activeCollection)?.[0] as ConfigStoreCollection,
+            Object.keys(activeCollection)?.[0]
+        );
+        setActiveNote(null);
+    }, [activeWorkspace]);
+
+    useMemo(() => {
+        const activeNoteFile = activeNote && Object.keys(activeNote)?.[0];
+        if (activeNoteFile?.length) {
+            const activeNoteFileSplit = activeNoteFile.split('/');
+            const [collectionFolder, collection] = Object.entries(
+                config.collections
+            ).filter(([key]) => {
+                return (
+                    key ===
+                    `/${activeNoteFileSplit[1]}/${activeNoteFileSplit[2]}`
+                );
+            });
+
+            if (collection && collectionFolder) {
+                setActiveCollection(
+                    collection as unknown as ConfigStoreCollection,
+                    collectionFolder as unknown as string
+                );
+            }
+        }
+    }, [activeNote]);
 
     return {
         createWorkspace,
