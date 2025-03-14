@@ -118,7 +118,7 @@ export default function App() {
                             <p className="text-sm text-nowrap">
                                 /mɑːrˈkiː/ notes
                             </p>
-                            <h2 className="visually-hidden">Markee notes</h2>
+                            <h2 className="sr-only">Markee notes</h2>
                         </div>
                     </header>
                     <div className="grid flex-1 grid-cols-1 grid-rows-1 items-start gap-4 p-4 pt-0">

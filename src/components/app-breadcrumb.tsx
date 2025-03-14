@@ -206,7 +206,7 @@ export function AppBreadcrumb() {
                     }
                 >
                     <CollectionUpsertDialog
-                        setDialogOpen={setWorkspaceDialogOpen}
+                        setDialogOpen={setCollectionDialogOpen}
                         updateCollection={activeCollection}
                     />
                 </Dialog>
