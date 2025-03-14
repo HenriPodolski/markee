@@ -66,6 +66,11 @@ export function WorkspaceUpsertDialog({
         }),
     });
 
+    function onCancel() {
+        setDialogOpen(false);
+        form.reset();
+    }
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (updateWorkspace) {
             await moveWorkspace(updateWorkspace, values.title);
@@ -112,6 +117,13 @@ export function WorkspaceUpsertDialog({
                         )}
                     />
                     <DialogFooter>
+                        <Button
+                            variant="secondary"
+                            type="button"
+                            onClick={onCancel}
+                        >
+                            Cancel
+                        </Button>
                         <Button type="submit">Save workspace</Button>
                     </DialogFooter>
                 </form>

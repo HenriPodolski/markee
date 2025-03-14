@@ -31,7 +31,7 @@ export function CollectionRemoveDialog({
     collectionName: string;
 }) {
     const { removeCollection } = useMarkee();
-    const formSchema = z.object({
+    const confirmNonEmptyRemovalFormSchema = z.object({
         confirmEntry: z.string().refine(
             (val) => val === collectionName,
             (val) => ({
@@ -39,38 +39,47 @@ export function CollectionRemoveDialog({
             })
         ),
     });
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const confirmNonEmptyRemovalForm = useForm<
+        z.infer<typeof confirmNonEmptyRemovalFormSchema>
+    >({
+        resolver: zodResolver(confirmNonEmptyRemovalFormSchema),
         defaultValues: {
             confirmEntry: '',
         },
     });
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    function onCancel() {
+        setDialogOpen(false);
+        confirmNonEmptyRemovalForm.reset();
+    }
+
+    async function onSubmit(
+        values: z.infer<typeof confirmNonEmptyRemovalFormSchema>
+    ) {
         if (values.confirmEntry === collectionName) {
             await removeCollection(workspaceName, collectionName);
             setDialogOpen(false);
-            form.reset();
+            confirmNonEmptyRemovalForm.reset();
         }
     }
 
     return (
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>Remove collection</DialogTitle>
+                <DialogTitle>Delete collection</DialogTitle>
                 <DialogDescription>
-                    {`Do you really want to remove the collection "${collectionName}
-                    "? This removes the collection and all contained notes. 
-                    Please confirm the removal by entering ${collectionName} in the field below!`}
+                    {`Do you really want to delete the collection "${collectionName}
+                    "? This deletes the collection and all contained notes. 
+                    Please confirm the deletion by entering ${collectionName} in the field below!`}
                 </DialogDescription>
             </DialogHeader>
-            <Form {...form}>
+            <Form {...confirmNonEmptyRemovalForm}>
                 <form
                     className="grid gap-4 py-4"
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={confirmNonEmptyRemovalForm.handleSubmit(onSubmit)}
                 >
                     <FormField
-                        control={form.control}
+                        control={confirmNonEmptyRemovalForm.control}
                         name="confirmEntry"
                         render={({ field }) => (
                             <FormItem className="grid grid-cols-4 items-center gap-4">
@@ -91,8 +100,15 @@ export function CollectionRemoveDialog({
                         )}
                     />
                     <DialogFooter>
+                        <Button
+                            variant="secondary"
+                            type="button"
+                            onClick={onCancel}
+                        >
+                            Cancel
+                        </Button>
                         <Button variant="destructive" type="submit">
-                            Remove collection
+                            Delete collection
                         </Button>
                     </DialogFooter>
                 </form>

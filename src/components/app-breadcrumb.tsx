@@ -23,6 +23,8 @@ import { WorkspaceUpsertDialog } from './workspace-upsert-dialog.tsx';
 import { useState } from 'react';
 import { WorkspaceRemoveDialog } from './workspace-remove-dialog.tsx';
 import { CollectionRemoveDialog } from './collection-remove-dialog.tsx';
+import { NoteRemoveDialog } from './note-remove-dialog.tsx';
+import { CollectionUpsertDialog } from './collection-upsert-dialog.tsx';
 
 export function AppBreadcrumb() {
     const { activeWorkspace, activeCollection, activeNote, workspaces } =
@@ -30,8 +32,11 @@ export function AppBreadcrumb() {
     const [workspaceDialogOpen, setWorkspaceDialogOpen] = useState(false);
     const [workspaceRemoveDialogOpen, setWorkspaceRemoveDialogOpen] =
         useState(false);
+    const [collectionDialogOpen, setCollectionDialogOpen] = useState(false);
     const [collectionRemoveDialogOpen, setCollectionRemoveDialogOpen] =
         useState(false);
+    const [noteDialogOpen, setNoteDialogOpen] = useState(false);
+    const [noteRemoveDialogOpen, setNoteRemoveDialogOpen] = useState(false);
 
     return (
         <>
@@ -93,7 +98,11 @@ export function AppBreadcrumb() {
                                         <Settings2 size={16} />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="start">
-                                        <DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() =>
+                                                setCollectionDialogOpen(true)
+                                            }
+                                        >
                                             <FolderCog className="text-muted-foreground" />
                                             <span>
                                                 Edit collection properties
@@ -131,11 +140,19 @@ export function AppBreadcrumb() {
                                         <Settings2 size={16} />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="start">
-                                        <DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() =>
+                                                setNoteDialogOpen(true)
+                                            }
+                                        >
                                             <FolderCog className="text-muted-foreground" />
                                             <span>Edit note properties</span>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() => {
+                                                setNoteRemoveDialogOpen(true);
+                                            }}
+                                        >
                                             <Trash2 className="text-muted-foreground" />
                                             <span>Delete note</span>
                                         </DropdownMenuItem>
@@ -180,6 +197,20 @@ export function AppBreadcrumb() {
                     />
                 </Dialog>
             )}
+            {(Object.values(activeCollection)?.[0] as ConfigStoreCollection)
+                ?.name && (
+                <Dialog
+                    open={collectionDialogOpen}
+                    onOpenChange={(open: boolean) =>
+                        setCollectionDialogOpen(open)
+                    }
+                >
+                    <CollectionUpsertDialog
+                        setDialogOpen={setWorkspaceDialogOpen}
+                        updateCollection={activeCollection}
+                    />
+                </Dialog>
+            )}
             {(Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace)
                 ?.name &&
                 (Object.values(activeCollection)?.[0] as ConfigStoreCollection)
@@ -204,6 +235,44 @@ export function AppBreadcrumb() {
                                     Object.values(
                                         activeCollection
                                     )?.[0] as ConfigStoreCollection
+                                )?.name
+                            }
+                        />
+                    </Dialog>
+                )}
+
+            {(Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace)
+                ?.name &&
+                (Object.values(activeCollection)?.[0] as ConfigStoreCollection)
+                    ?.name &&
+                (Object.values(activeNote)?.[0] as ConfigStoreNote)?.name && (
+                    <Dialog
+                        open={noteRemoveDialogOpen}
+                        onOpenChange={(open: boolean) =>
+                            setNoteRemoveDialogOpen(open)
+                        }
+                    >
+                        <NoteRemoveDialog
+                            setDialogOpen={setNoteRemoveDialogOpen}
+                            workspaceName={
+                                (
+                                    Object.values(
+                                        activeWorkspace
+                                    )?.[0] as ConfigStoreWorkspace
+                                )?.name
+                            }
+                            collectionName={
+                                (
+                                    Object.values(
+                                        activeCollection
+                                    )?.[0] as ConfigStoreCollection
+                                )?.name
+                            }
+                            noteName={
+                                (
+                                    Object.values(
+                                        activeNote
+                                    )?.[0] as ConfigStoreNote
                                 )?.name
                             }
                         />

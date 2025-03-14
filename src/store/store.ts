@@ -372,6 +372,13 @@ export const useMarkee = () => {
         }
     };
 
+    const moveCollection = async (
+        workspaceName: string,
+        collection: ConfigStore['collections'],
+        destWorkspace: string,
+        destCollectionName: string
+    ) => {};
+
     const createNote = async (
         workspaceName: string,
         collectionName: string,
@@ -480,6 +487,27 @@ export const useMarkee = () => {
         }
     };
 
+    const removeNote = async (
+        workspaceName: string,
+        collectionName: string,
+        noteName: string
+    ) => {
+        const noteFilePath = `/${workspaceName}/${collectionName}/${noteName}.json`;
+
+        if ((await stat(noteFilePath)).isFile()) {
+            const notesState = structuredClone(config.notes);
+            await unlink(noteFilePath);
+            delete notesState[noteFilePath];
+            setConfig({
+                ...config,
+                notes: notesState,
+            });
+        }
+    };
+
+    /**
+     * used to set a collection to active when a cotaining note is activated
+     */
     useMemo(() => {
         const activeNoteFile = activeNote && Object.keys(activeNote)?.[0];
         if (activeNoteFile?.length) {
@@ -503,6 +531,7 @@ export const useMarkee = () => {
     }, [activeNote]);
 
     return {
+        config,
         createWorkspace,
         moveWorkspace,
         removeWorkspace,
@@ -512,6 +541,7 @@ export const useMarkee = () => {
         workspaceCollections,
         toggleExpandCollection,
         createCollection,
+        moveCollection,
         removeCollection,
         collectionNotesCallback,
         activeCollection,
@@ -519,6 +549,7 @@ export const useMarkee = () => {
         createNote,
         setActiveNote,
         activeNote,
+        removeNote,
         readNoteFileContent,
         writeNoteFileContent,
     };

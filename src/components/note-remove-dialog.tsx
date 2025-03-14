@@ -15,78 +15,75 @@ import {
     FormControl,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from '@/components/ui/form.tsx';
 import { useMarkee } from '../store/store.ts';
-import { ClipboardEvent, SetStateAction } from 'react';
+import { SetStateAction } from 'react';
 
-export function WorkspaceRemoveDialog({
+export function NoteRemoveDialog({
     setDialogOpen,
     workspaceName,
+    collectionName,
+    noteName,
 }: {
     setDialogOpen: SetStateAction<boolean>;
     workspaceName: string;
+    collectionName: string;
+    noteName: string;
 }) {
-    const { removeWorkspace } = useMarkee();
-    const formSchema = z.object({
-        confirmEntry: z.string().refine(
-            (val) => val === workspaceName,
-            (val) => ({
-                message: `Workspace removal confirmation must be ${workspaceName} and ${val} does not match`,
+    const { removeNote } = useMarkee();
+    const confirmFormSchema = z.object({
+        confirm: z.string().refine(
+            (val) => val === noteName,
+            () => ({
+                message: `Note ${noteName} cannot be removed`,
             })
         ),
     });
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const confirmForm = useForm<z.infer<typeof confirmFormSchema>>({
+        resolver: zodResolver(confirmFormSchema),
         defaultValues: {
-            confirmEntry: '',
+            confirm: noteName,
         },
     });
 
     function onCancel() {
         setDialogOpen(false);
-        form.reset();
+        confirmForm.reset();
     }
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        if (values.confirmEntry === workspaceName) {
-            await removeWorkspace(workspaceName);
+    async function onSubmit(values: z.infer<typeof confirmFormSchema>) {
+        console.log(values.confirm, noteName);
+        if (values.confirm === noteName) {
+            await removeNote(workspaceName, collectionName, noteName);
             setDialogOpen(false);
-            form.reset();
+            confirmForm.reset();
         }
     }
 
     return (
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>Delete workspace</DialogTitle>
+                <DialogTitle>Remove note</DialogTitle>
                 <DialogDescription>
-                    {`Do you really want to delete the workspace "${workspaceName}
-                    "? This deletes the workspace and all its collections and notes. 
-                    Please confirm the deletion by entering ${workspaceName} in the field below!`}
+                    {`Do you really want to remove the note "${noteName}"?`}
                 </DialogDescription>
             </DialogHeader>
-            <Form {...form}>
+            <Form {...confirmForm}>
                 <form
                     className="grid gap-4 py-4"
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={confirmForm.handleSubmit(onSubmit)}
                 >
                     <FormField
-                        control={form.control}
-                        name="confirmEntry"
+                        control={confirmForm.control}
+                        name="confirm"
                         render={({ field }) => (
                             <FormItem className="grid grid-cols-4 items-center gap-4">
-                                <FormLabel>Confirmation</FormLabel>
                                 <FormControl>
                                     <Input
-                                        onPaste={(evt: ClipboardEvent) =>
-                                            evt.preventDefault()
-                                        }
-                                        autoComplete="off"
-                                        className="col-span-3"
-                                        placeholder="Type in the name of the workspace"
+                                        type="hidden"
                                         {...field}
+                                        value={noteName}
                                     />
                                 </FormControl>
                                 <FormMessage className="col-span-3" />
@@ -102,7 +99,7 @@ export function WorkspaceRemoveDialog({
                             Cancel
                         </Button>
                         <Button variant="destructive" type="submit">
-                            Delete workspace
+                            Remove note
                         </Button>
                     </DialogFooter>
                 </form>
