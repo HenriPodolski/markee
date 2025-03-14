@@ -94,7 +94,9 @@ export function CollectionUpsertDialog({
                     Object.keys(config.workspaces).length > 1
                 ) {
                     // validation error if collection already exists in workspace
-                    return !config.collection[`/${val.workspace}/${val.title}`];
+                    return !config.collections[
+                        `/${val.workspace}/${val.title}`
+                    ];
                 }
 
                 return true;
