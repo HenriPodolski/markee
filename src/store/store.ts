@@ -216,22 +216,42 @@ export const useMarkee = () => {
         return workspace;
     }, [config.workspaces]);
 
-    const workspaceCollections: ConfigStore['collections'] = useMemo(() => {
-        const activeWorkspaceName = (
-            Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
-        )?.name;
-        return structuredClone(
-            Object.fromEntries(
-                Object.entries(config.collections).filter(
-                    ([collectionFolder]: [string, unknown]) => {
-                        return collectionFolder.startsWith(
-                            `/${activeWorkspaceName}`
-                        );
-                    }
+    const activeWorkspaceCollections: ConfigStore['collections'] =
+        useMemo(() => {
+            const activeWorkspaceName = (
+                Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+            )?.name;
+            return structuredClone(
+                Object.fromEntries(
+                    Object.entries(config.collections).filter(
+                        ([collectionFolder]: [string, unknown]) => {
+                            return collectionFolder.startsWith(
+                                `/${activeWorkspaceName}`
+                            );
+                        }
+                    )
                 )
-            )
-        );
-    }, [activeWorkspace, config.collections]);
+            );
+        }, [activeWorkspace, config.collections]);
+
+    const workspaceCollections: (
+        workspaceName: string
+    ) => ConfigStore['collections'] = useCallback(
+        (workspaceName: string) => {
+            return structuredClone(
+                Object.fromEntries(
+                    Object.entries(config.collections).filter(
+                        ([collectionFolder]: [string, unknown]) => {
+                            return collectionFolder.startsWith(
+                                `/${workspaceName}`
+                            );
+                        }
+                    )
+                )
+            );
+        },
+        [config.workspaces, config.collections]
+    );
 
     const toggleExpandCollection = (
         itemFolder: string,
@@ -375,9 +395,41 @@ export const useMarkee = () => {
     const moveCollection = async (
         workspaceName: string,
         collection: ConfigStore['collections'],
-        destWorkspace: string,
+        destWorkspaceName: string,
         destCollectionName: string
-    ) => {};
+    ) => {
+        const oldCollectionFolder = Object.keys(collection)?.[0];
+        const destCollectionFolder = `/${destWorkspaceName}/${destCollectionName}`;
+        await rename(oldCollectionFolder, destCollectionFolder);
+        // get all files that start with collectionFolder
+        let notesState = structuredClone(config.notes);
+        notesState = Object.fromEntries(
+            Object.entries(notesState).map(([key, value]) => {
+                if (key.startsWith(oldCollectionFolder)) {
+                    key = key.replace(
+                        oldCollectionFolder,
+                        destCollectionFolder
+                    );
+                }
+
+                return [key, value];
+            })
+        );
+
+        // finally update collection
+        const collectionsState = structuredClone(config.collections);
+        delete collectionsState[oldCollectionFolder];
+
+        collectionsState[destCollectionFolder] = {
+            ...Object.values(collection)?.[0],
+            name: destCollectionName,
+        };
+        setConfig({
+            ...config,
+            collections: collectionsState,
+            notes: notesState,
+        });
+    };
 
     const createNote = async (
         workspaceName: string,
@@ -538,6 +590,7 @@ export const useMarkee = () => {
         workspaces,
         activeWorkspace,
         setActiveWorkspace,
+        activeWorkspaceCollections,
         workspaceCollections,
         toggleExpandCollection,
         createCollection,

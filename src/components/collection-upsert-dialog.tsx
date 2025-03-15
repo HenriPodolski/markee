@@ -19,7 +19,7 @@ import {
     FormMessage,
 } from './ui/form.tsx';
 import { useMarkee } from '../store/store.ts';
-import { SetStateAction } from 'react';
+import { SetStateAction, useEffect } from 'react';
 import {
     ConfigStore,
     ConfigStoreWorkspace,
@@ -33,9 +33,11 @@ import {
 } from './ui/select.tsx';
 
 export function CollectionUpsertDialog({
+    dialogOpen,
     setDialogOpen,
     updateCollection,
 }: {
+    dialogOpen: boolean;
     setDialogOpen: SetStateAction<boolean>;
     updateCollection?: ConfigStore['collections'];
 }) {
@@ -60,24 +62,25 @@ export function CollectionUpsertDialog({
                 .regex(/^(?:(?![\\:/*?"<>|]).)*$/, {
                     message:
                         'Collection title must not contain letters / \\ : * ? " < > |',
-                })
-                .refine(
-                    (val) =>
-                        !Object.values(workspaceCollections).find(
-                            (collection) => collection.name === val
-                        ),
-                    (val) => ({
-                        message: `Collection title must be unique and "${val}" already exists in workspace ${
-                            (
-                                Object.values(
-                                    activeWorkspace
-                                )?.[0] as ConfigStoreWorkspace
-                            )?.name
-                        }`,
-                    })
-                ),
+                }),
             workspace: z.string().optional(),
         })
+        .refine(
+            (val) => {
+                if (!val.workspace) {
+                    return false;
+                }
+
+                return !Object.values(workspaceCollections(val.workspace)).find(
+                    (collection) => collection.name === val.title
+                );
+            },
+            (val) => ({
+                message: `Collection title must be unique and "${val.title}" already exists in workspace ${
+                    val.workspace
+                }`,
+            })
+        )
         .refine(
             (val) => {
                 if (
@@ -91,12 +94,13 @@ export function CollectionUpsertDialog({
                     return false;
                 } else if (
                     updateCollection &&
-                    Object.keys(config.workspaces).length > 1
+                    Object.keys(config.workspaces).length > 1 &&
+                    Boolean(
+                        config.collections[`/${val.workspace}/${val.title}`]
+                    )
                 ) {
                     // validation error if collection already exists in workspace
-                    return !config.collections[
-                        `/${val.workspace}/${val.title}`
-                    ];
+                    return false;
                 }
 
                 return true;
@@ -109,16 +113,13 @@ export function CollectionUpsertDialog({
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: '',
+            title: updateCollection
+                ? Object.values(updateCollection)?.[0]?.name
+                : '',
+            workspace: (
+                Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+            )?.name,
         },
-        ...(updateCollection && {
-            values: {
-                title: Object.values(updateCollection)?.[0]?.name,
-                workspace: (
-                    Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
-                )?.name,
-            },
-        }),
     });
 
     function onCancel() {
@@ -150,6 +151,14 @@ export function CollectionUpsertDialog({
         setDialogOpen(false);
         form.reset();
     }
+
+    useEffect(() => {
+        if (!dialogOpen) {
+            form.reset();
+        }
+
+        return () => form.reset();
+    }, [dialogOpen]);
 
     return (
         <DialogContent className="sm:max-w-[425px]">

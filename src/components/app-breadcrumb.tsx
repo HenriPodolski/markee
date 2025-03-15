@@ -172,6 +172,7 @@ export function AppBreadcrumb() {
                     }
                 >
                     <WorkspaceUpsertDialog
+                        dialogOpen={workspaceDialogOpen}
                         setDialogOpen={setWorkspaceDialogOpen}
                         updateWorkspace={activeWorkspace}
                     />
@@ -206,6 +207,7 @@ export function AppBreadcrumb() {
                     }
                 >
                     <CollectionUpsertDialog
+                        dialogOpen={collectionDialogOpen}
                         setDialogOpen={setCollectionDialogOpen}
                         updateCollection={activeCollection}
                     />

@@ -149,6 +149,7 @@ export function WorkspaceSwitcher({}: Props) {
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <WorkspaceUpsertDialog
+                        dialogOpen={workspaceCreationDialogOpen}
                         setDialogOpen={setWorkspaceCreationDialogOpen}
                     />
                 </Dialog>

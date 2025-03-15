@@ -19,13 +19,15 @@ import {
     FormMessage,
 } from '@/components/ui/form.tsx';
 import { useMarkee } from '../store/store.ts';
-import { SetStateAction } from 'react';
+import { SetStateAction, useEffect } from 'react';
 import { ConfigStore } from '../store/config-store-initial.ts';
 
 export function WorkspaceUpsertDialog({
+    dialogOpen,
     setDialogOpen,
     updateWorkspace,
 }: {
+    dialogOpen: boolean;
     setDialogOpen: SetStateAction<boolean>;
     updateWorkspace?: ConfigStore['workspaces'];
 }) {
@@ -81,6 +83,14 @@ export function WorkspaceUpsertDialog({
         setDialogOpen(false);
         form.reset();
     }
+
+    useEffect(() => {
+        if (!dialogOpen) {
+            form.reset();
+        }
+
+        return () => form.reset();
+    }, [dialogOpen]);
 
     return (
         <DialogContent className="sm:max-w-[425px]">

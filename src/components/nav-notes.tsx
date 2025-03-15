@@ -39,10 +39,12 @@ import { NoteUpsertDialog } from './note-upsert-dialog.tsx';
 import {
     ConfigStoreCollection,
     ConfigStoreNote,
+    ConfigStoreWorkspace,
 } from '../store/config-store-initial.ts';
 
 export function NavNotes() {
     const {
+        activeWorkspace,
         workspaceCollections,
         toggleExpandCollection,
         collectionNotesCallback,
@@ -78,202 +80,197 @@ export function NavNotes() {
             <SidebarGroup>
                 <SidebarGroupLabel>Collections</SidebarGroupLabel>
                 <SidebarMenu>
-                    {Object.entries(workspaceCollections).map(
-                        ([collectionFolder, collection]) => (
-                            <Collapsible
-                                key={collectionFolder}
-                                asChild
-                                open={collection.expanded}
-                                onOpenChange={() => {
-                                    if (collection.expanded) {
-                                        setActiveNote(null);
-                                    }
-                                    toggleExpandCollection(
-                                        collectionFolder,
-                                        collection
-                                    );
-                                }}
-                                className="group/collapsible"
+                    {Object.entries(
+                        workspaceCollections(
+                            (
+                                Object.values(
+                                    activeWorkspace
+                                )?.[0] as ConfigStoreWorkspace
+                            )?.name
+                        )
+                    ).map(([collectionFolder, collection]) => (
+                        <Collapsible
+                            key={collectionFolder}
+                            asChild
+                            open={collection.expanded}
+                            onOpenChange={() => {
+                                if (collection.expanded) {
+                                    setActiveNote(null);
+                                }
+                                toggleExpandCollection(
+                                    collectionFolder,
+                                    collection
+                                );
+                            }}
+                            className="group/collapsible"
+                        >
+                            <SidebarMenuItem
+                                onClick={() =>
+                                    setActiveCollection(
+                                        collection,
+                                        collectionFolder
+                                    )
+                                }
                             >
-                                <SidebarMenuItem
-                                    onClick={() =>
-                                        setActiveCollection(
-                                            collection,
-                                            collectionFolder
-                                        )
-                                    }
+                                <CollapsibleTrigger
+                                    className="group-has-data-[sidebar=menu-action]/menu-item:pr-2"
+                                    asChild
                                 >
-                                    <CollapsibleTrigger
-                                        className="group-has-data-[sidebar=menu-action]/menu-item:pr-2"
-                                        asChild
+                                    <SidebarMenuButton
+                                        tooltip={collection.name}
                                     >
-                                        <SidebarMenuButton
-                                            tooltip={collection.name}
-                                        >
-                                            {collection.icon && (
-                                                <collection.icon />
-                                            )}
-                                            <div className="flex w-fit pr-7 relative">
-                                                <span>{collection.name}</span>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger
-                                                        asChild
+                                        {collection.icon && <collection.icon />}
+                                        <div className="flex w-fit pr-7 relative">
+                                            <span>{collection.name}</span>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <SidebarMenuAction
+                                                        showOnHover
                                                     >
-                                                        <SidebarMenuAction
-                                                            showOnHover
-                                                        >
-                                                            <MoreHorizontal />
-                                                            <span className="sr-only">
-                                                                More
-                                                            </span>
-                                                        </SidebarMenuAction>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent
-                                                        className="w-48 rounded-lg"
-                                                        side={
-                                                            isMobile
-                                                                ? 'bottom'
-                                                                : 'right'
-                                                        }
-                                                        align={
-                                                            isMobile
-                                                                ? 'end'
-                                                                : 'start'
-                                                        }
-                                                    >
-                                                        <DropdownMenuItem>
-                                                            <FolderCog className="text-muted-foreground" />
-                                                            <span>
-                                                                Edit properties
-                                                            </span>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem>
-                                                            <Trash2 className="text-muted-foreground" />
-                                                            <span>
-                                                                Delete
-                                                                collection
-                                                            </span>
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </div>
-                                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                        </SidebarMenuButton>
-                                    </CollapsibleTrigger>
-
-                                    <CollapsibleContent>
-                                        <SidebarMenuSub>
-                                            {(
-                                                Object.entries(
-                                                    collectionNotesCallback(
-                                                        collection
-                                                    )
-                                                ) as [string, ConfigStoreNote][]
-                                            ).map(([noteFile, note]) => (
-                                                <SidebarMenuSubItem
-                                                    key={noteFile}
-                                                >
-                                                    <SidebarMenuSubButton
-                                                        asChild
-                                                    >
-                                                        <button
-                                                            onClick={(
-                                                                evt: MouseEvent
-                                                            ) =>
-                                                                handleOpenNoteClick(
-                                                                    evt,
-                                                                    noteFile
-                                                                )
-                                                            }
-                                                            type="button"
-                                                            className="contents appearance-none block w-full cursor-pointer"
-                                                        >
-                                                            <div className="flex w-[calc(100%-25px)] relative">
-                                                                <span>
-                                                                    {note.name}
-                                                                </span>
-                                                                <DropdownMenu>
-                                                                    <DropdownMenuTrigger
-                                                                        asChild
-                                                                    >
-                                                                        <SidebarMenuAction
-                                                                            showOnHover
-                                                                        >
-                                                                            <MoreHorizontal />
-                                                                            <span className="sr-only">
-                                                                                More
-                                                                            </span>
-                                                                        </SidebarMenuAction>
-                                                                    </DropdownMenuTrigger>
-                                                                    <DropdownMenuContent
-                                                                        className="w-48 rounded-lg"
-                                                                        side={
-                                                                            isMobile
-                                                                                ? 'bottom'
-                                                                                : 'right'
-                                                                        }
-                                                                        align={
-                                                                            isMobile
-                                                                                ? 'end'
-                                                                                : 'start'
-                                                                        }
-                                                                    >
-                                                                        <DropdownMenuItem>
-                                                                            <FilePenLine className="text-muted-foreground" />
-                                                                            <span>
-                                                                                Edit
-                                                                                note
-                                                                            </span>
-                                                                        </DropdownMenuItem>
-                                                                        <DropdownMenuItem>
-                                                                            <FileCog className="text-muted-foreground" />
-                                                                            <span>
-                                                                                Edit
-                                                                                properties
-                                                                            </span>
-                                                                        </DropdownMenuItem>
-                                                                        <DropdownMenuSeparator />
-                                                                        <DropdownMenuItem>
-                                                                            <Trash2 className="text-muted-foreground" />
-                                                                            <span>
-                                                                                Delete
-                                                                                note
-                                                                            </span>
-                                                                        </DropdownMenuItem>
-                                                                    </DropdownMenuContent>
-                                                                </DropdownMenu>
-                                                            </div>
-                                                        </button>
-                                                    </SidebarMenuSubButton>
-                                                </SidebarMenuSubItem>
-                                            ))}
-                                            <SidebarMenuSubItem>
-                                                <SidebarMenuSubButton
-                                                    onClick={(
-                                                        evt: MouseEvent
-                                                    ) =>
-                                                        handleAddNoteClick(
-                                                            evt,
-                                                            collection
-                                                        )
+                                                        <MoreHorizontal />
+                                                        <span className="sr-only">
+                                                            More
+                                                        </span>
+                                                    </SidebarMenuAction>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent
+                                                    className="w-48 rounded-lg"
+                                                    side={
+                                                        isMobile
+                                                            ? 'bottom'
+                                                            : 'right'
                                                     }
-                                                    className="gap-2 p-2 select-none"
+                                                    align={
+                                                        isMobile
+                                                            ? 'end'
+                                                            : 'start'
+                                                    }
                                                 >
-                                                    <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                                                        <Plus className="size-4" />
-                                                    </div>
-                                                    <div className="font-medium text-muted-foreground">
-                                                        Add note
-                                                    </div>
+                                                    <DropdownMenuItem>
+                                                        <FolderCog className="text-muted-foreground" />
+                                                        <span>
+                                                            Edit properties
+                                                        </span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem>
+                                                        <Trash2 className="text-muted-foreground" />
+                                                        <span>
+                                                            Delete collection
+                                                        </span>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                    </SidebarMenuButton>
+                                </CollapsibleTrigger>
+
+                                <CollapsibleContent>
+                                    <SidebarMenuSub>
+                                        {(
+                                            Object.entries(
+                                                collectionNotesCallback(
+                                                    collection
+                                                )
+                                            ) as [string, ConfigStoreNote][]
+                                        ).map(([noteFile, note]) => (
+                                            <SidebarMenuSubItem key={noteFile}>
+                                                <SidebarMenuSubButton asChild>
+                                                    <button
+                                                        onClick={(
+                                                            evt: MouseEvent
+                                                        ) =>
+                                                            handleOpenNoteClick(
+                                                                evt,
+                                                                noteFile
+                                                            )
+                                                        }
+                                                        type="button"
+                                                        className="contents appearance-none block w-full cursor-pointer"
+                                                    >
+                                                        <div className="flex w-[calc(100%-25px)] relative">
+                                                            <span>
+                                                                {note.name}
+                                                            </span>
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger
+                                                                    asChild
+                                                                >
+                                                                    <SidebarMenuAction
+                                                                        showOnHover
+                                                                    >
+                                                                        <MoreHorizontal />
+                                                                        <span className="sr-only">
+                                                                            More
+                                                                        </span>
+                                                                    </SidebarMenuAction>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent
+                                                                    className="w-48 rounded-lg"
+                                                                    side={
+                                                                        isMobile
+                                                                            ? 'bottom'
+                                                                            : 'right'
+                                                                    }
+                                                                    align={
+                                                                        isMobile
+                                                                            ? 'end'
+                                                                            : 'start'
+                                                                    }
+                                                                >
+                                                                    <DropdownMenuItem>
+                                                                        <FilePenLine className="text-muted-foreground" />
+                                                                        <span>
+                                                                            Edit
+                                                                            note
+                                                                        </span>
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem>
+                                                                        <FileCog className="text-muted-foreground" />
+                                                                        <span>
+                                                                            Edit
+                                                                            properties
+                                                                        </span>
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuSeparator />
+                                                                    <DropdownMenuItem>
+                                                                        <Trash2 className="text-muted-foreground" />
+                                                                        <span>
+                                                                            Delete
+                                                                            note
+                                                                        </span>
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </div>
+                                                    </button>
                                                 </SidebarMenuSubButton>
                                             </SidebarMenuSubItem>
-                                        </SidebarMenuSub>
-                                    </CollapsibleContent>
-                                </SidebarMenuItem>
-                            </Collapsible>
-                        )
-                    )}
+                                        ))}
+                                        <SidebarMenuSubItem>
+                                            <SidebarMenuSubButton
+                                                onClick={(evt: MouseEvent) =>
+                                                    handleAddNoteClick(
+                                                        evt,
+                                                        collection
+                                                    )
+                                                }
+                                                className="gap-2 p-2 select-none"
+                                            >
+                                                <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                                                    <Plus className="size-4" />
+                                                </div>
+                                                <div className="font-medium text-muted-foreground">
+                                                    Add note
+                                                </div>
+                                            </SidebarMenuSubButton>
+                                        </SidebarMenuSubItem>
+                                    </SidebarMenuSub>
+                                </CollapsibleContent>
+                            </SidebarMenuItem>
+                        </Collapsible>
+                    ))}
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             onClick={handleAddCollectionClick}
@@ -297,6 +294,7 @@ export function NavNotes() {
                 }
             >
                 <CollectionUpsertDialog
+                    dialogOpen={collectionCreationDialogOpen}
                     setDialogOpen={setCollectionCreationDialogOpen}
                 />
             </Dialog>
