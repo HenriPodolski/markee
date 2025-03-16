@@ -75,6 +75,17 @@ export function NavNotes() {
         setActiveNote(noteFile);
     };
 
+    const truncateTextMiddle = (text, maxLength) => {
+        if (!text || text.length <= maxLength) {
+            return text;
+        }
+
+        const halfLength = Math.floor((maxLength - 3) / 2);
+        const visibleText = `${text.slice(0, halfLength)} ... ${text.slice(-halfLength)}`;
+
+        return visibleText;
+    };
+
     return (
         <>
             <SidebarGroup>
@@ -188,10 +199,20 @@ export function NavNotes() {
                                                         }
                                                         type="button"
                                                         className="contents appearance-none block w-full cursor-pointer"
+                                                        title={note.name}
                                                     >
+                                                        <span className="sr-only">
+                                                            {note.name}
+                                                        </span>
                                                         <div className="flex w-[calc(100%-25px)] relative">
-                                                            <span>
-                                                                {note.name}
+                                                            <span
+                                                                className="text-nowrap"
+                                                                aria-hidden="true"
+                                                            >
+                                                                {truncateTextMiddle(
+                                                                    note.name,
+                                                                    23
+                                                                )}
                                                             </span>
                                                             <DropdownMenu>
                                                                 <DropdownMenuTrigger
