@@ -91,9 +91,9 @@ import { ToolbarPlugin } from '@/editor/registry/new-york/editor/plugins/toolbar
 import { TypingPerfPlugin } from '@/editor/registry/new-york/editor/plugins/typing-pref-plugin';
 import { MARKDOWN_TRANSFORMERS } from '@/editor/registry/new-york/editor/transformers/markdown-transformers';
 import { ContentEditable } from '@/editor/registry/new-york/editor/editor-ui/content-editable';
+import { WordCharacterCountPlugin } from './word-character-count-plugin.tsx';
 
 const placeholder = 'Press / for commands...';
-const maxLength = 150000;
 
 export function Plugins({}) {
     const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -251,8 +251,7 @@ export function Plugins({}) {
                 <ListMaxIndentLevelPlugin />
             </div>
             <div className="clear-both flex h-10 items-center justify-between border-t p-1">
-                <MaxLengthPlugin maxLength={maxLength} />
-                <CharacterLimitPlugin maxLength={maxLength} charset="UTF-16" />
+                <WordCharacterCountPlugin />
                 <div className="flex justify-end">
                     <SpeechToTextPlugin />
                     <ShareContentPlugin />
