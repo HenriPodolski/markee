@@ -75,15 +75,41 @@ export function NavNotes() {
         setActiveNote(noteFile);
     };
 
-    const truncateTextMiddle = (text, maxLength) => {
-        if (!text || text.length <= maxLength) {
+    const truncateTextMiddle = (text: string, maxLengthPx: number) => {
+        if (!text) {
             return text;
         }
 
-        const halfLength = Math.floor((maxLength - 3) / 2);
-        const visibleText = `${text.slice(0, halfLength)} ... ${text.slice(-halfLength)}`;
+        const controlElement = document.querySelector(
+            `[data-control-px="${text}"]`
+        );
+        const controlElementText = controlElement?.textContent?.trim();
 
-        return visibleText;
+        if (!controlElementText || !controlElement) {
+            return text;
+        }
+
+        const width = controlElement.scrollWidth;
+        const controlElementCountChars = controlElementText.length;
+        const averageWidth = width / controlElementCountChars;
+        console.log(width, controlElementCountChars, averageWidth);
+        const maxLength = maxLengthPx / averageWidth;
+        if (text.length <= maxLength) {
+            return text;
+        }
+
+        const ellipsis = `...`;
+        const ellipsisLength = ellipsis.length;
+        const remainingLength = maxLength - ellipsisLength;
+
+        if (remainingLength < 2) {
+            return text.substring(0, maxLength);
+        }
+
+        const leftLength = Math.floor(remainingLength / 2);
+        const rightLength = remainingLength - leftLength;
+
+        return `${text.substring(0, leftLength)}${ellipsis}${text.substring(text.length - rightLength)}`;
     };
 
     return (
@@ -198,20 +224,29 @@ export function NavNotes() {
                                                             )
                                                         }
                                                         type="button"
-                                                        className="contents appearance-none block w-full cursor-pointer"
+                                                        className="contents appearance-none w-full cursor-pointer"
                                                         title={note.name}
                                                     >
                                                         <span className="sr-only">
                                                             {note.name}
                                                         </span>
-                                                        <div className="flex w-[calc(100%-25px)] relative">
+                                                        <div className="flex w-full relative">
                                                             <span
                                                                 className="text-nowrap"
                                                                 aria-hidden="true"
                                                             >
+                                                                <span
+                                                                    data-control-px={
+                                                                        note.name
+                                                                    }
+                                                                    className="invisible absolute -z-10"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    {note.name}
+                                                                </span>
                                                                 {truncateTextMiddle(
                                                                     note.name,
-                                                                    23
+                                                                    120
                                                                 )}
                                                             </span>
                                                             <DropdownMenu>
