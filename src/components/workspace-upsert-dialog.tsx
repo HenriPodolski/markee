@@ -98,7 +98,7 @@ export function WorkspaceUpsertDialog({
                 <DialogTitle>
                     {updateWorkspace ? 'Edit workspace' : 'Add workspace'}
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="break-all">
                     {updateWorkspace
                         ? `Edit properties of workspace ${Object.values(updateWorkspace)?.[0]?.name}`
                         : 'Create a new workspace to organize your notes better'}

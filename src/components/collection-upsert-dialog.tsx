@@ -139,7 +139,6 @@ export function CollectionUpsertDialog({
 
         if (updateCollection) {
             await moveCollection(
-                activeWorkspaceName,
                 updateCollection,
                 destWorkspaceName,
                 values.title
@@ -166,7 +165,7 @@ export function CollectionUpsertDialog({
                 <DialogTitle>
                     {updateCollection ? 'Edit collection' : 'Add collection'}
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="break-all">
                     {updateCollection
                         ? `Edit properties of collection ${Object.values(updateCollection)?.[0]?.name}`
                         : 'Create a new note collection'}

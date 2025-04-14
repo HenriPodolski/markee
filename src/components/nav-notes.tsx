@@ -37,7 +37,6 @@ import { CollectionUpsertDialog } from './collection-upsert-dialog.tsx';
 import { Dialog } from './ui/dialog.tsx';
 import { NoteUpsertDialog } from './note-upsert-dialog.tsx';
 import {
-    ConfigStoreCollection,
     ConfigStoreNote,
     ConfigStoreWorkspace,
 } from '../store/config-store-initial.ts';
@@ -53,8 +52,7 @@ export function NavNotes() {
     } = useMarkee();
     const [collectionCreationDialogOpen, setCollectionCreationDialogOpen] =
         useState(false);
-    const [collectionForNoteCreation, setCollectionForNoteCreation] =
-        useState<ConfigStoreCollection | null>(null);
+    const [noteCreationDialogOpen, setNoteCreationDialogOpen] = useState(false);
     const { isMobile } = useSidebar();
 
     const handleAddCollectionClick = (evt: MouseEvent) => {
@@ -62,12 +60,9 @@ export function NavNotes() {
         setCollectionCreationDialogOpen(true);
     };
 
-    const handleAddNoteClick = (
-        evt: MouseEvent,
-        collection: ConfigStoreCollection
-    ) => {
+    const handleAddNoteClick = (evt: MouseEvent) => {
         evt.preventDefault();
-        setCollectionForNoteCreation(collection);
+        setNoteCreationDialogOpen(true);
     };
 
     const handleOpenNoteClick = (evt: MouseEvent, noteFile: string) => {
@@ -92,8 +87,8 @@ export function NavNotes() {
         const width = controlElement.scrollWidth;
         const controlElementCountChars = controlElementText.length;
         const averageWidth = width / controlElementCountChars;
-        console.log(width, controlElementCountChars, averageWidth);
         const maxLength = maxLengthPx / averageWidth;
+
         if (text.length <= maxLength) {
             return text;
         }
@@ -307,10 +302,7 @@ export function NavNotes() {
                                         <SidebarMenuSubItem>
                                             <SidebarMenuSubButton
                                                 onClick={(evt: MouseEvent) =>
-                                                    handleAddNoteClick(
-                                                        evt,
-                                                        collection
-                                                    )
+                                                    handleAddNoteClick(evt)
                                                 }
                                                 className="gap-2 p-2 select-none"
                                             >
@@ -355,19 +347,17 @@ export function NavNotes() {
                 />
             </Dialog>
 
-            {collectionForNoteCreation && (
-                <Dialog
-                    open={Boolean(collectionForNoteCreation)}
-                    onOpenChange={(open: boolean) => {
-                        if (!open) setCollectionForNoteCreation(null);
-                    }}
-                >
-                    <NoteUpsertDialog
-                        collection={collectionForNoteCreation}
-                        setCollection={setCollectionForNoteCreation}
-                    />
-                </Dialog>
-            )}
+            <Dialog
+                open={noteCreationDialogOpen}
+                onOpenChange={(open: boolean) => {
+                    setNoteCreationDialogOpen(open);
+                }}
+            >
+                <NoteUpsertDialog
+                    dialogOpen={noteCreationDialogOpen}
+                    setDialogOpen={setNoteCreationDialogOpen}
+                />
+            </Dialog>
         </>
     );
 }

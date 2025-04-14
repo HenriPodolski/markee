@@ -25,6 +25,7 @@ import { WorkspaceRemoveDialog } from './workspace-remove-dialog.tsx';
 import { CollectionRemoveDialog } from './collection-remove-dialog.tsx';
 import { NoteRemoveDialog } from './note-remove-dialog.tsx';
 import { CollectionUpsertDialog } from './collection-upsert-dialog.tsx';
+import { NoteUpsertDialog } from './note-upsert-dialog.tsx';
 
 export function AppBreadcrumb() {
     const { activeWorkspace, activeCollection, activeNote, workspaces } =
@@ -243,6 +244,18 @@ export function AppBreadcrumb() {
                     </Dialog>
                 )}
 
+            {(Object.values(activeNote)?.[0] as ConfigStoreNote)?.name && (
+                <Dialog
+                    open={noteDialogOpen}
+                    onOpenChange={(open: boolean) => setNoteDialogOpen(open)}
+                >
+                    <NoteUpsertDialog
+                        dialogOpen={noteDialogOpen}
+                        setDialogOpen={setNoteDialogOpen}
+                        updateNote={activeNote}
+                    />
+                </Dialog>
+            )}
             {(Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace)
                 ?.name &&
                 (Object.values(activeCollection)?.[0] as ConfigStoreCollection)

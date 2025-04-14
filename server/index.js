@@ -7,14 +7,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const fastify = Fastify({
-  logger: true
+    logger: true,
 });
 
 fastify.register(FastifyStatic, {
     root: join(__dirname, '../dist'),
-    constraints: { ...(process.env.NODE_ENV === 'production' && { 
-        host: 'markee-notes.com' 
-    })}
+    constraints: {
+        // eslint-disable-next-line no-undef
+        ...(process.env.NODE_ENV === 'production' && {
+            host: 'markee-notes.com',
+        }),
+    },
 });
 
 const start = async () => {
@@ -22,8 +25,9 @@ const start = async () => {
         await fastify.listen({ port: 3200 });
     } catch (err) {
         fastify.log.error(err);
+        // eslint-disable-next-line no-undef
         process.exit(1);
     }
-}
+};
 
 start();

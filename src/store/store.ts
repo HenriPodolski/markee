@@ -393,7 +393,6 @@ export const useMarkee = () => {
     };
 
     const moveCollection = async (
-        workspaceName: string,
         collection: ConfigStore['collections'],
         destWorkspaceName: string,
         destCollectionName: string
@@ -557,6 +556,38 @@ export const useMarkee = () => {
         }
     };
 
+    const moveNote = async (
+        note: ConfigStore['notes'],
+        destWorkspaceName: string,
+        destCollectionName: string,
+        destNoteName: string
+    ) => {
+        const oldNoteFolder = Object.keys(note)?.[0];
+        const destNoteFolder = `/${destWorkspaceName}/${destCollectionName}/${destNoteName}.json`;
+        console.log(
+            'oldNoteFolder, destNoteFolder',
+            oldNoteFolder,
+            destNoteFolder
+        );
+        await rename(oldNoteFolder, destNoteFolder);
+        // get all files that start with collectionFolder
+        let notesState = structuredClone(config.notes);
+        notesState = Object.fromEntries(
+            Object.entries(notesState).map(([key, value]) => {
+                if (key.startsWith(oldNoteFolder)) {
+                    key = key.replace(oldNoteFolder, destNoteFolder);
+                }
+
+                return [key, value];
+            })
+        );
+
+        setConfig({
+            ...config,
+            notes: notesState,
+        });
+    };
+
     /**
      * used to set a collection to active when a cotaining note is activated
      */
@@ -602,6 +633,7 @@ export const useMarkee = () => {
         createNote,
         setActiveNote,
         activeNote,
+        moveNote,
         removeNote,
         readNoteFileContent,
         writeNoteFileContent,
