@@ -119,11 +119,14 @@ export function NoteUpsertDialog({
         )?.name;
         let destCollectionName = activeCollectionName;
 
-        if (Object.keys(workspaceCollections(values.workspace)).length === 1) {
+        if (
+            updateNote &&
+            Object.keys(workspaceCollections(values.workspace)).length === 1
+        ) {
             destCollectionName = Object.values(
                 workspaceCollections(values.workspace)
             )?.[0]?.name;
-        } else if (values.collection) {
+        } else if (updateNote && values.collection) {
             destCollectionName = values.collection;
         }
 

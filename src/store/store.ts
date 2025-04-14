@@ -564,11 +564,6 @@ export const useMarkee = () => {
     ) => {
         const oldNoteFolder = Object.keys(note)?.[0];
         const destNoteFolder = `/${destWorkspaceName}/${destCollectionName}/${destNoteName}.json`;
-        console.log(
-            'oldNoteFolder, destNoteFolder',
-            oldNoteFolder,
-            destNoteFolder
-        );
         await rename(oldNoteFolder, destNoteFolder);
         // get all files that start with collectionFolder
         let notesState = structuredClone(config.notes);
@@ -577,6 +572,8 @@ export const useMarkee = () => {
                 if (key.startsWith(oldNoteFolder)) {
                     key = key.replace(oldNoteFolder, destNoteFolder);
                 }
+
+                value.name = destNoteName;
 
                 return [key, value];
             })
