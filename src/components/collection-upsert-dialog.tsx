@@ -79,6 +79,7 @@ export function CollectionUpsertDialog({
                 message: `Collection title must be unique and "${val.title}" already exists in workspace ${
                     val.workspace
                 }`,
+                path: ['title'],
             })
         )
         .refine(
@@ -107,19 +108,23 @@ export function CollectionUpsertDialog({
             },
             (val) => ({
                 message: `Error moving collection ${val.title} to workspace ${val.workspace}. Make sure the workspace exists and does not contain a collection with the same name!`,
+                path: ['title'],
             })
         );
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: updateCollection
-                ? Object.values(updateCollection)?.[0]?.name
-                : '',
+            title: '',
             workspace: (
                 Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
             )?.name,
         },
+        ...(updateCollection && {
+            values: {
+                title: Object.values(updateCollection)?.[0]?.name,
+            },
+        }),
     });
 
     function onCancel() {

@@ -328,23 +328,27 @@ export const useMarkee = () => {
         return collection;
     }, [activeWorkspace, config.collections]);
 
-    const collectionNotesCallback = useCallback<ConfigStore['notes']>(
-        (collection: ConfigStoreCollection): ConfigStore['notes'] => {
-            const activeWorkspaceName = (
-                Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
-            )?.name;
-            return structuredClone(
-                Object.fromEntries(
-                    Object.entries(config.notes).filter(
-                        ([noteFile]: [string, unknown]) => {
-                            return noteFile.startsWith(
-                                `/${activeWorkspaceName}/${collection.name}`
-                            );
-                        }
-                    )
+    const collectionNotes = (
+        collection: ConfigStoreCollection
+    ): ConfigStore['notes'] => {
+        const activeWorkspaceName = (
+            Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+        )?.name;
+        return structuredClone(
+            Object.fromEntries(
+                Object.entries(config.notes).filter(
+                    ([noteFile]: [string, unknown]) => {
+                        return noteFile.startsWith(
+                            `/${activeWorkspaceName}/${collection.name}`
+                        );
+                    }
                 )
-            ) as ConfigStore['notes'];
-        },
+            )
+        ) as ConfigStore['notes'];
+    };
+
+    const collectionNotesCallback = useCallback<ConfigStore['notes']>(
+        collectionNotes,
         [activeWorkspace, config.collections, config.notes]
     );
 
@@ -434,10 +438,21 @@ export const useMarkee = () => {
         workspaceName: string,
         collectionName: string,
         noteName: string
-    ) => {
+    ): Promise<boolean> => {
         const collectionFolder = `/${workspaceName}/${collectionName}`;
+        let fileExists = true;
+        try {
+            fileExists = Boolean(
+                (await stat(`${collectionFolder}/${noteName}.json`)) &&
+                    (
+                        await stat(`${collectionFolder}/${noteName}.json`)
+                    ).isFile()
+            );
+        } catch {
+            fileExists = false;
+        }
 
-        if ((await stat(collectionFolder)).isDirectory()) {
+        if ((await stat(collectionFolder)).isDirectory() && !fileExists) {
             const noteFilePath = `${collectionFolder}/${noteName}.json`;
             await writeFile(
                 noteFilePath,
@@ -453,7 +468,10 @@ export const useMarkee = () => {
                 name: noteName,
             };
             setConfig({ ...config, notes: notesState });
+            return true;
         }
+
+        return false;
     };
 
     const setActiveNote = (noteFile?: string | null) => {
@@ -561,28 +579,33 @@ export const useMarkee = () => {
         destWorkspaceName: string,
         destCollectionName: string,
         destNoteName: string
-    ) => {
+    ): Promise<boolean> => {
+        let operationExecuted = false;
         const oldNoteFolder = Object.keys(note)?.[0];
         const destNoteFolder = `/${destWorkspaceName}/${destCollectionName}/${destNoteName}.json`;
         await rename(oldNoteFolder, destNoteFolder);
         // get all files that start with collectionFolder
         let notesState = structuredClone(config.notes);
         notesState = Object.fromEntries(
-            Object.entries(notesState).map(([key, value]) => {
-                if (key.startsWith(oldNoteFolder)) {
-                    key = key.replace(oldNoteFolder, destNoteFolder);
+            Object.entries(notesState).map(
+                ([key, value]: [string, unknown]) => {
+                    if (key.startsWith(oldNoteFolder)) {
+                        key = key.replace(oldNoteFolder, destNoteFolder);
+                        (value as ConfigStoreNote).name = destNoteName;
+                    }
+
+                    return [key, value];
                 }
-
-                value.name = destNoteName;
-
-                return [key, value];
-            })
+            )
         );
 
         setConfig({
             ...config,
             notes: notesState,
         });
+
+        operationExecuted = true;
+        return operationExecuted;
     };
 
     /**
@@ -624,6 +647,7 @@ export const useMarkee = () => {
         createCollection,
         moveCollection,
         removeCollection,
+        collectionNotes,
         collectionNotesCallback,
         activeCollection,
         setActiveCollection,

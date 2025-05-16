@@ -50,7 +50,7 @@ export function NoteUpsertDialog({
         workspaceCollections,
         createNote,
         moveNote,
-        collectionNotesCallback,
+        collectionNotes,
     } = useMarkee();
     const formSchema = z
         .object({
@@ -67,28 +67,45 @@ export function NoteUpsertDialog({
                     message:
                         'Note title must not contain letters / \\ : * ? " < > |',
                 }),
-            collection: z.string(),
-            workspace: z.string(),
+            collection: z.string({
+                required_error: 'Collection is required',
+            }),
+            workspace: z.string({
+                required_error: 'Workspace is required',
+            }),
         })
         .refine(
             (val) => {
-                if (!val.collection || !val.workspace) {
-                    return false;
-                }
+                const collection = Object.values(
+                    workspaceCollections(val.workspace)
+                ).find((collection) => collection.name === val.collection);
 
-                return !(
-                    Object.values(
-                        collectionNotesCallback(val.collection)
-                    ) as ConfigStoreNote[]
-                ).find((note) => note.name === val.title);
+                return (
+                    Boolean(collection) &&
+                    !(
+                        Object.values(
+                            collectionNotes(collection!)
+                        ) as ConfigStoreNote[]
+                    ).find((note) => note.name === val.title)
+                );
             },
             (val) => ({
                 message: `Note title must be unique and "${val.title}" already exists in collection ${val.collection}, workspace ${val.workspace}`,
+                path: ['title'],
             })
         );
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            title: '',
+            collection: (
+                Object.values(activeCollection)?.[0] as ConfigStoreCollection
+            )?.name,
+            workspace: (
+                Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
+            )?.name,
+        },
+        values: {
             title: updateNote ? Object.values(updateNote)?.[0]?.name : '',
             collection: (
                 Object.values(activeCollection)?.[0] as ConfigStoreCollection
@@ -105,6 +122,7 @@ export function NoteUpsertDialog({
     }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        let operationExecuted = false;
         const activeWorkspaceName = (
             Object.values(activeWorkspace)?.[0] as ConfigStoreWorkspace
         )?.name;
@@ -131,22 +149,24 @@ export function NoteUpsertDialog({
         }
 
         if (updateNote) {
-            await moveNote(
+            operationExecuted = await moveNote(
                 updateNote,
                 destWorkspaceName,
                 destCollectionName,
                 values.title
             );
         } else {
-            await createNote(
+            operationExecuted = await createNote(
                 destWorkspaceName,
                 destCollectionName,
                 values.title
             );
         }
 
-        setDialogOpen(false);
-        form.reset();
+        if (operationExecuted) {
+            setDialogOpen(false);
+            form.reset();
+        }
     }
 
     useEffect(() => {
@@ -174,105 +194,119 @@ export function NoteUpsertDialog({
                     className="grid gap-4 py-4"
                     onSubmit={form.handleSubmit(onSubmit)}
                 >
-                    {updateNote &&
-                        Object.values(config.workspaces).filter((workspace) => {
-                            return Object.keys(
-                                workspaceCollections(
-                                    (workspace as ConfigStoreWorkspace).name
-                                )
-                            ).length;
-                        }).length > 1 && (
-                            <FormField
-                                control={form.control}
-                                name="workspace"
-                                render={({ field }) => (
-                                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                                        <FormLabel>Workspace</FormLabel>
-                                        <Select
-                                            className="col-span-3"
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a workspace" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {Object.values(
-                                                    config.workspaces
-                                                ).map((workspace) => {
-                                                    const workspaceName = (
+                    <FormField
+                        control={form.control}
+                        name="workspace"
+                        render={({ field }) => (
+                            <FormItem className="grid grid-cols-4 items-center gap-4">
+                                {updateNote &&
+                                    Object.values(config.workspaces).filter(
+                                        (workspace) => {
+                                            return Object.keys(
+                                                workspaceCollections(
+                                                    (
                                                         workspace as ConfigStoreWorkspace
-                                                    ).name;
-                                                    return (
-                                                        <SelectItem
-                                                            key={workspaceName}
-                                                            value={
-                                                                workspaceName
-                                                            }
-                                                        >
-                                                            {workspaceName}
-                                                        </SelectItem>
-                                                    );
-                                                })}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage className="col-span-3" />
-                                    </FormItem>
-                                )}
-                            />
+                                                    ).name
+                                                )
+                                            ).length;
+                                        }
+                                    ).length > 1 && (
+                                        <>
+                                            <FormLabel>Workspace</FormLabel>
+                                            <Select
+                                                className="col-span-3"
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a workspace" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {Object.values(
+                                                        config.workspaces
+                                                    ).map((workspace) => {
+                                                        const workspaceName = (
+                                                            workspace as ConfigStoreWorkspace
+                                                        ).name;
+                                                        return (
+                                                            <SelectItem
+                                                                key={
+                                                                    workspaceName
+                                                                }
+                                                                value={
+                                                                    workspaceName
+                                                                }
+                                                            >
+                                                                {workspaceName}
+                                                            </SelectItem>
+                                                        );
+                                                    })}
+                                                </SelectContent>
+                                            </Select>
+                                        </>
+                                    )}
+                                <FormMessage className="col-span-3" />
+                            </FormItem>
                         )}
+                    />
 
-                    {updateNote &&
-                        Object.keys(
-                            workspaceCollections(form.getValues('workspace'))
-                        ).length > 1 && (
-                            <FormField
-                                control={form.control}
-                                name="collection"
-                                render={({ field }) => (
-                                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                                        <FormLabel>Collection</FormLabel>
-                                        <Select
-                                            className="col-span-3"
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a collection" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {Object.values(
-                                                    workspaceCollections(
-                                                        form.getValues(
-                                                            'workspace'
+                    <FormField
+                        control={form.control}
+                        name="collection"
+                        render={({ field }) => (
+                            <FormItem className="grid grid-cols-4 items-center gap-4">
+                                {updateNote &&
+                                    Object.keys(
+                                        workspaceCollections(
+                                            form.getValues('workspace')
+                                        )
+                                    ).length > 1 && (
+                                        <>
+                                            <FormLabel>Collection</FormLabel>
+                                            <Select
+                                                className="col-span-3"
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a collection" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {Object.values(
+                                                        workspaceCollections(
+                                                            form.getValues(
+                                                                'workspace'
+                                                            )
                                                         )
-                                                    )
-                                                ).map((collection) => {
-                                                    const collectionName = (
-                                                        collection as ConfigStoreCollection
-                                                    ).name;
-                                                    return (
-                                                        <SelectItem
-                                                            key={collectionName}
-                                                            value={
-                                                                collectionName
-                                                            }
-                                                        >
-                                                            {collectionName}
-                                                        </SelectItem>
-                                                    );
-                                                })}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage className="col-span-3" />
-                                    </FormItem>
-                                )}
-                            />
+                                                    ).map((collection) => {
+                                                        const collectionName = (
+                                                            collection as ConfigStoreCollection
+                                                        ).name;
+                                                        return (
+                                                            <SelectItem
+                                                                key={
+                                                                    collectionName
+                                                                }
+                                                                value={
+                                                                    collectionName
+                                                                }
+                                                            >
+                                                                {collectionName}
+                                                            </SelectItem>
+                                                        );
+                                                    })}
+                                                </SelectContent>
+                                            </Select>
+                                        </>
+                                    )}
+                                <FormMessage className="col-span-3" />
+                            </FormItem>
                         )}
+                    />
                     <FormField
                         control={form.control}
                         name="title"
