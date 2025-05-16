@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { MouseEventHandler, MouseEvent, useState } from 'react';
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
@@ -46,13 +46,10 @@ import { FontSizeToolbarPlugin } from '@/editor/registry/new-york/editor/plugins
 import { HistoryToolbarPlugin } from '@/editor/registry/new-york/editor/plugins/toolbar/history-toolbar-plugin';
 import { LinkToolbarPlugin } from '@/editor/registry/new-york/editor/plugins/toolbar/link-toolbar-plugin';
 import { SubSuperToolbarPlugin } from '@/editor/registry/new-york/editor/plugins/toolbar/subsuper-toolbar-plugin';
-
-import { CharacterLimitPlugin } from '@/editor/registry/new-york/editor/plugins/actions/character-limit-plugin';
 import { ClearEditorActionPlugin } from '@/editor/registry/new-york/editor/plugins/actions/clear-editor-plugin';
 import { EditModeTogglePlugin } from '@/editor/registry/new-york/editor/plugins/actions/edit-mode-toggle-plugin';
 import { ImportExportPlugin } from '@/editor/registry/new-york/editor/plugins/actions/import-export-plugin';
 import { MarkdownTogglePlugin } from '@/editor/registry/new-york/editor/plugins/actions/markdown-toggle-plugin';
-import { MaxLengthPlugin } from '@/editor/registry/new-york/editor/plugins/actions/max-length-plugin';
 import { ShareContentPlugin } from '@/editor/registry/new-york/editor/plugins/actions/share-content-plugin';
 import { SpeechToTextPlugin } from '@/editor/registry/new-york/editor/plugins/actions/speech-to-text-plugin';
 import { TreeViewPlugin } from '@/editor/registry/new-york/editor/plugins/actions/tree-view-plugin';
@@ -102,6 +99,23 @@ export function Plugins({}) {
     const onRef = (_floatingAnchorElem: HTMLDivElement) => {
         if (_floatingAnchorElem !== null) {
             setFloatingAnchorElem(_floatingAnchorElem);
+        }
+    };
+
+    const handleContentEditableWrapperClick: MouseEventHandler = (
+        evt: MouseEvent
+    ) => {
+        const el = evt.target;
+        const editableEl = el.querySelector('*[contenteditable="true"]');
+        if (el === evt.currentTarget && editableEl) {
+            editableEl.focus();
+            const range = document.createRange();
+            range.selectNodeContents(editableEl);
+            range.collapse(false);
+
+            const sel = window.getSelection();
+            sel?.removeAllRanges();
+            sel?.addRange(range);
         }
     };
 
@@ -178,7 +192,10 @@ export function Plugins({}) {
                     </div>
                 )}
             </ToolbarPlugin>
-            <div className="relative flex-1 self-stretch">
+            <div
+                className="relative flex-1 self-stretch"
+                onClick={handleContentEditableWrapperClick}
+            >
                 <AutoFocusPlugin />
                 <RichTextPlugin
                     contentEditable={
