@@ -1,9 +1,52 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { resolve } from 'path';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-    plugins: [preact()],
+    plugins: [
+        preact(),
+        VitePWA({
+            registerType: 'autoUpdate',
+            manifest: {
+                name: 'Markee Notes',
+                short_name: 'Markee',
+                description: 'A modern markdown note-taking app.',
+                start_url: '.',
+                display: 'standalone',
+                background_color: '#ffffff',
+                theme_color: '#2563eb',
+                icons: [
+                    {
+                        src: '/markee.svg',
+                        sizes: '192x192',
+                        type: 'image/svg+xml',
+                    },
+                ],
+            },
+            workbox: {
+                runtimeCaching: [
+                    {
+                        urlPattern: ({ request }) =>
+                            request.destination === 'document' ||
+                            request.destination === 'script' ||
+                            request.destination === 'style' ||
+                            request.destination === 'image' ||
+                            request.destination === 'font',
+                        handler: 'NetworkFirst',
+                        options: {
+                            cacheName: 'markee-runtime-cache',
+                            expiration: {
+                                maxEntries: 200,
+                                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+                            },
+                        },
+                    },
+                ],
+                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MiB
+            },
+        }),
+    ],
     resolve: {
         alias: {
             react: 'preact/compat',
