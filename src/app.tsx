@@ -5,7 +5,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'preact/hooks';
 import { Editor } from './components/blocks/editor/editor.tsx';
 import { MarkeeLogo } from './components/markee-logo.tsx';
 import { useMarkee } from './store/store.ts';
@@ -64,7 +64,7 @@ export default function App() {
             ) => {
                 await writeNoteFileContent(noteFilePath, noteFileContent);
             };
-            const noteFilePath = Object.keys(activeNote)?.[0];
+            const noteFilePath = Object.keys(activeNote ?? {})[0];
 
             if (noteFilePath) {
                 saveNoteFileLexicalContent(
@@ -85,7 +85,7 @@ export default function App() {
 
             updateEditorState(noteFileContentState);
         };
-        const noteFilePath = Object.keys(activeNote)?.[0];
+        const noteFilePath = Object.keys(activeNote ?? {})[0];
 
         if (noteFilePath) {
             getNoteFileLexicalContent(noteFilePath);
@@ -122,7 +122,7 @@ export default function App() {
                         </div>
                     </header>
                     <div className="grid flex-1 grid-cols-1 grid-rows-1 items-start gap-4 p-4 pt-0">
-                        {Object.keys(activeNote)?.[0] && (
+                        {activeNote && Object.keys(activeNote)[0] && (
                             <Editor
                                 editorRef={editorRef}
                                 editorSerializedState={editorState}

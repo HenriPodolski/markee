@@ -22,7 +22,7 @@ export default [
         },
         settings: {
             react: {
-                version: 'detect',
+                version: '18.0', // Explicitly set React version for Preact/compat
             },
         },
     },
