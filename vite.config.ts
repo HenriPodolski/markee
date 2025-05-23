@@ -14,9 +14,8 @@ export default defineConfig({
     },
     define: {
         'process.env': {
-            ...process.env,
             IS_PREACT: 'true',
-            NODE_ENV: process.env.NODE_ENV || 'development',
+            NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
             APP_VERSION: JSON.stringify(process.env.npm_package_version),
             FEATURE_FLAGS:
                 process.env.NODE_ENV === 'development'
