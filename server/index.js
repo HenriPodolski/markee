@@ -2,30 +2,45 @@ import Fastify from 'fastify';
 import FastifyStatic from '@fastify/static';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import process from 'process';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const httpsOptions =
+    process.env.NODE_ENV !== 'production'
+        ? {
+              key: fs.readFileSync(join(__dirname, 'certs/key.pem')),
+              cert: fs.readFileSync(join(__dirname, 'certs/cert.pem')),
+          }
+        : undefined;
+
 const fastify = Fastify({
     logger: true,
+    ...(httpsOptions && { https: httpsOptions }),
 });
 
 fastify.register(FastifyStatic, {
     root: join(__dirname, '../dist'),
     constraints: {
-        // eslint-disable-next-line no-undef
         ...(process.env.NODE_ENV === 'production' && {
             host: 'markee-notes.com',
         }),
     },
 });
 
+if (httpsOptions) {
+    console.log(
+        'HTTPS is enabled in development mode using certificates from the certs directory.'
+    );
+}
+
 const start = async () => {
     try {
         await fastify.listen({ port: 3200 });
     } catch (err) {
         fastify.log.error(err);
-        // eslint-disable-next-line no-undef
         process.exit(1);
     }
 };
