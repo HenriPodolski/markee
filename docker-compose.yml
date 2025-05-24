@@ -1,0 +1,13 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Containerfile
+    ports:
+      - "3200:3200"
+    networks:
+      - markee-network
+
+networks:
+  markee-network:
+    driver: bridge

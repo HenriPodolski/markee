@@ -23,11 +23,15 @@ const fastify = Fastify({
 
 fastify.register(FastifyStatic, {
     root: join(__dirname, '../dist'),
-    constraints: {
-        ...(process.env.NODE_ENV === 'production' && {
-            host: 'markee-notes.com',
-        }),
-    },
+    prefix: '/',
+});
+
+fastify.setNotFoundHandler((request, reply) => {
+    if (request.raw.url && request.raw.url.startsWith('/dist/')) {
+        reply.code(404).send('Not Found');
+    } else {
+        reply.sendFile('index.html');
+    }
 });
 
 if (httpsOptions) {
@@ -38,7 +42,7 @@ if (httpsOptions) {
 
 const start = async () => {
     try {
-        await fastify.listen({ port: 3200 });
+        await fastify.listen({ port: 3200, host: '0.0.0.0' });
     } catch (err) {
         fastify.log.error(err);
         process.exit(1);
