@@ -22,17 +22,11 @@ COPY src/ ./src
 COPY public/ ./public
 COPY vite.config.ts ./vite.config.ts
 COPY tsconfig.json ./tsconfig.json
-
-# Copy package.json and lock file for the frontend
+COPY postcss.config.js ./postcss.config.js
+COPY tailwind.config.js ./tailwind.config.js
 COPY package.json package-lock.json ./
-
-# Copy the index.html file for the frontend
 COPY index.html ./
-
-# Copy the tsconfig.app.json file for the frontend
 COPY tsconfig.app.json ./
-
-# Copy the tsconfig.node.json file for the frontend
 COPY tsconfig.node.json ./
 
 # Build the frontend
