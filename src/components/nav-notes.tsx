@@ -53,7 +53,7 @@ export function NavNotes() {
     const [collectionCreationDialogOpen, setCollectionCreationDialogOpen] =
         useState(false);
     const [noteCreationDialogOpen, setNoteCreationDialogOpen] = useState(false);
-    const { isMobile } = useSidebar();
+    const { isMobile, setOpenMobile } = useSidebar();
 
     const handleAddCollectionClick = (evt: MouseEvent) => {
         evt.preventDefault();
@@ -68,6 +68,7 @@ export function NavNotes() {
     const handleOpenNoteClick = (evt: MouseEvent, noteFile: string) => {
         evt.preventDefault();
         setActiveNote(noteFile);
+        setOpenMobile(false);
     };
 
     const truncateTextMiddle = (text: string, maxLengthPx: number) => {
