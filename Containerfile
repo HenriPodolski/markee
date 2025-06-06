@@ -1,5 +1,5 @@
-# Stage 1: Install dependencies
-FROM node:22-alpine AS dependencies
+# Stage 1: Install root dependencies
+FROM node:22-alpine AS root-dependencies
 
 WORKDIR /app
 
@@ -9,13 +9,24 @@ COPY package.json package-lock.json ./
 # Install dependencies
 RUN npm ci --legacy-peer-deps
 
-# Stage 2: Build the frontend
+# Stage 2: Install server (backend) dependencies
+FROM node:22-alpine AS server-dependencies
+
+WORKDIR /server
+
+# Copy server package.json and lock file
+COPY server/package.json server/package-lock.json ./
+
+# Install server dependencies
+RUN npm ci --legacy-peer-deps --only=production
+
+# Stage 3: Build the frontend
 FROM node:22-alpine AS frontend-builder
 
 WORKDIR /frontend
 
-# Copy dependencies from the previous stage
-COPY --from=dependencies /app/node_modules ./node_modules
+# Copy dependencies from the root dependencies stage
+COPY --from=root-dependencies /app/node_modules ./node_modules
 
 # Copy frontend-specific files
 COPY src/ ./src
@@ -32,24 +43,25 @@ COPY tsconfig.node.json ./
 # Build the frontend
 RUN npm run build
 
-# Stage 3: Build the backend
+# Stage 4: Build the backend
 FROM node:22-alpine AS backend-builder
 
 WORKDIR /backend
 
-# Copy dependencies from the previous stage
-COPY --from=dependencies /app/node_modules ./node_modules
+# Copy server dependencies from the server dependencies stage
+COPY --from=server-dependencies /server/node_modules ./node_modules
 
 # Copy backend-specific files
 COPY server/ ./server
 
-# Stage 4: Create the production image
+# Stage 5: Create the production image
 FROM node:22-alpine
 
 WORKDIR /app
 
 # Copy built backend and frontend from previous stages
-COPY --from=backend-builder /backend ./
+COPY --from=backend-builder /backend/server ./server
+COPY --from=backend-builder /backend/node_modules ./server/node_modules
 COPY --from=frontend-builder /frontend/dist ./dist
 
 # Expose the port the app runs on
