@@ -1,0 +1,14 @@
+services:
+  app:
+    image: ghcr.io/henripodolski/markee:latest
+    ports:
+      - "3200:3200"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - cmsnet
+    # Add volumes, secrets, or other overrides as needed for production
+
+networks:
+  cmsnet:
+    external: true
