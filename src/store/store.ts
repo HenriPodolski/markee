@@ -19,7 +19,14 @@ const { mkdir, writeFile, readFile, stat, rename, unlink, rmdir } = fsPromise;
 
 const initialFsListState = [...(await initialFsList())];
 const initialConfigState = await initialConfig(initialFsListState);
-let featureFlagState = {};
+
+interface FeatureFlags {
+    exports?: boolean;
+    docs?: boolean;
+    tools?: boolean;
+}
+
+let featureFlagState: FeatureFlags = {};
 
 try {
     featureFlagState = JSON.parse(process?.env?.FEATURE_FLAGS as string);

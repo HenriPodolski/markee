@@ -124,7 +124,7 @@ export function AppBreadcrumb() {
                             </BreadcrumbItem>
                         </>
                     )}
-                    {(Object.values(activeNote)?.[0] as ConfigStoreNote)
+                    {(Object.values(activeNote ?? {})[0] as ConfigStoreNote)
                         ?.name && (
                         <>
                             <BreadcrumbSeparator />
@@ -134,8 +134,8 @@ export function AppBreadcrumb() {
                                         {
                                             (
                                                 Object.values(
-                                                    activeNote
-                                                )?.[0] as ConfigStoreNote
+                                                    activeNote ?? {}
+                                                )[0] as ConfigStoreNote
                                             )?.name
                                         }
                                         <Settings2 size={16} />

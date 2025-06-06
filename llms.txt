@@ -1,0 +1,64 @@
+# LLM Chat Context for Markee Project
+
+## Project Overview
+Markee is a project with a client-side Vite/Preact application and a server-side Node.js application. The client serves as the frontend, while the server provides backend functionality. The project uses Docker for containerization and includes a `docker-compose.yml` file for managing services.
+
+## Key Components
+
+### Client Application
+- **Framework**: Vite with Preact
+- **Entry Points**:
+  - `src/main.tsx`: Main entry point for the client application.
+  - `src/app.tsx`: Contains the main application component.
+- **Assets**:
+  - `src/assets/`: Contains static assets like `markee-logo.svg`.
+- **UI Components**:
+  - `src/components/ui/`: Includes reusable UI components like `button.tsx`, `input.tsx`, and `tooltip.tsx`.
+- **Editor**:
+  - `src/editor/`: Contains editor-related components and plugins.
+
+### Server Application
+- **Framework**: Node.js with Fastify
+- **Entry Point**:
+  - `server/index.js`: Main server file.
+- **Certificates**:
+  - `server/certs/`: Contains development certificates (`key.pem`, `cert.pem`, etc.).
+- **Static File Serving**:
+  - Uses `@fastify/static` to serve files from `dist`.
+
+## Docker Setup
+
+### Server Container
+- **Dockerfile**: `Containerfile.server`
+- **Base Image**: `node:22-alpine`
+- **Exposed Port**: 3200
+- **Serving**: Runs the Fastify server and serves the frontend build.
+
+### Docker Compose
+- **File**: `docker-compose.yml`
+- **Services**:
+  - `server`: Builds and serves both the frontend and backend using the `Containerfile`.
+- **Network**: The service is connected via `markee-network`.
+
+## Development Notes
+- **Certificates**: The certificates in `server/certs/` are for development only and are not included in the production setup.
+- **Node.js Version**: Both client and server use Node.js LTS (22-alpine).
+- **Simplified Builds**: Both `Containerfile.client` and `Containerfile.server` assume the use of `npm` for dependency management.
+
+## Commands
+- **Build and Run with Docker Compose**:
+  ```bash
+  docker-compose up --build
+  ```
+- **Integrate with Existing Docker Compose**:
+  ```bash
+  docker-compose -f existing-compose.yml -f docker-compose.yml up
+  ```
+
+## Additional Information
+- **Frontend Framework**: Preact is used for lightweight React-like functionality.
+- **Backend Framework**: Fastify is used for high-performance server-side operations.
+- **Static Files**: The client build output is served directly by BusyBox's built-in HTTP server (`httpd`) on port 8080. Nginx proxies requests to this BusyBox container.
+- **Editor Features**: Includes plugins and themes for rich text editing.
+
+This file serves as a quick reference for the Markee project and can be updated as the project evolves.
