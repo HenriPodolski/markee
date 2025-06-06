@@ -1,5 +1,5 @@
 services:
-  app:
+  markee:
     image: ghcr.io/henripodolski/markee:latest
     ports:
       - "3200:3200"
