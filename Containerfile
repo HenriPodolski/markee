@@ -1,5 +1,5 @@
 # Stage 1: Install root dependencies
-FROM node:22-alpine AS root-dependencies
+FROM node:24-alpine AS root-dependencies
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps
 
 # Stage 2: Install server (backend) dependencies
-FROM node:22-alpine AS server-dependencies
+FROM node:24-alpine AS server-dependencies
 
 WORKDIR /server
 
@@ -21,7 +21,7 @@ COPY server/package.json server/package-lock.json ./
 RUN npm ci --legacy-peer-deps --only=production
 
 # Stage 3: Build the frontend
-FROM node:22-alpine AS frontend-builder
+FROM node:24-alpine AS frontend-builder
 
 WORKDIR /frontend
 
@@ -44,7 +44,7 @@ COPY tsconfig.node.json ./
 RUN npm run build
 
 # Stage 4: Build the backend
-FROM node:22-alpine AS backend-builder
+FROM node:24-alpine AS backend-builder
 
 WORKDIR /backend
 
@@ -55,7 +55,7 @@ COPY --from=server-dependencies /server/node_modules ./node_modules
 COPY server/ ./server
 
 # Stage 5: Create the production image
-FROM node:22-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
